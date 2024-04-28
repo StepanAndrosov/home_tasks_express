@@ -1,3 +1,4 @@
+import { Resolution } from "../../../types";
 
 export interface VideoModel {
     /**
@@ -13,9 +14,9 @@ export interface VideoModel {
     id: number,
     title: string,
     author: string,
+    availableResolutions: Resolution[]
     canBeDownloaded: boolean,
     minAgeRestriction: number | null,
     createdAt: string,
     publicationDate: string,
-    availableResolutions: string[]
 }

@@ -1,4 +1,4 @@
-export interface CourseIdParamsModel {
+export interface VideoIdParamsModel {
     /**
      * Course id 
      */

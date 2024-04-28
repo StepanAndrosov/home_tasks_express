@@ -1,7 +1,11 @@
 
-export type UserCreateModel = {
+export type VideoCreateModel = {
     /**
-     * User title 
+     * Video title 
+     * Video author
+     * Video available resolutions
      */
-    userName: string
+    title: string,
+    author: string,
+    availableResolutions: string[]
 }

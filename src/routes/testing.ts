@@ -7,7 +7,7 @@ import express, { Request, Response, NextFunction } from 'express'
 const getTestingRouter = express.Router()
 
 
-getTestingRouter.delete(RouterPaths.testing, (req: Request, res: Response, next: NextFunction) => {
+getTestingRouter.delete('/', (req: Request, res: Response, next: NextFunction) => {
     db.videos = []
     res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
 })
