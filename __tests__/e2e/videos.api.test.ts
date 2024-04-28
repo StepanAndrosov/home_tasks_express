@@ -6,7 +6,7 @@ import { RouterPaths } from '../../src/app'
 describe('/videos', () => {
 
     beforeAll(async () => {
-        await request(app).delete('/__test__/')
+        await request(app).delete(RouterPaths.testing)
     })
 
     it('should return 200 and empty array', async () => {

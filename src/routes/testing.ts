@@ -1,12 +1,18 @@
 import { RouterPaths, app } from "../app"
+import { db } from "../db/db"
 import { DBType } from "../types"
 import { HTTP_STATUSES } from "../utils"
+import express, { Request, Response, NextFunction } from 'express'
+
+const getTestingRouter = express.Router()
 
 
-export const getTestRouter = (db: DBType) => {
-    return app.delete(RouterPaths.__test__, (req: any, res: any) => {
-        db.courses = []
-        db.users = []
-        res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
-    })
+getTestingRouter.delete(RouterPaths.testing, (req: Request, res: Response, next: NextFunction) => {
+    db.videos = []
+    res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+})
+
+
+export {
+    getTestingRouter
 }
