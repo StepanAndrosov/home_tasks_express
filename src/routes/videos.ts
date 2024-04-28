@@ -110,44 +110,41 @@ getVideosRouter.put('/:id', (req: RequestWithParamsAndBody<VideoIdParamsModel, V
         return
     }
 
-    if (req.body.availableResolutions && req.body.availableResolutions.length)
-        if (isInvalidResolutions(req.body.availableResolutions as undefined | Resolution[])) {
-            res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-                errorMessages: [
-                    {
-                        message: 'Bad Resolutions',
-                        field: 'availableResolutions'
-                    }
-                ]
-            })
-            return
-        }
-    if (req.body.title && req.body.title.trim().length)
-        if (isInvalidTitle(req.body.title)) {
-            res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-                errorMessages: [
-                    {
-                        message: 'Bad Title',
-                        field: 'title'
-                    }
-                ]
-            })
-            return
-        }
-    if (req.body.author && req.body.author.trim().length)
-        if (isInvalidAuthor(req.body.author)) {
-            res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-                errorMessages: [
-                    {
-                        message: 'Bad Author',
-                        field: 'author'
-                    }
-                ]
-            })
-            return
-        }
+    if (isInvalidResolutions(req.body.availableResolutions as undefined | Resolution[])) {
+        res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+            errorMessages: [
+                {
+                    message: 'Bad Resolutions',
+                    field: 'availableResolutions'
+                }
+            ]
+        })
+        return
+    }
+    if (isInvalidTitle(req.body.title)) {
+        res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+            errorMessages: [
+                {
+                    message: 'Bad Title',
+                    field: 'title'
+                }
+            ]
+        })
+        return
+    }
+    if (isInvalidAuthor(req.body.author)) {
+        res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+            errorMessages: [
+                {
+                    message: 'Bad Author',
+                    field: 'author'
+                }
+            ]
+        })
+        return
+    }
 
-    if (req.body.canBeDownloaded && typeof req.body.canBeDownloaded !== 'boolean') {
+    if (typeof req.body.canBeDownloaded !== 'boolean') {
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
             errorMessages: [
                 {
@@ -159,29 +156,27 @@ getVideosRouter.put('/:id', (req: RequestWithParamsAndBody<VideoIdParamsModel, V
         return
     }
 
-    if (req.body.minAgeRestriction)
-        if (isNaN(+req.body.minAgeRestriction) || +req.body.minAgeRestriction < 1 || +req.body.minAgeRestriction > 18) {
-            res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-                errorMessages: [
-                    {
-                        message: 'Bad Min Age Restriction',
-                        field: 'minAgeRestriction'
-                    }
-                ]
-            })
-            return
-        }
+    if (isNaN(+req.body.minAgeRestriction) || +req.body.minAgeRestriction < 1 || +req.body.minAgeRestriction > 18) {
+        res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+            errorMessages: [
+                {
+                    message: 'Bad Min Age Restriction',
+                    field: 'minAgeRestriction'
+                }
+            ]
+        })
+        return
+    }
 
-    if (req.body.publicationDate) {
-        if (!req.body.publicationDate.trim())
-            res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-                errorMessages: [
-                    {
-                        message: 'Bad Publication Date',
-                        field: 'publicationDate'
-                    }
-                ]
-            })
+    if (!req.body.publicationDate.trim()) {
+        res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+            errorMessages: [
+                {
+                    message: 'Bad Publication Date',
+                    field: 'publicationDate'
+                }
+            ]
+        })
         return
     }
 
