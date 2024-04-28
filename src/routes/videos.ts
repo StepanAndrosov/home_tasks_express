@@ -68,8 +68,8 @@ getVideosRouter.post('/', (req: RequestWithBody<VideoCreateModel>, res: Response
         title: req.body.title,
         author: req.body.author,
         availableResolutions: req.body.availableResolutions as Resolution[],
-        canBeDownloaded: true,
-        minAgeRestriction: 16,
+        canBeDownloaded: false,
+        minAgeRestriction: null,
         createdAt: new Date().toISOString(),
         publicationDate: new Date().toISOString(),
     }
