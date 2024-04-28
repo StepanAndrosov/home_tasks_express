@@ -9,7 +9,7 @@ export type DBType = {
 export type Resolution = 'P144' | 'P240' | 'P360' | 'P480' | 'P720' | 'P1080' | 'P1440' | 'P2160'
 
 export type ErrorType = {
-    errorMessages: [
+    errorsMessages: [
         {
             message: string,
             field: string

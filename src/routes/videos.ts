@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express'
 import { db } from '../db/db'
 import { VideoViewModel } from '../features/videos/models/VideoViewModel'
-import { HTTP_STATUSES, availableResolutions, validLengthFields } from '../utils'
+import { DAY, HTTP_STATUSES, availableResolutions, validLengthFields } from '../utils'
 import { ErrorType, RequestWithBody, RequestWithParams, RequestWithParamsAndBody, Resolution } from '../types'
 import { VideoCreateModel } from '../features/videos/models/VodeoCreateModel'
 import { VideoIdParamsModel } from '../features/videos/models/VideoIdParamsModel'
@@ -29,7 +29,7 @@ getVideosRouter.post('/', (req: RequestWithBody<VideoCreateModel>, res: Response
 
     if (isInvalidResolutions(req.body.availableResolutions as undefined | Resolution[])) {
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-            errorMessages: [
+            errorsMessages: [
                 {
                     message: 'Bad Resolutions',
                     field: 'availableResolutions'
@@ -41,7 +41,7 @@ getVideosRouter.post('/', (req: RequestWithBody<VideoCreateModel>, res: Response
 
     if (isInvalidTitle(req.body.title)) {
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-            errorMessages: [
+            errorsMessages: [
                 {
                     message: 'Bad Title',
                     field: 'title'
@@ -53,7 +53,7 @@ getVideosRouter.post('/', (req: RequestWithBody<VideoCreateModel>, res: Response
 
     if (isInvalidAuthor(req.body.author)) {
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-            errorMessages: [
+            errorsMessages: [
                 {
                     message: 'Bad Author',
                     field: 'author'
@@ -64,14 +64,14 @@ getVideosRouter.post('/', (req: RequestWithBody<VideoCreateModel>, res: Response
     }
 
     const newVideo = {
-        id: +Date.now(),
+        id: Date.now(),
         title: req.body.title,
         author: req.body.author,
         availableResolutions: req.body.availableResolutions as Resolution[],
         canBeDownloaded: false,
         minAgeRestriction: null,
-        createdAt: new Date().toISOString(),
-        publicationDate: new Date().toISOString(),
+        createdAt: new Date(Date.now() + DAY).toISOString(),
+        publicationDate: new Date(Date.now() + DAY).toISOString(),
     }
 
     db.videos.push(newVideo)
@@ -112,7 +112,7 @@ getVideosRouter.put('/:id', (req: RequestWithParamsAndBody<VideoIdParamsModel, V
 
     if (isInvalidResolutions(req.body.availableResolutions as undefined | Resolution[])) {
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-            errorMessages: [
+            errorsMessages: [
                 {
                     message: 'Bad Resolutions',
                     field: 'availableResolutions'
@@ -123,7 +123,7 @@ getVideosRouter.put('/:id', (req: RequestWithParamsAndBody<VideoIdParamsModel, V
     }
     if (isInvalidTitle(req.body.title)) {
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-            errorMessages: [
+            errorsMessages: [
                 {
                     message: 'Bad Title',
                     field: 'title'
@@ -134,7 +134,7 @@ getVideosRouter.put('/:id', (req: RequestWithParamsAndBody<VideoIdParamsModel, V
     }
     if (isInvalidAuthor(req.body.author)) {
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-            errorMessages: [
+            errorsMessages: [
                 {
                     message: 'Bad Author',
                     field: 'author'
@@ -146,7 +146,7 @@ getVideosRouter.put('/:id', (req: RequestWithParamsAndBody<VideoIdParamsModel, V
 
     if (typeof req.body.canBeDownloaded !== 'boolean') {
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-            errorMessages: [
+            errorsMessages: [
                 {
                     message: 'Bad type Can Be Downloaded',
                     field: 'canBeDownloaded'
@@ -158,7 +158,7 @@ getVideosRouter.put('/:id', (req: RequestWithParamsAndBody<VideoIdParamsModel, V
 
     if (isNaN(+req.body.minAgeRestriction) || +req.body.minAgeRestriction < 1 || +req.body.minAgeRestriction > 18) {
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-            errorMessages: [
+            errorsMessages: [
                 {
                     message: 'Bad Min Age Restriction',
                     field: 'minAgeRestriction'
@@ -170,7 +170,7 @@ getVideosRouter.put('/:id', (req: RequestWithParamsAndBody<VideoIdParamsModel, V
 
     if (!req.body.publicationDate.trim()) {
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-            errorMessages: [
+            errorsMessages: [
                 {
                     message: 'Bad Publication Date',
                     field: 'publicationDate'
