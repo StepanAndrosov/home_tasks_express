@@ -139,7 +139,7 @@ getVideosRouter.put('/:id', (req: RequestWithParamsAndBody<VideoIdParamsModel, V
         })
     }
 
-    if (!req.body.publicationDate.trim()) {
+    if (typeof req.body.publicationDate !== 'string' || !req.body.publicationDate.toString().trim()) {
         errorsMessages.push({
             message: 'Bad Publication Date',
             field: 'publicationDate'
