@@ -64,7 +64,7 @@ getVideosRouter.post('/', (req: RequestWithBody<VideoCreateModel>, res: Response
         availableResolutions: req.body.availableResolutions as Resolution[],
         canBeDownloaded: false,
         minAgeRestriction: null,
-        createdAt: new Date(Date.now() + DAY).toISOString(),
+        createdAt: new Date(Date.now()).toISOString(),
         publicationDate: new Date(Date.now() + DAY).toISOString(),
     }
 
