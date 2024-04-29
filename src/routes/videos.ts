@@ -69,8 +69,9 @@ getVideosRouter.post('/', (req: RequestWithBody<VideoCreateModel>, res: Response
     }
 
     db.videos.push(newVideo)
-    res.json(newVideo)
-    res.sendStatus(HTTP_STATUSES.CREATED_201)
+    res
+        .status(HTTP_STATUSES.CREATED_201)
+        .send(newVideo)
 })
 
 getVideosRouter.get('/:id', (req: RequestWithParams<VideoIdParamsModel>, res: Response<VideoViewModel>, next: NextFunction) => {
