@@ -8,13 +8,12 @@ export type DBType = {
 
 export type Resolution = 'P144' | 'P240' | 'P360' | 'P480' | 'P720' | 'P1080' | 'P1440' | 'P2160'
 
-export type ErrorType = {
-    errorsMessages: [
-        {
-            message: string,
-            field: string
-        }
-    ]
+export type Error = {
+    message: string,
+    field: string
+}
+export type ErrorsMessagesType = {
+    errorsMessages: Error[]
 }
 
 export type RequestWithBody<T> = Request<{}, {}, T>
