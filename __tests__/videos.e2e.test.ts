@@ -3,6 +3,7 @@ import { app } from '../src/app'
 import { HTTP_STATUSES } from '../src/utils'
 import { RouterPaths } from '../src/app'
 import { VideoViewModel } from '../src/features/videos/models/VideoViewModel'
+import { videoTestManager } from './videoTestManager'
 
 describe('/users', () => {
 
@@ -23,15 +24,18 @@ describe('/users', () => {
     })
 
     it('should`n create entity with bad title', async () => {
-        await request(app)
-            .post(RouterPaths.videos)
-            .send({ title: '', author: 'Some author', availableResolutions: ['P144'] })
-            .expect(HTTP_STATUSES.BAD_REQUEST_400, {
-                errorsMessages: [{
-                    message: 'Bad Title',
-                    field: 'title'
-                }]
-            })
+        const data = { title: '', author: 'Some author', availableResolutions: ['P144'] }
+        const error = {
+            errorsMessages: [{
+                message: 'Bad Title',
+                field: 'title'
+            }]
+        }
+        await videoTestManager.createVideoWithErrors(
+            data,
+            HTTP_STATUSES.BAD_REQUEST_400,
+            error
+        )
 
         await request(app)
             .get(RouterPaths.videos)
@@ -39,15 +43,18 @@ describe('/users', () => {
     })
 
     it('should`n create entity with bad author', async () => {
-        await request(app)
-            .post(RouterPaths.videos)
-            .send({ title: 'Some title', author: '', availableResolutions: ['P144'] })
-            .expect(HTTP_STATUSES.BAD_REQUEST_400, {
-                errorsMessages: [{
-                    message: 'Bad Author',
-                    field: 'author'
-                }]
-            })
+        const data = { title: 'Some title', author: '', availableResolutions: ['P144'] }
+        const error = {
+            errorsMessages: [{
+                message: 'Bad Author',
+                field: 'author'
+            }]
+        }
+        await videoTestManager.createVideoWithErrors(
+            data,
+            HTTP_STATUSES.BAD_REQUEST_400,
+            error
+        )
 
         await request(app)
             .get(RouterPaths.videos)
@@ -55,15 +62,19 @@ describe('/users', () => {
     })
 
     it('should`n create entity with bad availableResolutions', async () => {
-        await request(app)
-            .post(RouterPaths.videos)
-            .send({ title: 'Some title', author: 'Some author', availableResolutions: [] })
-            .expect(HTTP_STATUSES.BAD_REQUEST_400, {
-                errorsMessages: [{
-                    message: 'Bad Resolutions',
-                    field: 'availableResolutions'
-                }]
-            })
+        const data = { title: 'Some title', author: 'Some author', availableResolutions: [] }
+        const error = {
+            errorsMessages: [{
+                message: 'Bad Resolutions',
+                field: 'availableResolutions'
+            }]
+        }
+
+        await videoTestManager.createVideoWithErrors(
+            data,
+            HTTP_STATUSES.BAD_REQUEST_400,
+            error
+        )
 
         await request(app)
             .get(RouterPaths.videos)
@@ -76,10 +87,7 @@ describe('/users', () => {
 
         const data = { title: 'Some title', author: 'Some author', availableResolutions: ['P144'] }
 
-        const response = await request(app)
-            .post(RouterPaths.videos)
-            .send(data)
-            .expect(HTTP_STATUSES.CREATED_201)
+        const response = await videoTestManager.createVideo(data)
 
         createdEntity = response.body
 
