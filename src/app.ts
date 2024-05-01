@@ -3,6 +3,7 @@ import express from 'express'
 
 import { getVideosRouter } from './routes/videos'
 import { getTestingRouter } from './routes/testing'
+import { db } from './db/db'
 
 export const app = express()
 
@@ -14,6 +15,6 @@ export const RouterPaths = {
     testing: '/testing'
 }
 
-app.use(RouterPaths.videos, getVideosRouter)
+app.use(RouterPaths.videos, getVideosRouter(db))
 app.use(RouterPaths.testing, getTestingRouter)
 
