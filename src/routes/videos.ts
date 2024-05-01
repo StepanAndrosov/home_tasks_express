@@ -1,11 +1,11 @@
 import express, { NextFunction, Request, Response } from 'express'
-import { VideoViewModel } from '../features/videos/models/VideoViewModel'
-import { DAY, HTTP_STATUSES, availableResolutions, validLengthFields } from '../utils'
-import { ErrorsMessagesType, Error, RequestWithBody, RequestWithParams, RequestWithParamsAndBody, Resolution, DBType } from '../types'
-import { VideoCreateModel } from '../features/videos/models/VodeoCreateModel'
 import { VideoIdParamsModel } from '../features/videos/models/VideoIdParamsModel'
 import { VideoUpdateModel } from '../features/videos/models/VideoUpdateModel'
-import { VideoModel } from '../features/videos/models/VideoModel'
+import { VideoViewModel } from '../features/videos/models/VideoViewModel'
+import { VideoCreateModel } from '../features/videos/models/VodeoCreateModel'
+import { videosRepository } from '../repositories/videosRepository'
+import { DBType, Error, ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndBody, Resolution } from '../types'
+import { HTTP_STATUSES, availableResolutions, validLengthFields } from '../utils'
 
 const isInvalidResolutions = (availableResolutionsData?: Resolution[]) => !availableResolutionsData ||
     !availableResolutionsData.length ?
@@ -16,12 +16,12 @@ const isInvalidTitle = (title?: string) => !title || !title.trim() || title.leng
 
 const isInvalidAuthor = (author?: string) => !author || !author.trim() || author.length > validLengthFields.videoAuthor
 
-export const getVideosRouter = (db: DBType) => {
+export const getVideosRouter = () => {
     const router = express.Router()
 
     router.get('/', (req: Request, res: Response<VideoViewModel[]>, next: NextFunction) => {
-        console.log("Videos Router Working");
-        res.json(db.videos)
+        const videos = videosRepository.getVideos()
+        res.json(videos)
         res.sendStatus(HTTP_STATUSES.OK_200)
     })
 
@@ -56,26 +56,15 @@ export const getVideosRouter = (db: DBType) => {
             })
             return
         }
+        const newVideo = videosRepository.createVideo(req.body)
 
-        const newVideo = {
-            id: Date.now(),
-            title: req.body.title,
-            author: req.body.author,
-            availableResolutions: req.body.availableResolutions as Resolution[],
-            canBeDownloaded: false,
-            minAgeRestriction: null,
-            createdAt: new Date(Date.now()).toISOString(),
-            publicationDate: new Date(Date.now() + DAY).toISOString(),
-        }
-
-        db.videos.push(newVideo)
         res
             .status(HTTP_STATUSES.CREATED_201)
             .send(newVideo)
     })
 
     router.get('/:id', (req: RequestWithParams<VideoIdParamsModel>, res: Response<VideoViewModel>, next: NextFunction) => {
-        const foundVideo = db.videos.find(v => v.id === Number(req.params.id))
+        const foundVideo = videosRepository.findVideo(Number(req.params.id))
         if (!foundVideo) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
@@ -85,20 +74,19 @@ export const getVideosRouter = (db: DBType) => {
     })
 
     router.put('/:id', (req: RequestWithParamsAndBody<VideoIdParamsModel, VideoUpdateModel>, res: Response<ErrorsMessagesType>, next: NextFunction) => {
-        console.log(req.body, 'params')
 
         if (!req.params.id || isNaN(Number(req.params.id))) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
         }
 
-        const foundVideo = db.videos.find(v => v.id === Number(req.params.id))
+        const foundVideo = videosRepository.findVideo(+req.params.id)
         if (!foundVideo) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
         }
 
-        const foundindex = db.videos.indexOf(foundVideo!)
+        const foundindex = videosRepository.findIndex(foundVideo)
 
         if (foundindex < 0) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -154,30 +142,32 @@ export const getVideosRouter = (db: DBType) => {
             return
         }
 
-        const newVideo = {
-            ...foundVideo,
-            ...req.body,
-            minAgeRestriction: req.body.minAgeRestriction ? +req.body.minAgeRestriction : foundVideo ? foundVideo.minAgeRestriction : null
-        } as VideoModel
+        // const newVideo = {
+        //     ...foundVideo,
+        //     ...req.body,
+        //     minAgeRestriction: req.body.minAgeRestriction ? +req.body.minAgeRestriction : foundVideo ? foundVideo.minAgeRestriction : null
+        // } as VideoModel
 
-        db.videos.splice(foundindex, 1, newVideo)
+        // db.videos.splice(foundindex, 1, newVideo)
+
+        videosRepository.updateVideo(foundindex, foundVideo, req.body)
 
         res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
     })
 
     router.delete('/:id', (req: RequestWithParams<VideoIdParamsModel>, res: Response<VideoViewModel>, next: NextFunction) => {
-        const foundVideo = db.videos.find(v => v.id === Number(req.params.id))
+        const foundVideo = videosRepository.findVideo(+req.params.id)
         if (!foundVideo) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
         }
-        const foundindex = db.videos.indexOf(foundVideo!)
+        const foundindex = videosRepository.findIndex(foundVideo)
 
         if (foundindex < 0) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
         }
-        db.videos.splice(foundindex, 1)
+        videosRepository.deleteVideo(foundindex)
 
         res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
     })

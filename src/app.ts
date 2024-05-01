@@ -15,6 +15,6 @@ export const RouterPaths = {
     testing: '/testing'
 }
 
-app.use(RouterPaths.videos, getVideosRouter(db))
-app.use(RouterPaths.testing, getTestingRouter)
+app.use(RouterPaths.videos, getVideosRouter())
+app.use(RouterPaths.testing, getTestingRouter())
 
