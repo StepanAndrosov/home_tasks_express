@@ -4,6 +4,7 @@ import { HTTP_STATUSES } from '../src/utils'
 import { RouterPaths } from '../src/app'
 import { VideoViewModel } from '../src/features/videos/models/VideoViewModel'
 import { videoTestManager } from './videoTestManager'
+import { errRequiredAuthor, errRequiredAvailableResolutions, errRequiredTitle } from '../src/features/videos/validations'
 
 describe('/users', () => {
 
@@ -27,7 +28,7 @@ describe('/users', () => {
         const data = { title: '', author: 'Some author', availableResolutions: ['P144'] }
         const error = {
             errorsMessages: [{
-                message: 'Bad Title',
+                message: errRequiredTitle,
                 field: 'title'
             }]
         }
@@ -46,7 +47,7 @@ describe('/users', () => {
         const data = { title: 'Some title', author: '', availableResolutions: ['P144'] }
         const error = {
             errorsMessages: [{
-                message: 'Bad Author',
+                message: errRequiredAuthor,
                 field: 'author'
             }]
         }
@@ -65,7 +66,7 @@ describe('/users', () => {
         const data = { title: 'Some title', author: 'Some author', availableResolutions: [] }
         const error = {
             errorsMessages: [{
-                message: 'Bad Resolutions',
+                message: errRequiredAvailableResolutions,
                 field: 'availableResolutions'
             }]
         }
@@ -90,8 +91,6 @@ describe('/users', () => {
         const response = await videoTestManager.createVideo(data)
 
         createdEntity = response.body
-
-        console.log(createdEntity, 'createdCource')
 
         expect(createdEntity.title).toEqual(data.title)
         expect(createdEntity.author).toEqual(data.author)

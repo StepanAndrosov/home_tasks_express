@@ -11,12 +11,7 @@ export const HTTP_STATUSES = {
 type StatusesKeys = keyof typeof HTTP_STATUSES
 export type HttpStatuses = typeof HTTP_STATUSES[StatusesKeys]
 
-export const availableResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160'] as const
 
-export const validLengthFields = {
-    videoTitle: 40,
-    videoAuthor: 20
-}
 
 export const SEC = 1000
 export const MIN = SEC * 60

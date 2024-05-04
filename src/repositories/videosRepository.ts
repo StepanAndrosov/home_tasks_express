@@ -5,20 +5,18 @@ import { VideoCreateModel } from "../features/videos/models/VodeoCreateModel";
 import { Resolution } from "../types";
 import { DAY } from "../utils";
 
-let videosData = db.videos
-
 export const videosRepository = {
     testDeleteData() {
-        videosData = []
+        db.videos = []
     },
     getVideos() {
-        return videosData
+        return db.videos
     },
     findVideo(id: number) {
-        return videosData.find(v => v.id === id)
+        return db.videos.find(v => v.id === id)
     },
     findIndex(video: VideoModel) {
-        return videosData.indexOf(video)
+        return db.videos.indexOf(video)
     },
     createVideo(createData: VideoCreateModel) {
         const newVideo = {
@@ -32,7 +30,7 @@ export const videosRepository = {
             publicationDate: new Date(Date.now() + DAY).toISOString(),
         }
 
-        videosData.push(newVideo)
+        db.videos.push(newVideo)
 
         return newVideo
     },
@@ -41,9 +39,9 @@ export const videosRepository = {
             ...foundVideo,
             ...updateData
         }
-        videosData.splice(index, 1, newVideo)
+        db.videos.splice(index, 1, newVideo)
     },
     deleteVideo(index: number) {
-        videosData.splice(index, 1)
+        db.videos.splice(index, 1)
     }
 }

@@ -1,5 +1,6 @@
 import type { Request } from "express"
 import { VideoModel } from "./features/videos/models/VideoModel"
+import { VideoUpdateModel } from './features/videos/models/VideoUpdateModel';
 
 
 export type DBType = {
@@ -20,3 +21,4 @@ export type RequestWithBody<T> = Request<{}, {}, T>
 export type RequestWithParams<T> = Request<T>
 export type RequestWithQuery<T> = Request<{}, {}, {}, T>
 export type RequestWithParamsAndBody<T, B> = Request<T, {}, B>
+
