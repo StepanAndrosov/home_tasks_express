@@ -1,3 +1,4 @@
+import { v4 } from "uuid";
 import { db } from "../db/db";
 import { BlogCreateModel } from "../features/blogs/models/BlogCreateModel";
 import { BlogModel } from "../features/blogs/models/BlogModel";
@@ -18,7 +19,7 @@ export const blogsRepository = {
     },
     createBlog(createData: BlogCreateModel) {
         const newBlog = {
-            id: Date.now().toString(),
+            id: v4(),
             name: createData.name,
             description: createData.description,
             websiteUrl: createData.websiteUrl,

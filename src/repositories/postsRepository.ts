@@ -1,3 +1,4 @@
+import { v4 } from "uuid";
 import { db } from "../db/db";
 import { PostCreateModel } from "../features/posts/models/PostCreateModel";
 import { PostModel } from "../features/posts/models/PostModel";
@@ -18,7 +19,7 @@ export const postsRepository = {
     },
     createPost(createData: PostCreateModel, blogName: string) {
         const newPost = {
-            id: Date.now().toString(),
+            id: v4(),
             title: createData.title,
             shortDescription: createData.shortDescription,
             content: createData.content,

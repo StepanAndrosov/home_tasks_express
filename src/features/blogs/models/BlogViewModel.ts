@@ -1,5 +1,5 @@
 
-export interface PostViewModel {
+export interface BlogViewModel {
     /**
      * Blog id 
      */
