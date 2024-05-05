@@ -3,7 +3,7 @@ import { Resolution } from "../../../types";
 
 export const availableResolutions = ['P144', 'P240', 'P360', 'P480', 'P720', 'P1080', 'P1440', 'P2160'] as const
 
-export const validLengthFields = {
+export const validVideosLengthFields = {
     videoTitle: 40,
     videoAuthor: 20,
     publicationDate: 24
@@ -19,10 +19,10 @@ export const errRequiredAvailableResolutions = 'the availableResolution required
 export const errMathValidAvailableResolutions = 'the resolution does not match valid values'
 
 export const errRequiredTitle = 'the title required'
-export const errLengthTitle = `the title must be shorter than ${validLengthFields.videoTitle} characters`
+export const errLengthTitle = `the title must be shorter than ${validVideosLengthFields.videoTitle} characters`
 
 export const errRequiredAuthor = 'the author required'
-export const errLengthAuthor = `the author must be shorter than ${validLengthFields.videoAuthor} characters`
+export const errLengthAuthor = `the author must be shorter than ${validVideosLengthFields.videoAuthor} characters`
 
 export const errCanBeDownloaded = 'canBeDownloaded required'
 
@@ -31,7 +31,7 @@ export const errAgeValueRestriction = `the min age restriction must be lower tha
 export const errMustNumberRestriction = 'the min age restriction must be a number'
 
 export const errRequiredPublicationDate = 'the PublicationDate required'
-export const errLengthPublicationDate = `the PublicationDate must be shorter than ${validLengthFields.videoTitle} characters`
+export const errLengthPublicationDate = `the PublicationDate must be shorter than ${validVideosLengthFields.videoTitle} characters`
 
 const resolutionsValidator = (availableResolutionsData?: Resolution[]) => {
     if (!availableResolutionsData || !availableResolutionsData.length)
@@ -46,11 +46,11 @@ export const validationResolutions = () => body("availableResolutions").isArray(
     .custom(resolutionsValidator)
 
 export const validationTitle = () => body("title").trim().notEmpty().withMessage(errRequiredTitle)
-    .isLength({ max: validLengthFields.videoTitle })
+    .isLength({ max: validVideosLengthFields.videoTitle })
     .withMessage(errLengthTitle)
 
 export const validationAuthor = () => body("author").trim().notEmpty().withMessage(errRequiredAuthor)
-    .isLength({ max: validLengthFields.videoAuthor })
+    .isLength({ max: validVideosLengthFields.videoAuthor })
     .withMessage(errLengthAuthor)
 
 export const canBeDownloadedValidator = () => body("canBeDownloaded").trim().notEmpty().isBoolean().withMessage(errCanBeDownloaded).toBoolean()
@@ -70,5 +70,5 @@ export const minAgeRestrictionValidator = () => body("minAgeRestriction").trim()
     .custom(ageValidator)
 
 export const validationPublicationDate = () => body("publicationDate").trim().notEmpty().withMessage(errRequiredPublicationDate)
-    .isLength({ max: validLengthFields.publicationDate })
+    .isLength({ max: validVideosLengthFields.publicationDate })
     .withMessage(errLengthPublicationDate)
