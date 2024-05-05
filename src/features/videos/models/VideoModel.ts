@@ -3,20 +3,34 @@ import { Resolution } from "../../../types";
 export interface VideoModel {
     /**
      * Video id 
-     * Video title 
-     * Video author
-     * Can be downloaded this videofile
-     * Min age restriction this videofile
-     * Video created at
-     * Video publication date
-     * Video available resolutions
      */
     id: number,
+    /**
+    * Video title 
+    */
     title: string,
+    /**
+    * Video author
+    */
     author: string,
+    /**
+    * Video available resolutions
+    */
     availableResolutions: Resolution[]
+    /**
+    *  Can be downloaded this videofile
+    */
     canBeDownloaded: boolean,
+    /**
+    *  Min age restriction this videofile
+    */
     minAgeRestriction: number | null,
+    /**
+    *  Video created at
+    */
     createdAt: string,
+    /**
+    *  Video publication date
+    */
     publicationDate: string,
 }

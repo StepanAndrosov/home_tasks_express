@@ -2,10 +2,14 @@
 export type VideoCreateModel = {
     /**
      * Video title 
-     * Video author
-     * Video available resolutions
      */
     title: string,
+    /**
+     * Video author
+     */
     author: string,
+    /**
+     * Video available resolutions
+     */
     availableResolutions: string[]
 }
