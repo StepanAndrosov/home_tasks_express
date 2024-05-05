@@ -6,7 +6,7 @@ import { VideoCreateModel } from '../features/videos/models/VodeoCreateModel'
 import { canBeDownloadedValidator, minAgeRestrictionValidator, validationAuthor, validationPublicationDate, validationResolutions, validationTitle } from '../features/videos/validations'
 import { inputValidMiddleware } from '../middlewares/input-valid'
 import { videosRepository } from '../repositories/videosRepository'
-import { Error, ErrorsMessagesType, RequestWithBody, RequestWithParams } from '../types'
+import { ErrorsMessagesType, RequestWithBody, RequestWithParams } from '../types'
 import { HTTP_STATUSES, } from '../utils'
 
 
@@ -77,7 +77,7 @@ export const getVideosRouter = () => {
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
-    router.delete('/:id', (req: RequestWithParams<VideoIdParamsModel>, res: Response<VideoViewModel>, next: NextFunction) => {
+    router.delete('/:id', (req: RequestWithParams<VideoIdParamsModel>, res: Response<VideoViewModel>) => {
         const foundVideo = videosRepository.findVideo(+req.params.id)
         if (!foundVideo) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
