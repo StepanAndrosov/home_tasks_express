@@ -8,6 +8,7 @@ import { blogsRepository } from '../repositories/blogsRepository'
 import { ErrorsMessagesType, RequestWithBody, RequestWithParams } from '../types'
 import { HTTP_STATUSES, } from '../utils'
 import { validationBlogName, validationDescription, validationWebsiteUrl } from '../features/blogs/validations'
+import { authenticationMiddleware } from '../middlewares/authentication '
 
 export const getBlogsRouter = () => {
     const router = express.Router()
@@ -19,6 +20,7 @@ export const getBlogsRouter = () => {
     })
 
     router.post('/',
+        authenticationMiddleware,
         validationBlogName(),
         validationDescription(),
         validationWebsiteUrl(),
@@ -44,6 +46,7 @@ export const getBlogsRouter = () => {
         })
 
     router.put('/:id',
+        authenticationMiddleware,
         validationBlogName(),
         validationDescription(),
         validationWebsiteUrl(),

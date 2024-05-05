@@ -23,6 +23,19 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 
+    it('should`n create entity if none auth 401', async () => {
+        const data = { name: 'Some name', description: 'Some description', websiteUrl: 'https://site.com' }
+
+        await blogsTestManager.createBlogNonAuth(
+            data,
+            HTTP_STATUSES.NOT_AUTHORIZED_401,
+        )
+
+        await request(app)
+            .get(RouterPaths.blogs)
+            .expect(HTTP_STATUSES.OK_200, [])
+    })
+
     it('should`n create entity with bad name', async () => {
         const data = { name: '', description: 'Some description', websiteUrl: 'https://site.com' }
         const error = {
@@ -125,8 +138,8 @@ describe('/blogs', () => {
         await blogsTestManager.updateBlogWithErrors(createdEntity.id, data, HTTP_STATUSES.BAD_REQUEST_400, errors)
 
         await request(app)
-            .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [createdEntity])
+            .get(`${RouterPaths.blogs}/${createdEntity.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdEntity)
     })
 
     it('should update entity with correct data', async () => {

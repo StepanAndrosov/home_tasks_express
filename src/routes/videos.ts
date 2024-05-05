@@ -34,7 +34,6 @@ export const getVideosRouter = () => {
 
     router.get('/:id',
         (req: RequestWithParams<VideoIdParamsModel>, res: Response<VideoViewModel>) => {
-            console.log(req.params)
             const errorsData = validationResult(req)
             if (!errorsData.isEmpty()) {
                 res.status(HTTP_STATUSES.NOT_FOUND_404)

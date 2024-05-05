@@ -11,6 +11,7 @@ import { postsRepository } from '../repositories/postsRepository'
 import { ErrorsMessagesType, RequestWithBody, RequestWithParams } from '../types'
 import { HTTP_STATUSES, } from '../utils'
 import { validationPostBlogId, validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
+import { authenticationMiddleware } from '../middlewares/authentication '
 
 export const getPostsRouter = () => {
     const router = express.Router()
@@ -22,6 +23,7 @@ export const getPostsRouter = () => {
     })
 
     router.post('/',
+        authenticationMiddleware,
         validationPostTile(),
         validationPostDescription(),
         validationPostContent(),
@@ -54,6 +56,7 @@ export const getPostsRouter = () => {
         })
 
     router.put('/:id',
+        authenticationMiddleware,
         validationPostTile(),
         validationPostDescription(),
         validationPostContent(),

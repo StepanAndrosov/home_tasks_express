@@ -42,6 +42,7 @@ const customBlogIdValidator = (blogId?: string) => {
     const foundBlog = blogsRepository.findBlog(blogId)
     if (!foundBlog)
         throw new Error(errExistBlog);
+    return true
 }
 
 export const validationPostBlogId = () => body("blogId").trim().notEmpty().withMessage(errRequiredBlogId)
