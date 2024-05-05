@@ -71,22 +71,24 @@ export const getBlogsRouter = () => {
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
-    router.delete('/:id', (req: RequestWithParams<BlogIdParamsModel>, res: Response<BlogViewModel>) => {
-        const foundBlog = blogsRepository.findBlog(req.params.id)
-        if (!foundBlog) {
-            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-            return
-        }
-        const foundindex = blogsRepository.findIndex(foundBlog)
+    router.delete('/:id',
+        authenticationMiddleware,
+        (req: Request, res: Response<BlogViewModel>) => {
+            const foundBlog = blogsRepository.findBlog(req.params.id)
+            if (!foundBlog) {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return
+            }
+            const foundindex = blogsRepository.findIndex(foundBlog)
 
-        if (foundindex < 0) {
-            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-            return
-        }
-        blogsRepository.deleteBlog(foundindex)
+            if (foundindex < 0) {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return
+            }
+            blogsRepository.deleteBlog(foundindex)
 
-        res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
-    })
+            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+        })
 
     return router
 }
