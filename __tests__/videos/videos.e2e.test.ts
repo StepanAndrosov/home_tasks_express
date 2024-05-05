@@ -1,10 +1,10 @@
 import request from 'supertest'
-import { app } from '../src/app'
-import { HTTP_STATUSES } from '../src/utils'
-import { RouterPaths } from '../src/app'
-import { VideoViewModel } from '../src/features/videos/models/VideoViewModel'
+import { app } from '../../src/app'
+import { HTTP_STATUSES } from '../../src/utils'
+import { RouterPaths } from '../../src/app'
+import { VideoViewModel } from '../../src/features/videos/models/VideoViewModel'
 import { videoTestManager } from './videoTestManager'
-import { errRequiredAuthor, errRequiredAvailableResolutions, errRequiredTitle } from '../src/features/videos/validations'
+import { errRequiredAuthor, errRequiredAvailableResolutions, errRequiredTitle } from '../../src/features/videos/validations'
 
 describe('/users', () => {
 

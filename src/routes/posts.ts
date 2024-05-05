@@ -12,7 +12,7 @@ import { ErrorsMessagesType, RequestWithBody, RequestWithParams } from '../types
 import { HTTP_STATUSES, } from '../utils'
 import { validationPostBlogId, validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
 
-export const getBlogsRouter = () => {
+export const getPostsRouter = () => {
     const router = express.Router()
 
     router.get('/', (req: Request, res: Response<PostModel[]>) => {

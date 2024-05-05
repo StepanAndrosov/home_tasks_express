@@ -1,8 +1,8 @@
 import request from 'supertest';
-import { RouterPaths, app } from '../src/app';
-import { VideoCreateModel } from "../src/features/videos/models/VodeoCreateModel";
-import { ErrorsMessagesType } from "../src/types";
-import { HTTP_STATUSES, HttpStatuses } from "../src/utils";
+import { RouterPaths, app } from '../../src/app';
+import { VideoCreateModel } from "../../src/features/videos/models/VodeoCreateModel";
+import { ErrorsMessagesType } from "../../src/types";
+import { HTTP_STATUSES, HttpStatuses } from "../../src/utils";
 
 
 export const videoTestManager = {
