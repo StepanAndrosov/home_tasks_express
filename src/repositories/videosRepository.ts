@@ -4,21 +4,19 @@ import { VideoUpdateModel } from "../features/videos/models/VideoUpdateModel";
 import { VideoCreateModel } from "../features/videos/models/VodeoCreateModel";
 import { Resolution } from "../types";
 import { DAY } from "../utils";
+import { videosCollection } from "../db/db";
 
 export const videosRepository = {
     testDeleteData() {
         db.videos = []
     },
-    getVideos() {
-        return db.videos
+    async getVideos(): Promise<VideoModel[]> {
+        return await videosCollection.find({}).toArray()
     },
-    findVideo(id: number) {
-        return db.videos.find(v => v.id === id)
+    async findVideo(id: number) {
+        return await videosCollection.findOne({ id })
     },
-    findIndex(video: VideoModel) {
-        return db.videos.indexOf(video)
-    },
-    createVideo(createData: VideoCreateModel) {
+    async createVideo(createData: VideoCreateModel) {
         const newVideo = {
             id: Date.now(),
             title: createData.title,
@@ -30,18 +28,18 @@ export const videosRepository = {
             publicationDate: new Date(Date.now() + DAY).toISOString(),
         }
 
-        db.videos.push(newVideo)
+        await videosCollection.insertOne(newVideo)
 
         return newVideo
     },
-    updateVideo(index: number, foundVideo: VideoModel, updateData: VideoUpdateModel) {
+    async updateVideo(id: number, foundVideo: VideoModel, updateData: VideoUpdateModel) {
         const newVideo = {
             ...foundVideo,
             ...updateData
         }
-        db.videos.splice(index, 1, newVideo)
+        await videosCollection.updateOne({ id }, { $set: newVideo })
     },
-    deleteVideo(index: number) {
-        db.videos.splice(index, 1)
+    async deleteVideo(id: number) {
+        await videosCollection.deleteOne({ id })
     }
 }

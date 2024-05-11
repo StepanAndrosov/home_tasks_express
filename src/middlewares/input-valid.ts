@@ -14,5 +14,6 @@ export const inputValidMiddleware = (req: Request, res: Response, next: NextFunc
         res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
             errorsMessages: errors
         })
+        return
     } else next()
 }

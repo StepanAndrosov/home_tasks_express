@@ -1,4 +1,33 @@
+import { MongoClient } from "mongodb";
 import { DBType } from "../types";
+import dotenv from 'dotenv'
+import { VideoModel } from "../features/videos/models/VideoModel";
+import { BlogModel } from "../features/blogs/models/BlogModel";
+import { PostModel } from "../features/posts/models/PostModel";
+
+dotenv.config()
+
+const mongoURI = process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
+console.log(process.env.MONGO_URL)
+
+const client = new MongoClient(mongoURI)
+
+const videosDB = client.db('videos')
+const blogsTubeDB = client.db('blogsTybe')
+
+export const videosCollection = videosDB.collection<VideoModel>('videos')
+export const blogsCollection = blogsTubeDB.collection<BlogModel>('blogs')
+export const postsCollection = blogsTubeDB.collection<PostModel>('posts')
+
+export const runDB = async () => {
+    try {
+        await client.connect()
+        console.log('Connected successfully to server')
+    } catch (e) {
+        console.log('Unsuccessfully connected to server')
+        await client.close()
+    }
+}
 
 export const db: DBType = {
     videos: [
