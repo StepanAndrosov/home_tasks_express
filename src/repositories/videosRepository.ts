@@ -1,10 +1,9 @@
-import { db } from "../db/db";
+import { videosCollection } from "../db/db";
 import { VideoModel } from "../features/videos/models/VideoModel";
 import { VideoUpdateModel } from "../features/videos/models/VideoUpdateModel";
 import { VideoCreateModel } from "../features/videos/models/VodeoCreateModel";
 import { Resolution } from "../types";
 import { DAY } from "../utils";
-import { videosCollection } from "../db/db";
 
 export const videosRepository = {
     async testDeleteData() {

@@ -1,23 +1,20 @@
 import { v4 } from "uuid";
-import { db } from "../db/db";
+import { postsCollection } from "../db/db";
 import { PostCreateModel } from "../features/posts/models/PostCreateModel";
 import { PostModel } from "../features/posts/models/PostModel";
 import { PostUpdateModel } from "../features/posts/models/PostUpdateModel";
 
 export const postsRepository = {
-    testDeleteData() {
-        db.posts = []
+    async testDeleteData() {
+        await postsCollection.drop()
     },
-    getPosts() {
-        return db.posts
+    async getPosts() {
+        return await postsCollection.find({}).toArray()
     },
-    findPost(id: string) {
-        return db.posts.find(v => v.id === id)
+    async findPost(id: string) {
+        return await postsCollection.findOne({ id })
     },
-    findIndex(post: PostModel) {
-        return db.posts.indexOf(post)
-    },
-    createPost(createData: PostCreateModel, blogName: string) {
+    async createPost(createData: PostCreateModel, blogName: string) {
         const newPost = {
             id: v4(),
             title: createData.title,
@@ -25,20 +22,21 @@ export const postsRepository = {
             content: createData.content,
             blogId: createData.blogId,
             blogName,
+            createdAt: new Date(Date.now()).toISOString()
         }
 
-        db.posts.push(newPost)
+        await postsCollection.insertOne(newPost)
 
         return newPost
     },
-    updatePost(index: number, foundPost: PostModel, updateData: PostUpdateModel) {
+    async updatePost(id: string, foundPost: PostModel, updateData: PostUpdateModel) {
         const newPost = {
             ...foundPost,
             ...updateData
         }
-        db.posts.splice(index, 1, newPost)
+        await postsCollection.updateOne({ id }, { $set: newPost })
     },
-    deletePost(index: number) {
-        db.posts.splice(index, 1)
+    async deletePost(id: string) {
+        await postsCollection.deleteOne({ id })
     }
 }

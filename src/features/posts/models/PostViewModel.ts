@@ -24,5 +24,9 @@ export interface PostViewModel {
     * Post blogName
     */
     blogName: string
+    /**
+    * Created time post 
+    */
+    createdAt: string
 }
 

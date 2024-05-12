@@ -24,5 +24,9 @@ export interface PostModel {
     * Post blogName
     */
     blogName: string
+    /**
+    * Created time post 
+    */
+    createdAt: string
 }
 

@@ -1,5 +1,5 @@
 import { v4 } from "uuid";
-import { blogsCollection, db } from "../db/db";
+import { blogsCollection } from "../db/db";
 import { BlogCreateModel } from "../features/blogs/models/BlogCreateModel";
 import { BlogModel } from "../features/blogs/models/BlogModel";
 import { BlogUpdateModel } from "../features/blogs/models/BlogUpdateModel";

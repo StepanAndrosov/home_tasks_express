@@ -1,23 +1,22 @@
 import express, { Request, Response } from 'express'
-import { BlogIdParamsModel } from '../features/blogs/models/BlogIdParamsModel'
 import { BlogViewModel } from '../features/blogs/models/BlogViewModel'
 import { PostCreateModel } from '../features/posts/models/PostCreateModel'
 import { PostIdParamsModel } from '../features/posts/models/PostIdParamsModel'
 import { PostModel } from '../features/posts/models/PostModel'
 import { PostViewModel } from '../features/posts/models/PostViewModel'
+import { validationPostBlogId, validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
+import { authenticationMiddleware } from '../middlewares/authentication '
 import { inputValidMiddleware } from '../middlewares/input-valid'
 import { blogsRepository } from '../repositories/blogsRepository'
 import { postsRepository } from '../repositories/postsRepository'
 import { ErrorsMessagesType, RequestWithBody, RequestWithParams } from '../types'
 import { HTTP_STATUSES, } from '../utils'
-import { validationPostBlogId, validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
-import { authenticationMiddleware } from '../middlewares/authentication '
 
 export const getPostsRouter = () => {
     const router = express.Router()
 
-    router.get('/', (req: Request, res: Response<PostModel[]>) => {
-        const posts = postsRepository.getPosts()
+    router.get('/', async (req: Request, res: Response<PostModel[]>) => {
+        const posts = await postsRepository.getPosts()
         res.json(posts)
         res.sendStatus(HTTP_STATUSES.OK_200)
     })
@@ -37,16 +36,16 @@ export const getPostsRouter = () => {
                 return
             }
 
-            const newPost = postsRepository.createPost(req.body, foundBlog.name)
+            const newPost = await postsRepository.createPost(req.body, foundBlog.name)
             res
                 .status(HTTP_STATUSES.CREATED_201)
                 .send(newPost)
         })
 
     router.get('/:id',
-        (req: RequestWithParams<PostIdParamsModel>, res: Response<PostViewModel>) => {
+        async (req: RequestWithParams<PostIdParamsModel>, res: Response<PostViewModel>) => {
 
-            const foundPost = postsRepository.findPost(req.params.id)
+            const foundPost = await postsRepository.findPost(req.params.id)
             if (!foundPost) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
@@ -62,41 +61,28 @@ export const getPostsRouter = () => {
         validationPostContent(),
         validationPostBlogId(),
         inputValidMiddleware,
-        (req: Request, res: Response<ErrorsMessagesType>) => {
+        async (req: Request, res: Response<ErrorsMessagesType>) => {
 
-            const foundPost = postsRepository.findPost(req.params.id)
+            const foundPost = await postsRepository.findPost(req.params.id)
             if (!foundPost) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
 
-            const foundindex = postsRepository.findIndex(foundPost)
-
-            if (foundindex < 0) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-                return
-            }
-
-            postsRepository.updatePost(foundindex, foundPost, req.body)
+            await postsRepository.updatePost(req.params.id, foundPost, req.body)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     router.delete('/:id',
         authenticationMiddleware,
-        (req: Request, res: Response<BlogViewModel>) => {
-            const foundPost = postsRepository.findPost(req.params.id)
+        async (req: Request, res: Response<BlogViewModel>) => {
+            const foundPost = await postsRepository.findPost(req.params.id)
             if (!foundPost) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
-            const foundindex = postsRepository.findIndex(foundPost)
-
-            if (foundindex < 0) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-                return
-            }
-            postsRepository.deletePost(foundindex)
+            await postsRepository.deletePost(req.params.id)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })

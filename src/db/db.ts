@@ -74,7 +74,8 @@ export const db: DBType = {
             shortDescription: 'Interview with yandex founder',
             blogId: '1',
             blogName: 'it-boroda',
-            content: 'it podcasts'
+            content: 'it podcasts',
+            createdAt: '2024-04-28T04:26:10.752Z',
         },
         {
             id: '2',
@@ -82,7 +83,8 @@ export const db: DBType = {
             shortDescription: 'Interview with yandex founder',
             blogId: '2',
             blogName: 'we are doomed',
-            content: 'it podcasts'
+            content: 'it podcasts',
+            createdAt: '2024-04-28T04:26:10.752Z',
         },
     ]
 }
