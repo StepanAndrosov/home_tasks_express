@@ -36,10 +36,10 @@ export const validationPostContent = () => body("content").trim().notEmpty().wit
     .isLength({ max: validPostsLengthFields.content })
     .withMessage(errLengthPostContent)
 
-const customBlogIdValidator = (blogId?: string) => {
+const customBlogIdValidator = async (blogId?: string) => {
     if (!blogId || !blogId.length)
         throw new Error(errRequiredBlogId);
-    const foundBlog = blogsRepository.findBlog(blogId)
+    const foundBlog = await blogsRepository.findBlog(blogId)
     if (!foundBlog)
         throw new Error(errExistBlog);
     return true

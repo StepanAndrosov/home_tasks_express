@@ -59,7 +59,7 @@ export const getBlogsRouter = () => {
                 return
             }
 
-            blogsRepository.updateBlog(req.params.id, foundBlog, req.body)
+            await blogsRepository.updateBlog(req.params.id, foundBlog, req.body)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
@@ -67,7 +67,7 @@ export const getBlogsRouter = () => {
     router.delete('/:id',
         authenticationMiddleware,
         async (req: Request, res: Response<BlogViewModel>) => {
-            const foundBlog = blogsRepository.findBlog(req.params.id)
+            const foundBlog = await blogsRepository.findBlog(req.params.id)
             if (!foundBlog) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
