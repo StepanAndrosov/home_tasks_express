@@ -7,8 +7,8 @@ import { DAY } from "../utils";
 import { videosCollection } from "../db/db";
 
 export const videosRepository = {
-    testDeleteData() {
-        db.videos = []
+    async testDeleteData() {
+        await videosCollection.drop()
     },
     async getVideos(): Promise<VideoModel[]> {
         return await videosCollection.find({}).toArray()

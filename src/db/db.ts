@@ -12,12 +12,9 @@ console.log(process.env.MONGO_URL)
 
 const client = new MongoClient(mongoURI)
 
-const videosDB = client.db('videos')
-const blogsTubeDB = client.db('blogsTybe')
-
-export const videosCollection = videosDB.collection<VideoModel>('videos')
-export const blogsCollection = blogsTubeDB.collection<BlogModel>('blogs')
-export const postsCollection = blogsTubeDB.collection<PostModel>('posts')
+export const videosCollection = client.db().collection<VideoModel>('videos')
+export const blogsCollection = client.db().collection<BlogModel>('blogs')
+export const postsCollection = client.db().collection<PostModel>('posts')
 
 export const runDB = async () => {
     try {
@@ -57,13 +54,17 @@ export const db: DBType = {
             id: '1',
             name: 'it-boroda',
             description: 'The creat it podcast',
-            websiteUrl: 'https://it-boroda.com'
+            websiteUrl: 'https://it-boroda.com',
+            createdAt: '2024-04-28T04:26:10.752Z',
+            isMembership: false
         },
         {
             id: '2',
             name: 'we are doomed',
             description: 'The creat it podcast with some humor',
-            websiteUrl: 'https://wearedoomed.com'
+            websiteUrl: 'https://wearedoomed.com',
+            createdAt: '2024-04-28T04:26:10.752Z',
+            isMembership: false
         },
     ],
     posts: [

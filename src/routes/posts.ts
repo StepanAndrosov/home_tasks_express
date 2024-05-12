@@ -29,9 +29,9 @@ export const getPostsRouter = () => {
         validationPostContent(),
         validationPostBlogId(),
         inputValidMiddleware,
-        (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | ErrorsMessagesType>) => {
+        async (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | ErrorsMessagesType>) => {
 
-            const foundBlog = blogsRepository.findBlog(req.body.blogId)
+            const foundBlog = await blogsRepository.findBlog(req.body.blogId)
             if (!foundBlog) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return

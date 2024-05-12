@@ -13,8 +13,8 @@ import { authenticationMiddleware } from '../middlewares/authentication '
 export const getBlogsRouter = () => {
     const router = express.Router()
 
-    router.get('/', (req: Request, res: Response<BlogModel[]>) => {
-        const blogs = blogsRepository.getBlogs()
+    router.get('/', async (req: Request, res: Response<BlogModel[]>) => {
+        const blogs = await blogsRepository.getBlogs()
         res.json(blogs)
         res.sendStatus(HTTP_STATUSES.OK_200)
     })
@@ -25,18 +25,18 @@ export const getBlogsRouter = () => {
         validationDescription(),
         validationWebsiteUrl(),
         inputValidMiddleware,
-        (req: RequestWithBody<BlogCreateModel>, res: Response<BlogViewModel | ErrorsMessagesType>) => {
+        async (req: RequestWithBody<BlogCreateModel>, res: Response<BlogViewModel | ErrorsMessagesType>) => {
 
-            const newBlog = blogsRepository.createBlog(req.body)
+            const newBlog = await blogsRepository.createBlog(req.body)
             res
                 .status(HTTP_STATUSES.CREATED_201)
                 .send(newBlog)
         })
 
     router.get('/:id',
-        (req: RequestWithParams<BlogIdParamsModel>, res: Response<BlogViewModel>) => {
+        async (req: RequestWithParams<BlogIdParamsModel>, res: Response<BlogViewModel>) => {
 
-            const foundBlog = blogsRepository.findBlog(req.params.id)
+            const foundBlog = await blogsRepository.findBlog(req.params.id)
             if (!foundBlog) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
@@ -51,41 +51,29 @@ export const getBlogsRouter = () => {
         validationDescription(),
         validationWebsiteUrl(),
         inputValidMiddleware,
-        (req: Request, res: Response<ErrorsMessagesType>) => {
+        async (req: Request, res: Response<ErrorsMessagesType>) => {
 
-            const foundBlog = blogsRepository.findBlog(req.params.id)
+            const foundBlog = await blogsRepository.findBlog(req.params.id)
             if (!foundBlog) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
 
-            const foundindex = blogsRepository.findIndex(foundBlog)
-
-            if (foundindex < 0) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-                return
-            }
-
-            blogsRepository.updateBlog(foundindex, foundBlog, req.body)
+            blogsRepository.updateBlog(req.params.id, foundBlog, req.body)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     router.delete('/:id',
         authenticationMiddleware,
-        (req: Request, res: Response<BlogViewModel>) => {
+        async (req: Request, res: Response<BlogViewModel>) => {
             const foundBlog = blogsRepository.findBlog(req.params.id)
             if (!foundBlog) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
-            const foundindex = blogsRepository.findIndex(foundBlog)
 
-            if (foundindex < 0) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-                return
-            }
-            blogsRepository.deleteBlog(foundindex)
+            await blogsRepository.deleteBlog(req.params.id)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
