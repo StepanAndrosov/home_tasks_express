@@ -3,16 +3,32 @@ import { postsCollection } from "../db/db";
 import { PostCreateModel } from "../features/posts/models/PostCreateModel";
 import { PostModel } from "../features/posts/models/PostModel";
 import { PostUpdateModel } from "../features/posts/models/PostUpdateModel";
+import { PostViewModel } from "../features/posts/models/PostViewModel";
+
+const getViewModelPost = (post: PostModel): PostViewModel => {
+    return {
+        id: post.id,
+        title: post.title,
+        shortDescription: post.shortDescription,
+        content: post.content,
+        blogId: post.blogId,
+        blogName: post.blogName,
+        createdAt: post.createdAt
+    }
+}
 
 export const postsRepository = {
     async testDeleteData() {
         await postsCollection.drop()
     },
     async getPosts() {
-        return await postsCollection.find({}).toArray()
+        const postsData = await postsCollection.find({}).toArray()
+        return postsData.map((p) => getViewModelPost(p))
     },
     async findPost(id: string) {
-        return await postsCollection.findOne({ id })
+        const postData = await postsCollection.findOne({ id })
+        if (!postData) return null
+        return getViewModelPost(postData)
     },
     async createPost(createData: PostCreateModel, blogName: string) {
         const newPost = {

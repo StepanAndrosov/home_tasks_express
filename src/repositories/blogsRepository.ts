@@ -3,16 +3,32 @@ import { blogsCollection } from "../db/db";
 import { BlogCreateModel } from "../features/blogs/models/BlogCreateModel";
 import { BlogModel } from "../features/blogs/models/BlogModel";
 import { BlogUpdateModel } from "../features/blogs/models/BlogUpdateModel";
+import { BlogViewModel } from "../features/blogs/models/BlogViewModel";
+
+
+const getViewModelBlog = (blog: BlogModel): BlogViewModel => {
+    return {
+        id: blog.id,
+        name: blog.name,
+        description: blog.description,
+        websiteUrl: blog.websiteUrl,
+        createdAt: blog.createdAt,
+        isMembership: blog.isMembership
+    }
+}
 
 export const blogsRepository = {
     async testDeleteData() {
         await blogsCollection.drop()
     },
     async getBlogs() {
-        return await blogsCollection.find({}).toArray()
+        const blogsData = await blogsCollection.find({}).toArray()
+        return blogsData.map((b) => getViewModelBlog(b))
     },
     async findBlog(id: string) {
-        return await blogsCollection.findOne({ id })
+        const blogData = await blogsCollection.findOne({ id })
+        if (!blogData) return null
+        return getViewModelBlog(blogData)
     },
     async createBlog(createData: BlogCreateModel) {
         const newBlog = {
