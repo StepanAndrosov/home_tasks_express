@@ -18,7 +18,7 @@ export const getPostsRouter = () => {
     router.get('/', async (req: Request, res: Response<PostModel[]>) => {
         const posts = await postsRepository.getPosts()
         res.json(posts)
-        res.sendStatus(HTTP_STATUSES.OK_200)
+        res.status(HTTP_STATUSES.OK_200)
     })
 
     router.post('/',
@@ -32,7 +32,7 @@ export const getPostsRouter = () => {
 
             const foundBlog = await blogsRepository.findBlog(req.body.blogId)
             if (!foundBlog) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                res.status(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
 
@@ -47,11 +47,11 @@ export const getPostsRouter = () => {
 
             const foundPost = await postsRepository.findPost(req.params.id)
             if (!foundPost) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                res.status(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
             res.json(foundPost)
-            res.sendStatus(HTTP_STATUSES.OK_200)
+            res.status(HTTP_STATUSES.OK_200)
         })
 
     router.put('/:id',
@@ -65,13 +65,13 @@ export const getPostsRouter = () => {
 
             const foundPost = await postsRepository.findPost(req.params.id)
             if (!foundPost) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                res.status(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
 
             await postsRepository.updatePost(req.params.id, foundPost, req.body)
 
-            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+            res.status(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     router.delete('/:id',
@@ -79,12 +79,12 @@ export const getPostsRouter = () => {
         async (req: Request, res: Response<BlogViewModel>) => {
             const foundPost = await postsRepository.findPost(req.params.id)
             if (!foundPost) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                res.status(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
             await postsRepository.deletePost(req.params.id)
 
-            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+            res.status(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     return router

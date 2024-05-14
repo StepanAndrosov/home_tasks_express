@@ -19,9 +19,9 @@ export const postsCollection = client.db().collection<PostModel>('posts')
 export const runDB = async () => {
     try {
         await client.connect()
-        console.log('Connected successfully to server')
+        console.log('✅ Connected successfully to server')
     } catch (e) {
-        console.log('Unsuccessfully connected to server')
+        console.log('❌ Unsuccessfully connected to server')
         await client.close()
     }
 }

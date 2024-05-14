@@ -23,6 +23,7 @@ export const blogsRepository = {
     },
     async getBlogs() {
         const blogsData = await blogsCollection.find({}).toArray()
+        console.log(blogsData, 'blogsData')
         return blogsData.map((b) => getViewModelBlog(b))
     },
     async findBlog(id: string) {

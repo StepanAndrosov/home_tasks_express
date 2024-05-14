@@ -16,7 +16,7 @@ export const getBlogsRouter = () => {
     router.get('/', async (req: Request, res: Response<BlogModel[]>) => {
         const blogs = await blogsRepository.getBlogs()
         res.json(blogs)
-        res.sendStatus(HTTP_STATUSES.OK_200)
+        res.status(HTTP_STATUSES.OK_200)
     })
 
     router.post('/',
@@ -38,11 +38,11 @@ export const getBlogsRouter = () => {
 
             const foundBlog = await blogsRepository.findBlog(req.params.id)
             if (!foundBlog) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                res.status(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
             res.json(foundBlog)
-            res.sendStatus(HTTP_STATUSES.OK_200)
+            res.status(HTTP_STATUSES.OK_200)
         })
 
     router.put('/:id',
@@ -55,13 +55,13 @@ export const getBlogsRouter = () => {
 
             const foundBlog = await blogsRepository.findBlog(req.params.id)
             if (!foundBlog) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                res.status(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
 
             await blogsRepository.updateBlog(req.params.id, foundBlog, req.body)
 
-            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+            res.status(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     router.delete('/:id',
@@ -69,13 +69,13 @@ export const getBlogsRouter = () => {
         async (req: Request, res: Response<BlogViewModel>) => {
             const foundBlog = await blogsRepository.findBlog(req.params.id)
             if (!foundBlog) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                res.status(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
 
             await blogsRepository.deleteBlog(req.params.id)
 
-            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+            res.status(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     return router
