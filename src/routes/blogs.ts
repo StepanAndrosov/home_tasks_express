@@ -52,16 +52,14 @@ export const getBlogsRouter = () => {
         validationWebsiteUrl(),
         inputValidMiddleware,
         async (req: Request, res: Response<ErrorsMessagesType>) => {
-
             const foundBlog = await blogsRepository.findBlog(req.params.id)
             if (!foundBlog) {
                 res.status(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
-
             await blogsRepository.updateBlog(req.params.id, foundBlog, req.body)
 
-            res.status(HTTP_STATUSES.NO_CONTEND_204)
+            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     router.delete('/:id',
@@ -75,7 +73,7 @@ export const getBlogsRouter = () => {
 
             await blogsRepository.deleteBlog(req.params.id)
 
-            res.status(HTTP_STATUSES.NO_CONTEND_204)
+            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     return router

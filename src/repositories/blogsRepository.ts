@@ -43,7 +43,7 @@ export const blogsRepository = {
 
         await blogsCollection.insertOne(newBlog)
 
-        return newBlog
+        return getViewModelBlog(newBlog)
     },
     async updateBlog(id: string, foundBlog: BlogModel, updateData: BlogUpdateModel) {
         const newBlog = {

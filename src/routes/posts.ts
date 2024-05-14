@@ -71,7 +71,7 @@ export const getPostsRouter = () => {
 
             await postsRepository.updatePost(req.params.id, foundPost, req.body)
 
-            res.status(HTTP_STATUSES.NO_CONTEND_204)
+            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     router.delete('/:id',
@@ -84,7 +84,7 @@ export const getPostsRouter = () => {
             }
             await postsRepository.deletePost(req.params.id)
 
-            res.status(HTTP_STATUSES.NO_CONTEND_204)
+            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     return router

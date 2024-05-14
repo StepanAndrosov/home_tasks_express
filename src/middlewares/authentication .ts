@@ -8,9 +8,9 @@ const auth = { login: 'admin', password: 'qwerty' }
 export const authenticationMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
     // parse login and password from headers
-    const title = (req.headers.authorization || '').split(' ')[0] || ''
-    const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
-    const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':')
+    const title = (req.headers.authorization || '').split(' ')[0] || '' // 'Basic xxxx'
+    const b64auth = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx login:password'
+    const [login, password] = Buffer.from(b64auth, 'base64').toString().split(':') // decoded login:password
     // Verify login and password are set and correct
     if (login && password && login === auth.login && password === auth.password && title === authTitle) {
         // Access granted...

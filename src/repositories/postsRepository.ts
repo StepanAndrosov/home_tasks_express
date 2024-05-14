@@ -44,7 +44,7 @@ export const postsRepository = {
 
         await postsCollection.insertOne(newPost)
 
-        return newPost
+        return getViewModelPost(newPost)
     },
     async updatePost(id: string, foundPost: PostModel, updateData: PostUpdateModel) {
         const newPost = {

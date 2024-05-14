@@ -15,5 +15,6 @@ export const inputValidMiddleware = (req: Request, res: Response, next: NextFunc
             errorsMessages: errors
         })
         return
-    } else next()
+    }
+    next()
 }
