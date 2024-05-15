@@ -38,7 +38,7 @@ export const getBlogsRouter = () => {
 
             const foundBlog = await blogsRepository.findBlog(req.params.id)
             if (!foundBlog) {
-                res.status(HTTP_STATUSES.NOT_FOUND_404)
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
             res.json(foundBlog)
@@ -54,7 +54,7 @@ export const getBlogsRouter = () => {
         async (req: Request, res: Response<ErrorsMessagesType>) => {
             const foundBlog = await blogsRepository.findBlog(req.params.id)
             if (!foundBlog) {
-                res.status(HTTP_STATUSES.NOT_FOUND_404)
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
             await blogsRepository.updateBlog(req.params.id, foundBlog, req.body)
