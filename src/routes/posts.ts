@@ -32,7 +32,7 @@ export const getPostsRouter = () => {
 
             const foundBlog = await blogsRepository.findBlog(req.body.blogId)
             if (!foundBlog) {
-                res.status(HTTP_STATUSES.NOT_FOUND_404)
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
 
@@ -47,7 +47,7 @@ export const getPostsRouter = () => {
 
             const foundPost = await postsRepository.findPost(req.params.id)
             if (!foundPost) {
-                res.status(HTTP_STATUSES.NOT_FOUND_404)
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
             res.json(foundPost)
@@ -65,7 +65,7 @@ export const getPostsRouter = () => {
 
             const foundPost = await postsRepository.findPost(req.params.id)
             if (!foundPost) {
-                res.status(HTTP_STATUSES.NOT_FOUND_404)
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
 
@@ -79,7 +79,7 @@ export const getPostsRouter = () => {
         async (req: Request, res: Response<BlogViewModel>) => {
             const foundPost = await postsRepository.findPost(req.params.id)
             if (!foundPost) {
-                res.status(HTTP_STATUSES.NOT_FOUND_404)
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
             await postsRepository.deletePost(req.params.id)

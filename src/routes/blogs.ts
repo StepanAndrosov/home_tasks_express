@@ -67,7 +67,7 @@ export const getBlogsRouter = () => {
         async (req: Request, res: Response<BlogViewModel>) => {
             const foundBlog = await blogsRepository.findBlog(req.params.id)
             if (!foundBlog) {
-                res.status(HTTP_STATUSES.NOT_FOUND_404)
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
 
