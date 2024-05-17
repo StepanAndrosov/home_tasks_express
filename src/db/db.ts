@@ -1,28 +1,33 @@
-import { MongoClient } from "mongodb";
+import { Collection, MongoClient } from "mongodb";
 import { DBType } from "../types";
-import dotenv from 'dotenv'
+
 import { VideoModel } from "../features/videos/models/VideoModel";
 import { BlogModel } from "../features/blogs/models/BlogModel";
 import { PostModel } from "../features/posts/models/PostModel";
 
-dotenv.config()
 
-const mongoURI = process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
-console.log(process.env.MONGO_URL)
 
-const client = new MongoClient(mongoURI)
+let client = {} as MongoClient
 
-export const videosCollection = client.db().collection<VideoModel>('videos')
-export const blogsCollection = client.db().collection<BlogModel>('blogs')
-export const postsCollection = client.db().collection<PostModel>('posts')
+export let videosCollection = {} as Collection<VideoModel>
+export let blogsCollection = {} as Collection<BlogModel>
+export let postsCollection = {} as Collection<PostModel>
 
-export const runDB = async () => {
+export const runDB = async (MONGO_URL: string) => {
     try {
+        client = new MongoClient(MONGO_URL)
+
+        videosCollection = client.db().collection<VideoModel>('videos')
+        blogsCollection = client.db().collection<BlogModel>('blogs')
+        postsCollection = client.db().collection<PostModel>('posts')
+
         await client.connect()
         console.log('✅ Connected successfully to server')
+        return true
     } catch (e) {
         console.log('❌ Unsuccessfully connected to server')
         await client.close()
+        return false
     }
 }
 

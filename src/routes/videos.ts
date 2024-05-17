@@ -36,13 +36,13 @@ export const getVideosRouter = () => {
         async (req: RequestWithParams<VideoIdParamsModel>, res: Response<VideoViewModel>) => {
             const errorsData = validationResult(req)
             if (!errorsData.isEmpty()) {
-                res.status(HTTP_STATUSES.NOT_FOUND_404)
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
 
             const foundVideo = await videosRepository.findVideo(Number(req.params.id))
             if (!foundVideo) {
-                res.status(HTTP_STATUSES.NOT_FOUND_404)
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
             res.json(foundVideo)
@@ -61,25 +61,25 @@ export const getVideosRouter = () => {
 
             const foundVideo = await videosRepository.findVideo(Number(req.params.id))
             if (!foundVideo) {
-                res.status(HTTP_STATUSES.NOT_FOUND_404)
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
 
             videosRepository.updateVideo(Number(req.params.id), foundVideo, req.body)
 
-            res.status(HTTP_STATUSES.NO_CONTEND_204)
+            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     router.delete('/:id', async (req: RequestWithParams<VideoIdParamsModel>, res: Response<VideoViewModel>) => {
         const foundVideo = await videosRepository.findVideo(Number(req.params.id))
         if (!foundVideo) {
-            res.status(HTTP_STATUSES.NOT_FOUND_404)
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
         }
 
         await videosRepository.deleteVideo(Number(req.params.id))
 
-        res.status(HTTP_STATUSES.NO_CONTEND_204)
+        res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
     })
 
     return router
