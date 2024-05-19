@@ -13,7 +13,7 @@ import { authenticationMiddleware } from '../middlewares/authentication '
 export const getBlogsRouter = () => {
     const router = express.Router()
 
-    router.get('/', async (req: Request, res: Response<BlogModel[]>) => {
+    router.get('/', async (req: Request, res: Response<BlogViewModel[]>) => {
         const blogs = await blogsRepository.getBlogs()
         res.json(blogs)
         res.status(HTTP_STATUSES.OK_200)

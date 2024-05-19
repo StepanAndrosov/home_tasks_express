@@ -1,9 +1,10 @@
+import { ObjectId } from "mongodb";
 
 export interface BlogModel {
     /**
      * Blog id 
      */
-    id: string,
+    _id: ObjectId,
     /**
     * Blog name 
     */

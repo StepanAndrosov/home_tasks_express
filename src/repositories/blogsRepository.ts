@@ -4,11 +4,23 @@ import { BlogCreateModel } from "../features/blogs/models/BlogCreateModel";
 import { BlogModel } from "../features/blogs/models/BlogModel";
 import { BlogUpdateModel } from "../features/blogs/models/BlogUpdateModel";
 import { BlogViewModel } from "../features/blogs/models/BlogViewModel";
+import { ObjectId, WithId } from "mongodb";
 
 
-const getViewModelBlog = (blog: BlogModel): BlogViewModel => {
+const getViewModelBlog = (blog: WithId<BlogModel>): BlogViewModel => {
     return {
-        id: blog.id,
+        id: blog._id.toString(),
+        name: blog.name,
+        description: blog.description,
+        websiteUrl: blog.websiteUrl,
+        createdAt: blog.createdAt,
+        isMembership: blog.isMembership
+    }
+}
+
+const getModelBlog = (blog: BlogViewModel): WithId<BlogModel> => {
+    return {
+        _id: new ObjectId(blog.id),
         name: blog.name,
         description: blog.description,
         websiteUrl: blog.websiteUrl,
@@ -33,7 +45,7 @@ export const blogsRepository = {
     },
     async createBlog(createData: BlogCreateModel) {
         const newBlog = {
-            id: v4(),
+            _id: new ObjectId(),
             name: createData.name,
             description: createData.description,
             websiteUrl: createData.websiteUrl,
@@ -45,14 +57,17 @@ export const blogsRepository = {
 
         return getViewModelBlog(newBlog)
     },
-    async updateBlog(id: string, foundBlog: BlogModel, updateData: BlogUpdateModel) {
+    async updateBlog(id: string, foundBlog: BlogViewModel, updateData: BlogUpdateModel) {
+
+        const foundBlogModel = getModelBlog(foundBlog)
+
         const newBlog = {
-            ...foundBlog,
+            ...foundBlogModel,
             ...updateData
         }
-        await blogsCollection.updateOne({ id }, { $set: newBlog })
+        await blogsCollection.updateOne({ _id: foundBlogModel._id }, { $set: newBlog })
     },
     async deleteBlog(id: string) {
-        await blogsCollection.deleteOne({ id })
+        await blogsCollection.deleteOne({ _id: new ObjectId(id) })
     }
 }
