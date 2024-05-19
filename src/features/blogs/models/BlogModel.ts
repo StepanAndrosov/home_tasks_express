@@ -1,10 +1,7 @@
-import { ObjectId } from "mongodb";
+import { WithId } from "mongodb"
 
-export interface BlogModel {
-    /**
-     * Blog id 
-     */
-    _id: ObjectId,
+
+interface Blog {
     /**
     * Blog name 
     */
@@ -26,3 +23,5 @@ export interface BlogModel {
     */
     isMembership: boolean
 }
+
+export type BlogModel = WithId<Blog>

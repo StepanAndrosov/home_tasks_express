@@ -1,9 +1,8 @@
+import { WithId } from "mongodb"
 
-export interface PostModel {
-    /**
-    * Post id 
-    */
-    id: string,
+
+interface Post {
+
     /**
     * Post title 
     */
@@ -29,4 +28,6 @@ export interface PostModel {
     */
     createdAt: string
 }
+
+export type PostModel = WithId<Post>
 

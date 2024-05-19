@@ -7,7 +7,7 @@ import { BlogViewModel } from "../features/blogs/models/BlogViewModel";
 import { ObjectId, WithId } from "mongodb";
 
 
-const getViewModelBlog = (blog: WithId<BlogModel>): BlogViewModel => {
+const getViewModelBlog = (blog: BlogModel): BlogViewModel => {
     return {
         id: blog._id.toString(),
         name: blog.name,
@@ -18,7 +18,7 @@ const getViewModelBlog = (blog: WithId<BlogModel>): BlogViewModel => {
     }
 }
 
-const getModelBlog = (blog: BlogViewModel): WithId<BlogModel> => {
+const getModelBlog = (blog: BlogViewModel): BlogModel => {
     return {
         _id: new ObjectId(blog.id),
         name: blog.name,
@@ -39,7 +39,7 @@ export const blogsRepository = {
         return blogsData.map((b) => getViewModelBlog(b))
     },
     async findBlog(id: string) {
-        const blogData = await blogsCollection.findOne({ id })
+        const blogData = await blogsCollection.findOne({ _id: new ObjectId(id) })
         if (!blogData) return null
         return getViewModelBlog(blogData)
     },
@@ -57,7 +57,7 @@ export const blogsRepository = {
 
         return getViewModelBlog(newBlog)
     },
-    async updateBlog(id: string, foundBlog: BlogViewModel, updateData: BlogUpdateModel) {
+    async updateBlog(foundBlog: BlogViewModel, updateData: BlogUpdateModel) {
 
         const foundBlogModel = getModelBlog(foundBlog)
 

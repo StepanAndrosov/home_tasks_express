@@ -15,7 +15,7 @@ import { HTTP_STATUSES, } from '../utils'
 export const getPostsRouter = () => {
     const router = express.Router()
 
-    router.get('/', async (req: Request, res: Response<PostModel[]>) => {
+    router.get('/', async (req: Request, res: Response<PostViewModel[]>) => {
         const posts = await postsRepository.getPosts()
         res.json(posts)
         res.status(HTTP_STATUSES.OK_200)
@@ -69,7 +69,7 @@ export const getPostsRouter = () => {
                 return
             }
 
-            await postsRepository.updatePost(req.params.id, foundPost, req.body)
+            await postsRepository.updatePost(foundPost, req.body)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
