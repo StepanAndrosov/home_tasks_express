@@ -1,14 +1,18 @@
 import express, { Request, Response } from 'express'
 import { BlogCreateModel } from '../features/blogs/models/BlogCreateModel'
 import { BlogIdParamsModel } from '../features/blogs/models/BlogIdParamsModel'
-import { BlogModel } from '../features/blogs/models/BlogModel'
 import { BlogViewModel } from '../features/blogs/models/BlogViewModel'
 import { inputValidMiddleware } from '../middlewares/input-valid'
 import { blogsRepository } from '../repositories/blogsRepository'
-import { ErrorsMessagesType, RequestWithBody, RequestWithParams } from '../types'
+import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndQuery } from '../types'
 import { HTTP_STATUSES, } from '../utils'
 import { validationBlogName, validationDescription, validationWebsiteUrl } from '../features/blogs/validations'
 import { authenticationMiddleware } from '../middlewares/authentication '
+import { BlogIdPostsPaginateModel } from '../features/blogs/models/BlogIdPostsPaginateModel'
+import { BlogParamsModel } from '../features/blogs/models/BlogParamsModel'
+import { PostViewModel } from '../features/posts/models/PostViewModel'
+import { sanitizeQuery } from '../features/blogs/sanitizeQuery'
+import { blogsQRepository } from '../queryRepositories/blogsQRepository'
 
 export const getBlogsRouter = () => {
     const router = express.Router()
@@ -42,6 +46,14 @@ export const getBlogsRouter = () => {
                 return
             }
             res.json(foundBlog)
+            res.status(HTTP_STATUSES.OK_200)
+        })
+    router.get('/:blogId/posts',
+        async (req: RequestWithParamsAndQuery<BlogParamsModel, { [key: string]: string | undefined }>, res: Response<BlogIdPostsPaginateModel>) => {
+
+            const sanitizedQuery = sanitizeQuery(req.query)
+            const posts = await blogsQRepository.getBlogIdPosts(req.params.blogId, sanitizedQuery)
+            // res.json(foundBlog)
             res.status(HTTP_STATUSES.OK_200)
         })
 
