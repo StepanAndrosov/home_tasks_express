@@ -50,7 +50,6 @@ export const getBlogsRouter = () => {
         })
     router.get('/:blogId/posts',
         async (req: RequestWithParamsAndQuery<BlogParamsModel, { [key: string]: string | undefined }>, res: Response<BlogIdPostsPaginateModel>) => {
-
             const sanitizedQuery = sanitizeQuery(req.query)
             const posts = await blogsQRepository.getBlogIdPosts(req.params.blogId, sanitizedQuery)
             res.json(posts)

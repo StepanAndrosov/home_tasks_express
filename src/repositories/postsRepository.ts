@@ -36,7 +36,7 @@ export const postsRepository = {
     },
     async getPosts(filter = {}) {
         const postsData = await postsCollection.find(filter).toArray()
-        console.log(postsData.map((p) => getViewModelPost(p)), 'postsData')
+
         return postsData.map((p) => getViewModelPost(p))
     },
     async findPost(id: string) {
