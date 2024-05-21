@@ -4,10 +4,10 @@ import { BlogCreateModel } from "../features/blogs/models/BlogCreateModel";
 import { BlogModel } from "../features/blogs/models/BlogModel";
 import { BlogUpdateModel } from "../features/blogs/models/BlogUpdateModel";
 import { BlogViewModel } from "../features/blogs/models/BlogViewModel";
-import { ObjectId, WithId } from "mongodb";
+import { ObjectId } from "mongodb";
 
 
-const getViewModelBlog = (blog: BlogModel): BlogViewModel => {
+export const getViewModelBlog = (blog: BlogModel): BlogViewModel => {
     return {
         id: blog._id.toString(),
         name: blog.name,

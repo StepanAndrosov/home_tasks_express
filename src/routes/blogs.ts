@@ -53,7 +53,7 @@ export const getBlogsRouter = () => {
 
             const sanitizedQuery = sanitizeQuery(req.query)
             const posts = await blogsQRepository.getBlogIdPosts(req.params.blogId, sanitizedQuery)
-            // res.json(foundBlog)
+            res.json(posts)
             res.status(HTTP_STATUSES.OK_200)
         })
 

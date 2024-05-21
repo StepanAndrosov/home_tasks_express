@@ -6,7 +6,7 @@ import { PostUpdateModel } from "../features/posts/models/PostUpdateModel";
 import { PostViewModel } from "../features/posts/models/PostViewModel";
 import { ObjectId, WithId } from "mongodb";
 
-const getViewModelPost = (post: PostModel): PostViewModel => {
+export const getViewModelPost = (post: PostModel): PostViewModel => {
     return {
         id: post._id.toString(),
         title: post.title,
