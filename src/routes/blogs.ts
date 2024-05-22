@@ -4,15 +4,17 @@ import { BlogIdParamsModel } from '../features/blogs/models/BlogIdParamsModel'
 import { BlogViewModel } from '../features/blogs/models/BlogViewModel'
 import { inputValidMiddleware } from '../middlewares/input-valid'
 import { blogsRepository } from '../repositories/blogsRepository'
-import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndQuery } from '../types'
+import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithParamsAndQuery } from '../types'
 import { HTTP_STATUSES, } from '../utils'
 import { validationBlogName, validationDescription, validationWebsiteUrl } from '../features/blogs/validations'
 import { authenticationMiddleware } from '../middlewares/authentication '
 import { BlogIdPostsPaginateModel } from '../features/blogs/models/BlogIdPostsPaginateModel'
 import { BlogParamsModel } from '../features/blogs/models/BlogParamsModel'
-import { PostViewModel } from '../features/posts/models/PostViewModel'
 import { sanitizeQuery } from '../features/blogs/sanitizeQuery'
 import { blogsQRepository } from '../queryRepositories/blogsQRepository'
+import { BlogIdPostCreateModel } from '../features/blogs/models/BlogIdPostCreateModel'
+import { validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
+import { PostViewModel } from '../features/posts/models/PostViewModel'
 
 export const getBlogsRouter = () => {
     const router = express.Router()
@@ -54,6 +56,26 @@ export const getBlogsRouter = () => {
             const posts = await blogsQRepository.getBlogIdPosts(req.params.blogId, sanitizedQuery)
             res.json(posts)
             res.status(HTTP_STATUSES.OK_200)
+        })
+
+    router.post('/:blogId/posts',
+        authenticationMiddleware,
+        validationPostTile(),
+        validationPostDescription(),
+        validationPostContent(),
+        inputValidMiddleware,
+        async (req: Request, res: Response<PostViewModel | ErrorsMessagesType>) => {
+
+            const foundBlog = await blogsRepository.findBlog(req.params.blogId)
+            if (!foundBlog) {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return
+            }
+
+            const post = await blogsQRepository.createBlogIdPosts(req.params.blogId, req.body, foundBlog.name)
+
+            res.status(HTTP_STATUSES.CREATED_201)
+            res.send(post)
         })
 
     router.put('/:id',

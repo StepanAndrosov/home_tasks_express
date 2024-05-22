@@ -3,6 +3,8 @@ import { SanitizedQuery } from "../features/blogs/sanitizeQuery";
 import { postsCollection } from "../db/db";
 import { BlogIdPostsPaginateModel } from "../features/blogs/models/BlogIdPostsPaginateModel";
 import { getViewModelPost } from "../repositories/postsRepository";
+import { BlogIdPostCreateModel } from "../features/blogs/models/BlogIdPostCreateModel";
+import { ObjectId } from "mongodb";
 
 
 export const blogsQRepository = {
@@ -33,5 +35,20 @@ export const blogsQRepository = {
             totalCount,
             items: postsData.map((p) => getViewModelPost(p))
         }
+    },
+    async createBlogIdPosts(blogId: string, body: BlogIdPostCreateModel, blogName: string) {
+        const newPost = {
+            _id: new ObjectId(),
+            title: body.title,
+            shortDescription: body.shortDescription,
+            content: body.content,
+            blogId: blogId,
+            blogName,
+            createdAt: new Date(Date.now()).toISOString()
+        }
+
+        await postsCollection.insertOne(newPost)
+
+        return getViewModelPost(newPost)
     }
 }
