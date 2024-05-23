@@ -11,16 +11,22 @@ import { getViewModelBlog } from "../repositories/blogsRepository";
 export const blogsQRepository = {
     async getBlogs(query: SanitizedQuery) {
 
+        const search = query.searchNameTerm ? { name: { $regex: query.searchNameTerm, $options: 'i' } } : {}
+
+        const filter = {
+            ...search,
+        }
+
         const skip = (query.pageNumber - 1) * query.pageSize
 
-        const blogsData = await blogsCollection.find({})
+        const blogsData = await blogsCollection.find(filter)
             .sort(query.sortBy, query.sortDirection)
             .skip(skip)
             .limit(query.pageSize)
             .toArray()
 
 
-        const totalCount = await blogsCollection.countDocuments()
+        const totalCount = await blogsCollection.countDocuments(filter)
         const pagesCount = Math.ceil(totalCount / query.pageSize)
 
         return {
