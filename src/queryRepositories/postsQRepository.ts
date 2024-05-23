@@ -15,9 +15,9 @@ export const postsQRepository = {
             .toArray()
 
 
-        const pagesCount = Math.ceil(postsData.length / query.pageSize)
-
         const totalCount = await postsCollection.countDocuments()
+        const pagesCount = Math.ceil(totalCount / query.pageSize)
+
 
         return {
             pagesCount,

@@ -20,9 +20,8 @@ export const blogsQRepository = {
             .toArray()
 
 
-        const pagesCount = Math.ceil(blogsData.length / query.pageSize)
-
         const totalCount = await blogsCollection.countDocuments()
+        const pagesCount = Math.ceil(totalCount / query.pageSize)
 
         return {
             pagesCount,
@@ -48,9 +47,9 @@ export const blogsQRepository = {
             .limit(query.pageSize)
             .toArray()
 
-        const pagesCount = Math.ceil(postsData.length / query.pageSize)
-
         const totalCount = await postsCollection.countDocuments(filter)
+        const pagesCount = Math.ceil(totalCount / query.pageSize)
+
 
         return {
             pagesCount,
