@@ -11,12 +11,18 @@ import { blogsRepository } from '../repositories/blogsRepository'
 import { postsRepository } from '../repositories/postsRepository'
 import { ErrorsMessagesType, RequestWithBody, RequestWithParams } from '../types'
 import { HTTP_STATUSES, } from '../utils'
+import { postsQRepository } from '../queryRepositories/postsQRepository'
+import { sanitizeQuery } from '../features/blogs/sanitizeQuery'
+import { PostsPaginateModel } from '../features/posts/models/PostsPaginateModel'
 
 export const getPostsRouter = () => {
     const router = express.Router()
 
-    router.get('/', async (req: Request, res: Response<PostViewModel[]>) => {
-        const posts = await postsRepository.getPosts()
+    router.get('/', async (req: Request<{}, {}, {}, { [key: string]: string | undefined }>, res: Response<PostsPaginateModel>) => {
+
+        const sanitizedQuery = sanitizeQuery(req.query)
+
+        const posts = await postsQRepository.getPosts(sanitizedQuery)
         res.json(posts)
         res.status(HTTP_STATUSES.OK_200)
     })

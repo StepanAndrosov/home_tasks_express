@@ -1,26 +1,29 @@
 import express, { Request, Response } from 'express'
 import { BlogCreateModel } from '../features/blogs/models/BlogCreateModel'
 import { BlogIdParamsModel } from '../features/blogs/models/BlogIdParamsModel'
-import { BlogViewModel } from '../features/blogs/models/BlogViewModel'
-import { inputValidMiddleware } from '../middlewares/input-valid'
-import { blogsRepository } from '../repositories/blogsRepository'
-import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithParamsAndQuery } from '../types'
-import { HTTP_STATUSES, } from '../utils'
-import { validationBlogName, validationDescription, validationWebsiteUrl } from '../features/blogs/validations'
-import { authenticationMiddleware } from '../middlewares/authentication '
 import { BlogIdPostsPaginateModel } from '../features/blogs/models/BlogIdPostsPaginateModel'
 import { BlogParamsModel } from '../features/blogs/models/BlogParamsModel'
+import { BlogViewModel } from '../features/blogs/models/BlogViewModel'
+import { BlogsPaginateModel } from '../features/blogs/models/BlogsPaginateModel'
 import { sanitizeQuery } from '../features/blogs/sanitizeQuery'
-import { blogsQRepository } from '../queryRepositories/blogsQRepository'
-import { BlogIdPostCreateModel } from '../features/blogs/models/BlogIdPostCreateModel'
-import { validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
+import { validationBlogName, validationDescription, validationWebsiteUrl } from '../features/blogs/validations'
 import { PostViewModel } from '../features/posts/models/PostViewModel'
+import { validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
+import { authenticationMiddleware } from '../middlewares/authentication '
+import { inputValidMiddleware } from '../middlewares/input-valid'
+import { blogsQRepository } from '../queryRepositories/blogsQRepository'
+import { blogsRepository } from '../repositories/blogsRepository'
+import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndQuery } from '../types'
+import { HTTP_STATUSES, } from '../utils'
 
 export const getBlogsRouter = () => {
     const router = express.Router()
 
-    router.get('/', async (req: Request, res: Response<BlogViewModel[]>) => {
-        const blogs = await blogsRepository.getBlogs()
+    router.get('/', async (req: Request<{}, {}, {}, { [key: string]: string | undefined }>, res: Response<BlogsPaginateModel>) => {
+
+        const sanitizedQuery = sanitizeQuery(req.query)
+
+        const blogs = await blogsQRepository.getBlogs(sanitizedQuery)
         res.json(blogs)
         res.status(HTTP_STATUSES.OK_200)
     })

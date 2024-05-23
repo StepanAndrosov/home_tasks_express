@@ -1,10 +1,9 @@
-import { v4 } from "uuid";
+import { ObjectId } from "mongodb";
 import { blogsCollection } from "../db/db";
 import { BlogCreateModel } from "../features/blogs/models/BlogCreateModel";
 import { BlogModel } from "../features/blogs/models/BlogModel";
 import { BlogUpdateModel } from "../features/blogs/models/BlogUpdateModel";
 import { BlogViewModel } from "../features/blogs/models/BlogViewModel";
-import { ObjectId } from "mongodb";
 
 
 export const getViewModelBlog = (blog: BlogModel): BlogViewModel => {
@@ -32,11 +31,6 @@ const getModelBlog = (blog: BlogViewModel): BlogModel => {
 export const blogsRepository = {
     async testDeleteData() {
         await blogsCollection.drop()
-    },
-    async getBlogs() {
-        const blogsData = await blogsCollection.find({}).toArray()
-
-        return blogsData.map((b) => getViewModelBlog(b))
     },
     async findBlog(id: string) {
         const blogData = await blogsCollection.findOne({ _id: new ObjectId(id) })
