@@ -34,11 +34,6 @@ export const postsRepository = {
     async testDeleteData() {
         await postsCollection.drop()
     },
-    async getPosts(filter = {}) {
-        const postsData = await postsCollection.find(filter).toArray()
-
-        return postsData.map((p) => getViewModelPost(p))
-    },
     async findPost(id: string) {
         const postData = await postsCollection.findOne({ _id: new ObjectId(id) })
         if (!postData) return null
