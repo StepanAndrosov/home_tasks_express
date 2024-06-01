@@ -12,7 +12,7 @@ import { postsRepository } from '../repositories/postsRepository'
 import { ErrorsMessagesType, RequestWithBody, RequestWithParams } from '../types'
 import { HTTP_STATUSES, } from '../utils'
 import { postsQRepository } from '../queryRepositories/postsQRepository'
-import { sanitizeQuery } from '../features/blogs/sanitizeQuery'
+import { sanitizeQuery } from '../utils'
 import { PostsPaginateModel } from '../features/posts/models/PostsPaginateModel'
 
 export const getPostsRouter = () => {
