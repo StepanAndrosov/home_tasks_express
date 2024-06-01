@@ -1,3 +1,4 @@
+import { sanitizeQuery } from './../utils';
 import express, { Request, Response } from 'express'
 import { BlogCreateModel } from '../features/blogs/models/BlogCreateModel'
 import { BlogIdParamsModel } from '../features/blogs/models/BlogIdParamsModel'
@@ -5,7 +6,6 @@ import { BlogIdPostsPaginateModel } from '../features/blogs/models/BlogIdPostsPa
 import { BlogParamsModel } from '../features/blogs/models/BlogParamsModel'
 import { BlogViewModel } from '../features/blogs/models/BlogViewModel'
 import { BlogsPaginateModel } from '../features/blogs/models/BlogsPaginateModel'
-import { sanitizeQuery } from '../features/blogs/sanitizeQuery'
 import { validationBlogName, validationDescription, validationWebsiteUrl } from '../features/blogs/validations'
 import { PostViewModel } from '../features/posts/models/PostViewModel'
 import { validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
