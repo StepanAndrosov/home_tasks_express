@@ -9,8 +9,6 @@ export const validUsersLengthFields = {
     password: { min: 6, max: 20 }
 }
 
-const loginPattern = /^[a-zA-Z0-9_-]*$/gm;
-
 export const errRequiredLogin = 'login is required'
 export const errValidLogin = 'login does not valid'
 export const errLengthLogin = `login must be shorter than ${validUsersLengthFields.login.max} or larger than ${validUsersLengthFields.login.min} characters`
@@ -21,18 +19,21 @@ export const errLengthName = `password must be shorter than shorter than ${valid
 export const errRequiredEmail = 'email is required'
 export const errValidEmail = 'email does not match email address'
 
-const customLogimValidator = async (login?: string) => {
+const customLoginValidator = async (login?: string) => {
+    let loginPattern = /^[a-zA-Z0-9_-]*$/gmi;
     if (!login || !login.length)
         throw new Error(errRequiredLogin);
-
-    if (!loginPattern.test(login))
-        throw new Error(errValidLogin);
-    return true
+    const isValid = loginPattern.test(login)
+    if (isValid) {
+        return true
+    } else {
+        throw new Error(errValidLogin)
+    };
 }
 
 export const validationLogin = () => body("login").trim().notEmpty().withMessage(errRequiredLogin)
     .isLength({ min: validUsersLengthFields.login.min, max: validUsersLengthFields.login.max }).withMessage(errLengthLogin)
-    .custom(customLogimValidator)
+    .custom(customLoginValidator)
 
 export const validationPassword = () => body("password").trim().notEmpty().withMessage(errRequiredPassword)
     .isLength({ min: validUsersLengthFields.password.min, max: validUsersLengthFields.password.max })

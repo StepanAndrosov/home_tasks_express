@@ -14,7 +14,7 @@ app.use(jsonBody)
 export const RouterPaths = {
     blogs: '/blogs',
     posts: '/posts',
-    users: '/usesrs',
+    users: '/users',
     testing: '/testing'
 }
 
