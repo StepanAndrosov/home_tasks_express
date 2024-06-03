@@ -2,6 +2,7 @@
 import { usersCollection } from "../db/db";
 import { SanitizedQuery } from "../utils";
 import { getViewModelUser } from "../repositories/usersRepository";
+import { ObjectId } from "mongodb";
 
 export const usersQRepository = {
     async getUsers(query: SanitizedQuery) {
@@ -25,5 +26,16 @@ export const usersQRepository = {
             totalCount,
             items: usersData.map((u) => getViewModelUser(u))
         }
-    }
+    },
+    async getFilterUsers(findData: { [term: string]: string }) {
+
+        const usersLoginData = await usersCollection.find(findData).toArray()
+
+        return usersLoginData
+    },
+    async findUser(id: string) {
+        const userData = await usersCollection.findOne({ _id: new ObjectId(id) })
+        if (!userData) return null
+        return getViewModelUser(userData)
+    },
 }

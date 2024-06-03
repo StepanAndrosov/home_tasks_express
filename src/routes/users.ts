@@ -9,6 +9,7 @@ import { usersQRepository } from '../queryRepositories/usersQRepository'
 import { usersRepository } from '../repositories/usersRepository'
 import { ErrorsMessagesType, RequestWithBody } from '../types'
 import { HTTP_STATUSES, sanitizeQuery } from '../utils'
+import { usersService } from '../features/users/service'
 
 export const getUsersRouter = () => {
     const router = express.Router()
@@ -30,16 +31,26 @@ export const getUsersRouter = () => {
         inputValidMiddleware,
         async (req: RequestWithBody<UserCreateModel>, res: Response<UserViewModel | ErrorsMessagesType>) => {
 
-            const newUser = await usersRepository.createUser(req.body)
-            res
-                .status(HTTP_STATUSES.CREATED_201)
-                .send(newUser)
+            const createDataUser = await usersService.createUser(req.body)
+
+            if (createDataUser.error && createDataUser.errorsMessages) {
+                res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+                    errorsMessages: createDataUser.errorsMessages
+                })
+                return
+            }
+
+            const newUser = createDataUser.newUser
+            if (newUser)
+                res
+                    .status(HTTP_STATUSES.CREATED_201)
+                    .send(newUser)
         })
 
     router.delete('/:id',
         authenticationMiddleware,
         async (req: Request, res: Response<UserViewModel>) => {
-            const foundUser = await usersRepository.findUser(req.params.id)
+            const foundUser = await usersQRepository.findUser(req.params.id)
             if (!foundUser) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return

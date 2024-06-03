@@ -20,12 +20,8 @@ export const usersRepository = {
     async testDeleteData() {
         await usersCollection.drop()
     },
-    async findUser(id: string) {
-        const userData = await usersCollection.findOne({ _id: new ObjectId(id) })
-        if (!userData) return null
-        return getViewModelUser(userData)
-    },
     async createUser(createData: UserCreateModel) {
+
         const newUser = {
             _id: new ObjectId(),
             login: createData.login,
