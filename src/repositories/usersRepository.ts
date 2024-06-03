@@ -1,11 +1,9 @@
 import { ObjectId } from "mongodb";
-import { postsCollection, usersCollection } from "../db/db";
-import { PostCreateModel } from "../features/posts/models/PostCreateModel";
-import { PostUpdateModel } from "../features/posts/models/PostUpdateModel";
-import { PostViewModel } from "../features/posts/models/PostViewModel";
+import { usersCollection } from "../db/db";
+import { UserCreateModel } from "../features/users/models/UserCreateModel";
 import { UserModel } from "../features/users/models/UserModel";
 import { UserViewModel } from "../features/users/models/UserViewModel";
-import { UserCreateModel } from "../features/users/models/UserCreateModel";
+import { genHash } from "../utils/genHash";
 
 export const getViewModelUser = (user: UserModel): UserViewModel => {
     return {
@@ -22,11 +20,13 @@ export const usersRepository = {
     },
     async createUser(createData: UserCreateModel) {
 
+        const passwordHash = await genHash(createData.password)
+
         const newUser = {
             _id: new ObjectId(),
             login: createData.login,
             email: createData.email,
-            password: createData.password,
+            password: passwordHash,
             createdAt: new Date(Date.now()).toISOString()
         }
 

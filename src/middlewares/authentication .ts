@@ -1,6 +1,6 @@
 
 import { NextFunction, Request, Response } from "express"
-import { HTTP_STATUSES } from "../utils"
+import { HTTP_STATUSES } from "../utils/helpers"
 // admin\qwerty.
 const authTitle = 'Basic'
 const auth = { login: 'admin', password: 'qwerty' }

@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response } from 'express'
-import { HTTP_STATUSES } from "../utils"
+import { HTTP_STATUSES } from "../utils/helpers"
 import { blogsRepository } from '../repositories/blogsRepository'
 import { postsRepository } from '../repositories/postsRepository'
 

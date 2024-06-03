@@ -34,4 +34,17 @@ export const sanitizeQuery = (query: { [key: string]: string | undefined }) => {
     }
 }
 
-export type SanitizedQuery = ReturnType<typeof sanitizeQuery> 
+export type SanitizedQuery = ReturnType<typeof sanitizeQuery>
+
+export const sanitizeUsersQuery = (query: { [key: string]: string | undefined }) => {
+    return {
+        pageNumber: query.pageNumber ? Number(query.pageNumber) : DEFAULT_PAGE_NUMBER,
+        pageSize: query.pageSize ? Number(query.pageSize) : DEFAULT_PAGE_SIZE,
+        sortBy: query.sortBy ? query.sortBy : DEFAULT_SORT_BY,
+        sortDirection: query.sortDirection ? query.sortDirection as SortDirection : DEFAULT_SORT_DIRECTION,
+        searchLoginTerm: query.searchLoginTerm ? query.searchLoginTerm : null,
+        searchEmailTerm: query.searchEmailTerm ? query.searchEmailTerm : null
+    }
+}
+
+export type SanitizedUsersQuery = ReturnType<typeof sanitizeUsersQuery>

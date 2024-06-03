@@ -1,5 +1,5 @@
 
-import { SanitizedQuery } from "../utils";
+import { SanitizedQuery } from "../utils/helpers";
 import { blogsCollection, postsCollection } from "../db/db";
 import { BlogIdPostsPaginateModel } from "../features/blogs/models/BlogIdPostsPaginateModel";
 import { getViewModelPost } from "../repositories/postsRepository";

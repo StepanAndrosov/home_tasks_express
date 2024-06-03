@@ -8,7 +8,7 @@ import { inputValidMiddleware } from '../middlewares/input-valid'
 import { usersQRepository } from '../queryRepositories/usersQRepository'
 import { usersRepository } from '../repositories/usersRepository'
 import { ErrorsMessagesType, RequestWithBody } from '../types'
-import { HTTP_STATUSES, sanitizeQuery } from '../utils'
+import { HTTP_STATUSES, sanitizeUsersQuery } from '../utils/helpers'
 import { usersService } from '../features/users/service'
 
 export const getUsersRouter = () => {
@@ -16,9 +16,9 @@ export const getUsersRouter = () => {
 
     router.get('/', async (req: Request<{}, {}, {}, { [key: string]: string | undefined }>, res: Response<UsersPaginateModel>) => {
 
-        const sanitizedQuery = sanitizeQuery(req.query)
+        const sanitizedUsersQuery = sanitizeUsersQuery(req.query)
 
-        const users = await usersQRepository.getUsers(sanitizedQuery)
+        const users = await usersQRepository.getUsers(sanitizedUsersQuery)
         res.json(users)
         res.status(HTTP_STATUSES.OK_200)
     })

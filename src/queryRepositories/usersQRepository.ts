@@ -1,15 +1,26 @@
 
 import { usersCollection } from "../db/db";
-import { SanitizedQuery } from "../utils";
+import { SanitizedUsersQuery } from "../utils/helpers";
 import { getViewModelUser } from "../repositories/usersRepository";
 import { ObjectId } from "mongodb";
 
 export const usersQRepository = {
-    async getUsers(query: SanitizedQuery) {
+    async getUsers(query: SanitizedUsersQuery) {
+
+        const search = {
+            $or: [
+                query.searchEmailTerm ? { email: { $regex: query.searchEmailTerm, $options: 'i' } } : {},
+                query.searchLoginTerm ? { login: { $regex: query.searchLoginTerm, $options: 'i' } } : {}
+            ]
+        }
+
+        const filter = {
+            ...search,
+        }
 
         const skip = (query.pageNumber - 1) * query.pageSize
 
-        const usersData = await usersCollection.find({})
+        const usersData = await usersCollection.find(filter)
             .sort(query.sortBy, query.sortDirection)
             .skip(skip)
             .limit(query.pageSize)

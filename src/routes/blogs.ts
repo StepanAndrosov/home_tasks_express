@@ -1,4 +1,4 @@
-import { sanitizeQuery } from './../utils';
+import { sanitizeQuery } from '../utils/helpers';
 import express, { Request, Response } from 'express'
 import { BlogCreateModel } from '../features/blogs/models/BlogCreateModel'
 import { BlogIdParamsModel } from '../features/blogs/models/BlogIdParamsModel'
@@ -14,7 +14,7 @@ import { inputValidMiddleware } from '../middlewares/input-valid'
 import { blogsQRepository } from '../queryRepositories/blogsQRepository'
 import { blogsRepository } from '../repositories/blogsRepository'
 import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndQuery } from '../types'
-import { HTTP_STATUSES, } from '../utils'
+import { HTTP_STATUSES, } from '../utils/helpers'
 
 export const getBlogsRouter = () => {
     const router = express.Router()

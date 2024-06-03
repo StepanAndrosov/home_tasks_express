@@ -10,9 +10,9 @@ import { inputValidMiddleware } from '../middlewares/input-valid'
 import { blogsRepository } from '../repositories/blogsRepository'
 import { postsRepository } from '../repositories/postsRepository'
 import { ErrorsMessagesType, RequestWithBody, RequestWithParams } from '../types'
-import { HTTP_STATUSES, } from '../utils'
+import { HTTP_STATUSES, } from '../utils/helpers'
 import { postsQRepository } from '../queryRepositories/postsQRepository'
-import { sanitizeQuery } from '../utils'
+import { sanitizeQuery } from '../utils/helpers'
 import { PostsPaginateModel } from '../features/posts/models/PostsPaginateModel'
 
 export const getPostsRouter = () => {

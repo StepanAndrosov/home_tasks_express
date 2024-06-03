@@ -1,6 +1,6 @@
 
 import { postsCollection } from "../db/db";
-import { SanitizedQuery } from "../utils";
+import { SanitizedQuery } from "../utils/helpers";
 import { getViewModelPost } from "../repositories/postsRepository";
 
 export const postsQRepository = {
