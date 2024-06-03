@@ -2,6 +2,7 @@
 import { postsCollection } from "../db/db";
 import { SanitizedQuery } from "../utils/helpers";
 import { getViewModelPost } from "../repositories/postsRepository";
+import { ObjectId } from "mongodb";
 
 export const postsQRepository = {
     async getPosts(query: SanitizedQuery) {
@@ -26,5 +27,10 @@ export const postsQRepository = {
             totalCount,
             items: postsData.map((p) => getViewModelPost(p))
         }
-    }
+    },
+    async findPost(id: string) {
+        const postData = await postsCollection.findOne({ _id: new ObjectId(id) })
+        if (!postData) return null
+        return getViewModelPost(postData)
+    },
 }

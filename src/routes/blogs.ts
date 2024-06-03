@@ -45,7 +45,7 @@ export const getBlogsRouter = () => {
     router.get('/:id',
         async (req: RequestWithParams<BlogIdParamsModel>, res: Response<BlogViewModel>) => {
 
-            const foundBlog = await blogsRepository.findBlog(req.params.id)
+            const foundBlog = await blogsQRepository.findBlog(req.params.id)
             if (!foundBlog) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
@@ -56,7 +56,7 @@ export const getBlogsRouter = () => {
     router.get('/:blogId/posts',
         async (req: RequestWithParamsAndQuery<BlogParamsModel, { [key: string]: string | undefined }>, res: Response<BlogIdPostsPaginateModel>) => {
 
-            const foundBlog = await blogsRepository.findBlog(req.params.blogId)
+            const foundBlog = await blogsQRepository.findBlog(req.params.blogId)
             if (!foundBlog) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
@@ -76,7 +76,7 @@ export const getBlogsRouter = () => {
         inputValidMiddleware,
         async (req: Request, res: Response<PostViewModel | ErrorsMessagesType>) => {
 
-            const foundBlog = await blogsRepository.findBlog(req.params.blogId)
+            const foundBlog = await blogsQRepository.findBlog(req.params.blogId)
             if (!foundBlog) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
@@ -95,7 +95,7 @@ export const getBlogsRouter = () => {
         validationWebsiteUrl(),
         inputValidMiddleware,
         async (req: Request, res: Response<ErrorsMessagesType>) => {
-            const foundBlog = await blogsRepository.findBlog(req.params.id)
+            const foundBlog = await blogsQRepository.findBlog(req.params.id)
             if (!foundBlog) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
@@ -108,7 +108,7 @@ export const getBlogsRouter = () => {
     router.delete('/:id',
         authenticationMiddleware,
         async (req: Request, res: Response<BlogViewModel>) => {
-            const foundBlog = await blogsRepository.findBlog(req.params.id)
+            const foundBlog = await blogsQRepository.findBlog(req.params.id)
             if (!foundBlog) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return

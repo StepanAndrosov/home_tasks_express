@@ -34,11 +34,7 @@ export const postsRepository = {
     async testDeleteData() {
         await postsCollection.drop()
     },
-    async findPost(id: string) {
-        const postData = await postsCollection.findOne({ _id: new ObjectId(id) })
-        if (!postData) return null
-        return getViewModelPost(postData)
-    },
+
     async createPost(createData: PostCreateModel, blogName: string) {
         const newPost = {
             _id: new ObjectId(),

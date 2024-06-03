@@ -32,11 +32,6 @@ export const blogsRepository = {
     async testDeleteData() {
         await blogsCollection.drop()
     },
-    async findBlog(id: string) {
-        const blogData = await blogsCollection.findOne({ _id: new ObjectId(id) })
-        if (!blogData) return null
-        return getViewModelBlog(blogData)
-    },
     async createBlog(createData: BlogCreateModel) {
         const newBlog = {
             _id: new ObjectId(),

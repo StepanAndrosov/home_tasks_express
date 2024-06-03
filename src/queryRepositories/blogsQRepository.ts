@@ -37,6 +37,11 @@ export const blogsQRepository = {
             items: blogsData.map((b) => getViewModelBlog(b))
         }
     },
+    async findBlog(id: string) {
+        const blogData = await blogsCollection.findOne({ _id: new ObjectId(id) })
+        if (!blogData) return null
+        return getViewModelBlog(blogData)
+    },
     async getBlogIdPosts(blogId: string, query: SanitizedQuery): Promise<BlogIdPostsPaginateModel> {
 
         const search = query.searchNameTerm ? { title: { $regex: query.searchNameTerm, $options: 'i' } } : {}

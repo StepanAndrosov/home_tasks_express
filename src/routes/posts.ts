@@ -2,18 +2,16 @@ import express, { Request, Response } from 'express'
 import { BlogViewModel } from '../features/blogs/models/BlogViewModel'
 import { PostCreateModel } from '../features/posts/models/PostCreateModel'
 import { PostIdParamsModel } from '../features/posts/models/PostIdParamsModel'
-import { PostModel } from '../features/posts/models/PostModel'
 import { PostViewModel } from '../features/posts/models/PostViewModel'
+import { PostsPaginateModel } from '../features/posts/models/PostsPaginateModel'
 import { validationPostBlogId, validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
 import { authenticationMiddleware } from '../middlewares/authentication '
 import { inputValidMiddleware } from '../middlewares/input-valid'
-import { blogsRepository } from '../repositories/blogsRepository'
+import { blogsQRepository } from '../queryRepositories/blogsQRepository'
+import { postsQRepository } from '../queryRepositories/postsQRepository'
 import { postsRepository } from '../repositories/postsRepository'
 import { ErrorsMessagesType, RequestWithBody, RequestWithParams } from '../types'
-import { HTTP_STATUSES, } from '../utils/helpers'
-import { postsQRepository } from '../queryRepositories/postsQRepository'
-import { sanitizeQuery } from '../utils/helpers'
-import { PostsPaginateModel } from '../features/posts/models/PostsPaginateModel'
+import { HTTP_STATUSES, sanitizeQuery, } from '../utils/helpers'
 
 export const getPostsRouter = () => {
     const router = express.Router()
@@ -36,7 +34,7 @@ export const getPostsRouter = () => {
         inputValidMiddleware,
         async (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | ErrorsMessagesType>) => {
 
-            const foundBlog = await blogsRepository.findBlog(req.body.blogId)
+            const foundBlog = await blogsQRepository.findBlog(req.body.blogId)
             if (!foundBlog) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
@@ -51,7 +49,7 @@ export const getPostsRouter = () => {
     router.get('/:id',
         async (req: RequestWithParams<PostIdParamsModel>, res: Response<PostViewModel>) => {
 
-            const foundPost = await postsRepository.findPost(req.params.id)
+            const foundPost = await postsQRepository.findPost(req.params.id)
             if (!foundPost) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
@@ -69,7 +67,7 @@ export const getPostsRouter = () => {
         inputValidMiddleware,
         async (req: Request, res: Response<ErrorsMessagesType>) => {
 
-            const foundPost = await postsRepository.findPost(req.params.id)
+            const foundPost = await postsQRepository.findPost(req.params.id)
             if (!foundPost) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
@@ -83,7 +81,7 @@ export const getPostsRouter = () => {
     router.delete('/:id',
         authenticationMiddleware,
         async (req: Request, res: Response<BlogViewModel>) => {
-            const foundPost = await postsRepository.findPost(req.params.id)
+            const foundPost = await postsQRepository.findPost(req.params.id)
             if (!foundPost) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
