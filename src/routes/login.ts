@@ -6,10 +6,10 @@ import { LoginCreateModel } from '../features/login/models/LoginCreateModel'
 import { validationLoginOrEmail, validationPassword } from '../features/login/validations'
 import { loginService } from '../features/login/service'
 
-export const getLoginRouter = () => {
+export const getAuthRouter = () => {
     const router = express.Router()
 
-    router.post('/',
+    router.post('/login',
         validationLoginOrEmail(),
         validationPassword(),
         inputValidMiddleware,
