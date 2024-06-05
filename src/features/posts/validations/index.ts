@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { blogsRepository } from "../../../repositories/blogsRepository";
+import { blogsQRepository } from "../../../queryRepositories/blogsQRepository";
 
 // title*	string => maxLength: 30
 // shortDescription* string => maxLength: 100
@@ -39,7 +39,7 @@ export const validationPostContent = () => body("content").trim().notEmpty().wit
 const customBlogIdValidator = async (blogId?: string) => {
     if (!blogId || !blogId.length)
         throw new Error(errRequiredBlogId);
-    const foundBlog = await blogsRepository.findBlog(blogId)
+    const foundBlog = await blogsQRepository.findBlog(blogId)
     if (!foundBlog)
         throw new Error(errExistBlog);
     return true

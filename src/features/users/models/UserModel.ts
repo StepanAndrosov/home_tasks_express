@@ -8,6 +8,10 @@ interface User {
     */
     login: string,
     /**
+    * User password hash with salt 
+    */
+    password: string,
+    /**
     * User email  
     */
     email: string,

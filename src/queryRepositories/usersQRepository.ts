@@ -38,13 +38,15 @@ export const usersQRepository = {
             items: usersData.map((u) => getViewModelUser(u))
         }
     },
-    async getFilterUsers(findData: { [term: string]: string }) {
-
-        const usersLoginData = await usersCollection.find(findData).toArray()
-
-        return usersLoginData
+    async findUsersByTerm(findData: { [term: string]: string }) {
+        const usersData = await usersCollection.find(findData).toArray()
+        return usersData
     },
-    async findUser(id: string) {
+    async findUsersByOneOfTerms(findData: { [term: string]: string }[]) {
+        const usersData = await usersCollection.find({ $or: findData }).toArray()
+        return usersData
+    },
+    async findUserById(id: string) {
         const userData = await usersCollection.findOne({ _id: new ObjectId(id) })
         if (!userData) return null
         return getViewModelUser(userData)

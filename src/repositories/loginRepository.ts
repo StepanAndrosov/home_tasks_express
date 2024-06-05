@@ -1,3 +1,6 @@
-export const loginRepository = () => {
 
+
+export const loginRepository = {
+    async login() {
+    }
 }

@@ -50,7 +50,7 @@ export const getUsersRouter = () => {
     router.delete('/:id',
         authenticationMiddleware,
         async (req: Request, res: Response<UserViewModel>) => {
-            const foundUser = await usersQRepository.findUser(req.params.id)
+            const foundUser = await usersQRepository.findUserById(req.params.id)
             if (!foundUser) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return

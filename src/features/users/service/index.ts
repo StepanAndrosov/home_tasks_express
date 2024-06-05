@@ -6,7 +6,7 @@ import { usersRepository } from "../../../repositories/usersRepository"
 export const usersService = {
     async createUser(createData: UserCreateModel) {
 
-        const usersLoginData = await usersQRepository.getFilterUsers({ login: createData.login })
+        const usersLoginData = await usersQRepository.findUsersByTerm({ login: createData.login })
         if (usersLoginData.length)
             return {
                 error: true,
@@ -15,7 +15,7 @@ export const usersService = {
                     message: "login should be unique"
                 }]
             }
-        const usersEmailData = await usersQRepository.getFilterUsers({ email: createData.email })
+        const usersEmailData = await usersQRepository.findUsersByTerm({ email: createData.email })
         if (usersEmailData.length)
             return {
                 error: true,

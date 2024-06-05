@@ -16,7 +16,6 @@ console.log(process.env.MONGO_URL);
         process.exit(1)
     }
     app.listen(port, () => {
-
         console.log(`Exsample app litsening on port ${port}`)
     })
 
