@@ -21,3 +21,17 @@ export type ResponsePaginate<T> = {
     totalCount: number
     items: T[]
 }
+
+export enum ResultStatus {
+    Success = 'Success',
+    NotFound = 'NotFound',
+    Forbidden = 'Forbidden',
+    Unauthorized = 'Unauthorized',
+    BadRequest = 'BadRequest'
+}
+
+export type Result<T> = {
+    status: ResultStatus
+    errorMessages?: [{ field: string, message: string }]
+    data?: T
+}
