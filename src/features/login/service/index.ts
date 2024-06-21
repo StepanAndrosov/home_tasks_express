@@ -9,11 +9,20 @@ export const loginService = {
             { email: loginData.loginOrEmail }
         ])
 
+
         if (!userLoginData.length)
-            return false
+            return {
+                isCompare: false,
+                user: {}
+            }
 
         const isCompare = await compareHash(loginData.password, userLoginData[0].password)
 
-        return isCompare
+        console.log('isCompare', isCompare, { id: userLoginData[0]._id.toString(), name: userLoginData[0].login })
+
+        return {
+            isCompare,
+            user: { id: userLoginData[0]._id.toString(), name: userLoginData[0].login }
+        }
     }
 }
