@@ -3,7 +3,7 @@ import { UserCreateModel } from '../features/users/models/UserCreateModel'
 import { UsersPaginateModel } from '../features/users/models/UserPaginateModel'
 import { UserViewModel } from '../features/users/models/UserViewModel'
 import { validationEmail, validationLogin, validationPassword } from '../features/users/validations'
-import { authenticationMiddleware } from '../middlewares/authentication '
+import { authenticationBasicMiddleware } from '../middlewares/authentication-basic'
 import { inputValidMiddleware } from '../middlewares/input-valid'
 import { usersQRepository } from '../queryRepositories/usersQRepository'
 import { usersRepository } from '../repositories/usersRepository'
@@ -24,7 +24,7 @@ export const getUsersRouter = () => {
     })
 
     router.post('/',
-        authenticationMiddleware,
+        authenticationBasicMiddleware,
         validationLogin(),
         validationEmail(),
         validationPassword(),
@@ -48,7 +48,7 @@ export const getUsersRouter = () => {
         })
 
     router.delete('/:id',
-        authenticationMiddleware,
+        authenticationBasicMiddleware,
         async (req: Request, res: Response<UserViewModel>) => {
             const foundUser = await usersQRepository.findUserById(req.params.id)
             if (!foundUser) {

@@ -5,7 +5,7 @@ import { HTTP_STATUSES } from "../utils/helpers"
 const authTitle = 'Basic'
 const auth = { login: 'admin', password: 'qwerty' }
 
-export const authenticationMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const authenticationBasicMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
     // parse login and password from headers
     const title = (req.headers.authorization || '').split(' ')[0] || '' // 'Basic xxxx'

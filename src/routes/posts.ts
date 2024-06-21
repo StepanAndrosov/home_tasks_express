@@ -5,7 +5,7 @@ import { PostIdParamsModel } from '../features/posts/models/PostIdParamsModel'
 import { PostViewModel } from '../features/posts/models/PostViewModel'
 import { PostsPaginateModel } from '../features/posts/models/PostsPaginateModel'
 import { validationPostBlogId, validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
-import { authenticationMiddleware } from '../middlewares/authentication '
+import { authenticationBasicMiddleware } from '../middlewares/authentication-basic'
 import { inputValidMiddleware } from '../middlewares/input-valid'
 import { blogsQRepository } from '../queryRepositories/blogsQRepository'
 import { postsQRepository } from '../queryRepositories/postsQRepository'
@@ -26,7 +26,7 @@ export const getPostsRouter = () => {
     })
 
     router.post('/',
-        authenticationMiddleware,
+        authenticationBasicMiddleware,
         validationPostTile(),
         validationPostDescription(),
         validationPostContent(),
@@ -59,7 +59,7 @@ export const getPostsRouter = () => {
         })
 
     router.put('/:id',
-        authenticationMiddleware,
+        authenticationBasicMiddleware,
         validationPostTile(),
         validationPostDescription(),
         validationPostContent(),
@@ -79,7 +79,7 @@ export const getPostsRouter = () => {
         })
 
     router.delete('/:id',
-        authenticationMiddleware,
+        authenticationBasicMiddleware,
         async (req: Request, res: Response<BlogViewModel>) => {
             const foundPost = await postsQRepository.findPost(req.params.id)
             if (!foundPost) {

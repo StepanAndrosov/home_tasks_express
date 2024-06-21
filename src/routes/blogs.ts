@@ -9,7 +9,7 @@ import { BlogsPaginateModel } from '../features/blogs/models/BlogsPaginateModel'
 import { validationBlogName, validationDescription, validationWebsiteUrl } from '../features/blogs/validations'
 import { PostViewModel } from '../features/posts/models/PostViewModel'
 import { validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
-import { authenticationMiddleware } from '../middlewares/authentication '
+import { authenticationBasicMiddleware } from '../middlewares/authentication-basic'
 import { inputValidMiddleware } from '../middlewares/input-valid'
 import { blogsQRepository } from '../queryRepositories/blogsQRepository'
 import { blogsRepository } from '../repositories/blogsRepository'
@@ -29,7 +29,7 @@ export const getBlogsRouter = () => {
     })
 
     router.post('/',
-        authenticationMiddleware,
+        authenticationBasicMiddleware,
         validationBlogName(),
         validationDescription(),
         validationWebsiteUrl(),
@@ -69,7 +69,7 @@ export const getBlogsRouter = () => {
         })
 
     router.post('/:blogId/posts',
-        authenticationMiddleware,
+        authenticationBasicMiddleware,
         validationPostTile(),
         validationPostDescription(),
         validationPostContent(),
@@ -89,7 +89,7 @@ export const getBlogsRouter = () => {
         })
 
     router.put('/:id',
-        authenticationMiddleware,
+        authenticationBasicMiddleware,
         validationBlogName(),
         validationDescription(),
         validationWebsiteUrl(),
@@ -106,7 +106,7 @@ export const getBlogsRouter = () => {
         })
 
     router.delete('/:id',
-        authenticationMiddleware,
+        authenticationBasicMiddleware,
         async (req: Request, res: Response<BlogViewModel>) => {
             const foundBlog = await blogsQRepository.findBlog(req.params.id)
             if (!foundBlog) {
