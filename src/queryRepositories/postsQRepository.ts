@@ -3,7 +3,7 @@ import { commentsCollection, postsCollection } from "../db/db";
 import { SanitizedQuery } from "../utils/helpers";
 import { getViewModelPost } from "../repositories/postsRepository";
 import { ObjectId } from "mongodb";
-import { PostIdCommentsPaginateModel } from "../features/comments/models/PostIdCommentsPaginateModel";
+import { CommentsPaginateModel } from './../features/comments/models/CommentsPaginateModel';
 import { getViewModelComment } from "../repositories/commentsRepository";
 
 export const postsQRepository = {
@@ -35,7 +35,7 @@ export const postsQRepository = {
         if (!postData) return null
         return getViewModelPost(postData)
     },
-    async getPostIdComments(postId: string, query: SanitizedQuery): Promise<PostIdCommentsPaginateModel> {
+    async getPostIdComments(postId: string, query: SanitizedQuery): Promise<CommentsPaginateModel> {
 
         const search = query.searchNameTerm ? { title: { $regex: query.searchNameTerm, $options: 'i' } } : {}
         const skip = (query.pageNumber - 1) * query.pageSize

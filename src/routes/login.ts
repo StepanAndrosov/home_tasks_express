@@ -1,15 +1,15 @@
-import express, { Request, Response } from 'express'
-import { inputValidMiddleware } from '../middlewares/input-valid'
-import { ErrorsMessagesType, RequestWithBody } from '../types'
-import { HTTP_STATUSES } from '../utils/helpers'
-import { LoginCreateModel } from '../features/login/models/LoginCreateModel'
-import { validationLoginOrEmail, validationPassword } from '../features/login/validations'
-import { loginService } from '../features/login/service'
-import { JWTPayload, genJWT, verifyJWT } from '../utils/genJWT'
+import express, { Response } from 'express'
 import { LoginAccessTokenModel } from '../features/login/models/LoginAccessTokenModel'
+import { LoginCreateModel } from '../features/login/models/LoginCreateModel'
 import { LoginMeCheckModel } from '../features/login/models/LoginMeCheckModel'
+import { loginService } from '../features/login/service'
+import { validationLoginOrEmail, validationPassword } from '../features/login/validations'
 import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer'
+import { inputValidMiddleware } from '../middlewares/input-valid'
 import { usersQRepository } from '../queryRepositories/usersQRepository'
+import { ErrorsMessagesType, RequestWithBody } from '../types'
+import { JWTPayload, genJWT } from '../utils/genJWT'
+import { HTTP_STATUSES } from '../utils/helpers'
 
 export const getAuthRouter = () => {
     const router = express.Router()

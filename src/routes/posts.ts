@@ -13,7 +13,7 @@ import { postsRepository } from '../repositories/postsRepository'
 import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndQuery } from '../types'
 import { HTTP_STATUSES, sanitizeQuery, } from '../utils/helpers'
 import { PostIdCommentsParamsModel } from '../features/posts/models/PostIdCommentsParamsModel'
-import { PostIdCommentsPaginateModel } from '../features/comments/models/PostIdCommentsPaginateModel'
+import { CommentsPaginateModel } from '../features/comments/models/CommentsPaginateModel'
 import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer'
 import { validationCommentContent } from '../features/comments/validations'
 import { CommentViewModel } from '../features/comments/models/CommentViewModel'
@@ -99,7 +99,7 @@ export const getPostsRouter = () => {
         })
 
     router.get('/:postId/comments',
-        async (req: RequestWithParamsAndQuery<PostIdCommentsParamsModel, { [key: string]: string | undefined }>, res: Response<PostIdCommentsPaginateModel>) => {
+        async (req: RequestWithParamsAndQuery<PostIdCommentsParamsModel, { [key: string]: string | undefined }>, res: Response<CommentsPaginateModel>) => {
 
             const foundPost = await postsQRepository.findPost(req.params.postId)
             if (!foundPost) {

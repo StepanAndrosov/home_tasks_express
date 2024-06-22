@@ -3,6 +3,7 @@ import { HTTP_STATUSES } from "../utils/helpers"
 import { blogsRepository } from '../repositories/blogsRepository'
 import { postsRepository } from '../repositories/postsRepository'
 import { usersRepository } from '../repositories/usersRepository'
+import { commentsRepository } from '../repositories/commentsRepository'
 
 
 export const getTestingRouter = () => {
@@ -12,6 +13,7 @@ export const getTestingRouter = () => {
         await blogsRepository.testDeleteData()
         await postsRepository.testDeleteData()
         await usersRepository.testDeleteData()
+        await commentsRepository.testDeleteData()
         res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
     })
 

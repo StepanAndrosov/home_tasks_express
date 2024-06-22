@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb"
 import { commentsCollection } from "../db/db"
 import { getViewModelComment } from "../repositories/commentsRepository"
 import { SanitizedQuery } from "../utils/helpers"
@@ -26,5 +27,10 @@ export const commentsQRepository = {
             totalCount,
             items: commentsData.map((c) => getViewModelComment(c))
         }
+    },
+    async findComment(id: string) {
+        const commentData = await commentsCollection.findOne({ _id: new ObjectId(id) })
+        if (!commentData) return null
+        return getViewModelComment(commentData)
     },
 }
