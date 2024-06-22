@@ -10,8 +10,9 @@ import { inputValidMiddleware } from '../middlewares/input-valid'
 import { blogsQRepository } from '../queryRepositories/blogsQRepository'
 import { postsQRepository } from '../queryRepositories/postsQRepository'
 import { postsRepository } from '../repositories/postsRepository'
-import { ErrorsMessagesType, RequestWithBody, RequestWithParams } from '../types'
+import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndQuery } from '../types'
 import { HTTP_STATUSES, sanitizeQuery, } from '../utils/helpers'
+import { PostIdCommentsParamsModel } from '../features/posts/models/PostIdCommentsParamsModel'
 
 export const getPostsRouter = () => {
     const router = express.Router()
@@ -89,6 +90,20 @@ export const getPostsRouter = () => {
             await postsRepository.deletePost(req.params.id)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+        })
+
+    router.get('/:postId/comments',
+        async (req: RequestWithParamsAndQuery<PostIdCommentsParamsModel, { [key: string]: string | undefined }>, res: Response<PostViewModel>) => {
+
+            const foundPost = await postsQRepository.findPost(req.params.postId)
+            if (!foundPost) {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return
+            }
+
+            const sanitizedQuery = sanitizeQuery(req.query)
+            res.json(foundPost)
+            res.status(HTTP_STATUSES.OK_200)
         })
 
     return router

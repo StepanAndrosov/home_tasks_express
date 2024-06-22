@@ -9,7 +9,6 @@ export const loginService = {
             { email: loginData.loginOrEmail }
         ])
 
-
         if (!userLoginData.length)
             return {
                 isCompare: false,
