@@ -34,17 +34,8 @@ export const getAuthRouter = () => {
 
     router.get('/me',
         authenticationBearerMiddleware,
-        async (req: Request, res: Response<LoginMeCheckModel>) => {
-            const token = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
-
-            const decoded = verifyJWT(token)
-            if (!decoded) {
-                res
-                    .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
-                return
-            }
-
-            const user = await usersQRepository.findUserById(decoded.id)
+        async (req: RequestWithBody<JWTPayload>, res: Response<LoginMeCheckModel>) => {
+            const user = await usersQRepository.findUserById(req.body.id)
             if (!user) {
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
