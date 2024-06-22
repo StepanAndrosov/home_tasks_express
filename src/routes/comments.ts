@@ -1,30 +1,26 @@
 import express, { Request, Response } from 'express'
-import { UserCreateModel } from '../features/users/models/UserCreateModel'
-import { UsersPaginateModel } from '../features/users/models/UserPaginateModel'
-import { UserViewModel } from '../features/users/models/UserViewModel'
-import { validationEmail, validationLogin, validationPassword } from '../features/users/validations'
-import { authenticationBasicMiddleware } from '../middlewares/authentication-basic'
-import { inputValidMiddleware } from '../middlewares/input-valid'
-import { usersQRepository } from '../queryRepositories/usersQRepository'
-import { usersRepository } from '../repositories/usersRepository'
-import { ErrorsMessagesType, RequestWithBody } from '../types'
-import { HTTP_STATUSES, sanitizeQuery } from '../utils/helpers'
-import { usersService } from '../features/users/service'
-import { CommentsPaginateModel } from '../features/comments/models/CommentsPaginateModel'
-import { commentsQRepository } from '../queryRepositories/commentsQRepository'
-import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer'
+import { CommentParamsModel } from '../features/comments/models/CommentParamsModel'
+import { CommentViewModel } from '../features/comments/models/CommentViewModel'
 import { validationCommentContent } from '../features/comments/validations'
+import { UserViewModel } from '../features/users/models/UserViewModel'
+import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer'
+import { inputValidMiddleware } from '../middlewares/input-valid'
+import { commentsQRepository } from '../queryRepositories/commentsQRepository'
 import { commentsRepository } from '../repositories/commentsRepository'
+import { ErrorsMessagesType, RequestWithParams } from '../types'
+import { HTTP_STATUSES } from '../utils/helpers'
 
 export const getCommentsRouter = () => {
     const router = express.Router()
 
-    router.get('/', async (req: Request<{}, {}, {}, { [key: string]: string | undefined }>, res: Response<CommentsPaginateModel>) => {
+    router.get('/:id', async (req: RequestWithParams<CommentParamsModel>, res: Response<CommentViewModel>) => {
 
-        const sanitizedUsersQuery = sanitizeQuery(req.query)
-
-        const comments = await commentsQRepository.getComments(sanitizedUsersQuery)
-        res.json(comments)
+        const foundComment = await commentsQRepository.findComment(req.params.id)
+        if (!foundComment) {
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
+        }
+        res.json(foundComment)
         res.status(HTTP_STATUSES.OK_200)
     })
 
