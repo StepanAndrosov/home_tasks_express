@@ -70,19 +70,5 @@ export const blogsQRepository = {
             items: postsData.map((p) => getViewModelPost(p))
         }
     },
-    async createBlogIdPosts(blogId: string, body: BlogIdPostCreateModel, blogName: string) {
-        const newPost = {
-            _id: new ObjectId(),
-            title: body.title,
-            shortDescription: body.shortDescription,
-            content: body.content,
-            blogId: blogId,
-            blogName,
-            createdAt: new Date(Date.now()).toISOString()
-        }
 
-        await postsCollection.insertOne(newPost)
-
-        return getViewModelPost(newPost)
-    }
 }

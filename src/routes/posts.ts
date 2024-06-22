@@ -14,6 +14,11 @@ import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithPara
 import { HTTP_STATUSES, sanitizeQuery, } from '../utils/helpers'
 import { PostIdCommentsParamsModel } from '../features/posts/models/PostIdCommentsParamsModel'
 import { PostIdCommentsPaginateModel } from '../features/comments/models/PostIdCommentsPaginateModel'
+import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer'
+import { validationCommentContent } from '../features/comments/validations'
+import { CommentViewModel } from '../features/comments/models/CommentViewModel'
+import { commentsRepository } from '../repositories/commentsRepository'
+import { usersQRepository } from '../queryRepositories/usersQRepository'
 
 export const getPostsRouter = () => {
     const router = express.Router()
@@ -107,6 +112,32 @@ export const getPostsRouter = () => {
             const comments = await postsQRepository.getPostIdComments(req.params.postId, sanitizedQuery)
             res.json(comments)
             res.status(HTTP_STATUSES.OK_200)
+        })
+
+    router.post('/:postId/comments',
+        authenticationBearerMiddleware,
+        validationCommentContent(),
+        inputValidMiddleware,
+        async (req: Request, res: Response<CommentViewModel | ErrorsMessagesType>) => {
+
+            console.log(req.params, req.body)
+
+            const user = await usersQRepository.findUserById(req.body.id)
+            if (!user) {
+                res
+                    .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+                return
+            }
+            const foundPost = await postsQRepository.findPost(req.params.postId)
+            if (!foundPost) {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return
+            }
+
+            const comment = await commentsRepository.createComment({ content: req.body.content, postId: foundPost.id }, { userId: user?.id, userLogin: user?.login })
+
+            res.status(HTTP_STATUSES.CREATED_201)
+            res.send(comment)
         })
 
     return router

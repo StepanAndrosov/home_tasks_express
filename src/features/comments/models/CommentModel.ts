@@ -14,6 +14,10 @@ interface Comment {
         userLogin: string
     },
     /**
+    * Post comment id
+    */
+    postId: string
+    /**
     * Created time comment 
     */
     createdAt: string

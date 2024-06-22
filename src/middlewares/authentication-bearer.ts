@@ -15,7 +15,7 @@ export const authenticationBearerMiddleware = (req: Request, res: Response<JWTPa
 
     if (decoded && title === 'Bearer') {
         // Access granted...
-        req.body = decoded
+        req.body = { ...req.body, ...decoded }
         return next()
     }
 

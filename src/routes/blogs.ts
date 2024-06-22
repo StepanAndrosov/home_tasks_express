@@ -82,7 +82,7 @@ export const getBlogsRouter = () => {
                 return
             }
 
-            const post = await blogsQRepository.createBlogIdPosts(req.params.blogId, req.body, foundBlog.name)
+            const post = await blogsRepository.createBlogIdPosts(req.params.blogId, req.body, foundBlog.name)
 
             res.status(HTTP_STATUSES.CREATED_201)
             res.send(post)

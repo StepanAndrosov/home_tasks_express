@@ -1,10 +1,11 @@
 import { v4 } from "uuid";
-import { postsCollection } from "../db/db";
+import { commentsCollection, postsCollection } from "../db/db";
 import { PostCreateModel } from "../features/posts/models/PostCreateModel";
 import { PostModel } from "../features/posts/models/PostModel";
 import { PostUpdateModel } from "../features/posts/models/PostUpdateModel";
 import { PostViewModel } from "../features/posts/models/PostViewModel";
 import { ObjectId, WithId } from "mongodb";
+import { getViewModelComment } from "./commentsRepository";
 
 export const getViewModelPost = (post: PostModel): PostViewModel => {
     return {
