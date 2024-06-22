@@ -13,6 +13,7 @@ import { postsRepository } from '../repositories/postsRepository'
 import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndQuery } from '../types'
 import { HTTP_STATUSES, sanitizeQuery, } from '../utils/helpers'
 import { PostIdCommentsParamsModel } from '../features/posts/models/PostIdCommentsParamsModel'
+import { PostIdCommentsPaginateModel } from '../features/comments/models/PostIdCommentsPaginateModel'
 
 export const getPostsRouter = () => {
     const router = express.Router()
@@ -93,7 +94,7 @@ export const getPostsRouter = () => {
         })
 
     router.get('/:postId/comments',
-        async (req: RequestWithParamsAndQuery<PostIdCommentsParamsModel, { [key: string]: string | undefined }>, res: Response<PostViewModel>) => {
+        async (req: RequestWithParamsAndQuery<PostIdCommentsParamsModel, { [key: string]: string | undefined }>, res: Response<PostIdCommentsPaginateModel>) => {
 
             const foundPost = await postsQRepository.findPost(req.params.postId)
             if (!foundPost) {
@@ -102,7 +103,9 @@ export const getPostsRouter = () => {
             }
 
             const sanitizedQuery = sanitizeQuery(req.query)
-            res.json(foundPost)
+
+            const comments = await postsQRepository.getPostIdComments(req.params.postId, sanitizedQuery)
+            res.json(comments)
             res.status(HTTP_STATUSES.OK_200)
         })
 
