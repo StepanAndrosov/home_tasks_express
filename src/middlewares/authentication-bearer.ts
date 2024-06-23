@@ -13,7 +13,8 @@ export const authenticationBearerMiddleware = (req: Request, res: Response<JWTPa
 
     // Verify token is set and correct
 
-    if (decoded?.exp ?? Date.now() < Date.now()) {
+    if (decoded?.exp! < Date.now()) {
+        console.log(HTTP_STATUSES.FORBIDDEN_403)
         res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
         return
     }
@@ -25,6 +26,5 @@ export const authenticationBearerMiddleware = (req: Request, res: Response<JWTPa
     }
 
     res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
-    return
 }
 

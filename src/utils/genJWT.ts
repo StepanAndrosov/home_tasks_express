@@ -13,7 +13,7 @@ export const genJWT = (
     expiresIn: string | number | undefined = process.env.JWT_EXPIRES_IN
 ) => {
     return jwt.sign({ id: newUser.id, name: newUser.name, iat: Date.now() }, secret ?? '', {
-        expiresIn
+        expiresIn: Number(expiresIn)
     });
 }
 
