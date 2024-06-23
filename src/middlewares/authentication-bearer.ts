@@ -25,5 +25,6 @@ export const authenticationBearerMiddleware = (req: Request, res: Response<JWTPa
     }
 
     res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    return
 }
 
