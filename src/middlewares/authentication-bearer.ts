@@ -13,6 +13,11 @@ export const authenticationBearerMiddleware = (req: Request, res: Response<JWTPa
 
     // Verify token is set and correct
 
+    if (decoded?.exp ?? 0 < Date.now()) {
+        res.status(HTTP_STATUSES.FORBIDDEN_403)
+        return
+    }
+
     if (decoded && title === 'Bearer') {
         // Access granted...
         req.body = { ...req.body, ...decoded }
