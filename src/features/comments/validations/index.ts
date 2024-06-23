@@ -5,7 +5,7 @@ import { body } from "express-validator";
 // minLength: 20
 
 export const validCommentLengthFields = {
-    content: { min: 30, max: 300 }
+    content: { min: 20, max: 300 }
 }
 
 export const errRequiredCommentContent = 'content required'
