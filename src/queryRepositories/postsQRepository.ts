@@ -51,7 +51,7 @@ export const postsQRepository = {
             .limit(query.pageSize)
             .toArray()
 
-        const totalCount = await postsCollection.countDocuments(filter)
+        const totalCount = await commentsCollection.countDocuments(filter)
         const pagesCount = Math.ceil(totalCount / query.pageSize)
 
         return {
