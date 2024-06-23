@@ -28,7 +28,7 @@ export const getAuthRouter = () => {
                 const jwt = genJWT({ id: user.id?.toString() ?? '', name: user.name ?? '' })
 
                 res.json({ accessToken: jwt })
-                res.status(HTTP_STATUSES.NO_CONTEND_204)
+                res.status(HTTP_STATUSES.OK_200)
             }
         })
 
