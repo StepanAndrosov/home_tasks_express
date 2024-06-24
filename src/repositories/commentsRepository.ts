@@ -49,13 +49,13 @@ export const commentsRepository = {
 
     async updateComment(foundComment: CommentViewModel, updateData: CommentUpdateModel) {
 
-        const foundBlogModel = getModelComment(foundComment)
+        const foundCommentModel = getModelComment(foundComment)
 
         const newComment = {
-            ...foundBlogModel,
+            ...foundCommentModel,
             ...updateData
         }
-        await commentsCollection.updateOne({ _id: foundBlogModel._id }, { $set: newComment })
+        await commentsCollection.updateOne({ _id: foundCommentModel._id }, { $set: newComment })
     },
     async deleteComment(id: string) {
         await commentsCollection.deleteOne({ _id: new ObjectId(id) })

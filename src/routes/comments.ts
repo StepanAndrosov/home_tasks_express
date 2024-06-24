@@ -30,9 +30,16 @@ export const getCommentsRouter = () => {
         inputValidMiddleware,
         async (req: Request, res: Response<ErrorsMessagesType>) => {
 
+            console.log(req.params, req.body)
+
             const foundComment = await commentsQRepository.findComment(req.params.commentId)
+
             if (!foundComment) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return
+            }
+            if (req.body.id !== foundComment?.commentatorInfo.userId) {
+                res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
                 return
             }
 
@@ -47,6 +54,10 @@ export const getCommentsRouter = () => {
             const foundComment = await commentsQRepository.findComment(req.params.commentId)
             if (!foundComment) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return
+            }
+            if (req.body.id !== foundComment?.commentatorInfo.userId) {
+                res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
                 return
             }
             await commentsRepository.deleteComment(req.params.commentId)

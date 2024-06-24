@@ -1,3 +1,4 @@
+import { errLengthContent } from './../features/comments/validations/index';
 import express, { Request, Response } from 'express'
 import { BlogViewModel } from '../features/blogs/models/BlogViewModel'
 import { PostCreateModel } from '../features/posts/models/PostCreateModel'
