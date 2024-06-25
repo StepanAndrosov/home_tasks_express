@@ -1,14 +1,21 @@
+import { HTTP_STATUSES } from './../../src/utils/helpers';
 import request from 'supertest'
 import { RouterPaths, app } from '../../src/app'
 import { BlogViewModel } from '../../src/features/blogs/models/BlogViewModel'
 import { errRequiredBlogName, errRequiredDescription, errValidWebsiteUrl, errRequiredWebsiteUrl } from '../../src/features/blogs/validations'
-import { HTTP_STATUSES } from '../../src/utils'
 import { blogsTestManager } from './blogsTestManager'
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { db } from '../../src/db/db';
 
 describe('/blogs', () => {
 
     beforeAll(async () => {
-        await request(app).delete(`${RouterPaths.testing}/all-data`)
+        const mongoServer = await MongoMemoryServer.create()
+        await db.run(mongoServer.getUri())
+    })
+
+    afterAll(async () => {
+        await db.stop()
     })
 
     it('should return 200 and empty array', async () => {

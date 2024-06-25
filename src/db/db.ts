@@ -12,21 +12,29 @@ export let postsCollection = {} as Collection<PostModel>
 export let usersCollection = {} as Collection<UserModel>
 export let commentsCollection = {} as Collection<CommentModel>
 
-export const runDB = async (MONGO_URL: string) => {
-    try {
-        client = new MongoClient(MONGO_URL)
+export const db = {
+    client: {} as MongoClient,
 
-        blogsCollection = client.db().collection<BlogModel>('blogs')
-        postsCollection = client.db().collection<PostModel>('posts')
-        usersCollection = client.db().collection<UserModel>('users')
-        commentsCollection = client.db().collection<CommentModel>('comments')
+    async run(MONGO_URL: string) {
+        try {
+            client = new MongoClient(MONGO_URL)
 
-        await client.connect()
-        console.log('✅ Connected successfully to server')
-        return true
-    } catch (e) {
-        console.log('❌ Unsuccessfully connected to server')
+            blogsCollection = client.db().collection<BlogModel>('blogs')
+            postsCollection = client.db().collection<PostModel>('posts')
+            usersCollection = client.db().collection<UserModel>('users')
+            commentsCollection = client.db().collection<CommentModel>('comments')
+
+            await client.connect()
+            console.log('✅ Connected successfully to server')
+            return true
+        } catch (e) {
+            console.log('❌ Unsuccessfully connected to server')
+            await client.close()
+            return false
+        }
+    },
+    async stop() {
         await client.close()
-        return false
+        console.log('✅ Connection successfully closed')
     }
 }

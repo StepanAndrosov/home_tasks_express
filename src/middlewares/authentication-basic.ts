@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express"
 import { HTTP_STATUSES } from "../utils/helpers"
 // admin\qwerty.
 const authTitle = 'Basic'
-const auth = { login: 'admin', password: 'qwerty' }
+export const auth = { login: 'admin', password: 'qwerty' }
 
 export const authenticationBasicMiddleware = (req: Request, res: Response, next: NextFunction) => {
 

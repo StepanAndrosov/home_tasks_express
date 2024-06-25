@@ -3,14 +3,21 @@ import { RouterPaths, app } from '../../src/app'
 import { BlogViewModel } from '../../src/features/blogs/models/BlogViewModel'
 import { PostViewModel } from '../../src/features/posts/models/PostViewModel'
 import { errRequiredBlogId, errRequiredContent, errRequiredPostDescription, errRequiredPostTitle } from '../../src/features/posts/validations'
-import { HTTP_STATUSES } from '../../src/utils'
+import { HTTP_STATUSES } from '../../src/utils/helpers'
 import { blogsTestManager } from '../blogs/blogsTestManager'
 import { postsTestManager } from './postsTestManager'
+import { MongoMemoryServer } from 'mongodb-memory-server'
+import { db } from '../../src/db/db'
 
 describe('/posts', () => {
 
     beforeAll(async () => {
-        await request(app).delete(`${RouterPaths.testing}/all-data`)
+        const mongoServer = await MongoMemoryServer.create()
+        await db.run(mongoServer.getUri())
+    })
+
+    afterAll(async () => {
+        await db.stop()
     })
 
     it('should return 200 and empty array', async () => {
