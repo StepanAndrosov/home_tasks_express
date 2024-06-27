@@ -4,6 +4,7 @@ import { LoginCreateModel } from "../models/LoginCreateModel";
 
 export const loginService = {
     async login(loginData: LoginCreateModel) {
+
         const userLoginData = await usersQRepository.findUsersByOneOfTerms([
             { login: loginData.loginOrEmail },
             { email: loginData.loginOrEmail }
@@ -16,8 +17,6 @@ export const loginService = {
             }
 
         const isCompare = await compareHash(loginData.password, userLoginData[0].password)
-
-        console.log('isCompare', isCompare, { id: userLoginData[0]._id.toString(), name: userLoginData[0].login })
 
         return {
             isCompare,
