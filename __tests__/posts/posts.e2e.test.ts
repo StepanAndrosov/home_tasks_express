@@ -23,12 +23,12 @@ describe('/posts', () => {
     it('should return 200 and empty array', async () => {
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it('should return 404 and empty array', async () => {
         await request(app)
-            .get(RouterPaths.posts + '/999999')
+            .get(RouterPaths.posts + '/6676a23681ff6de724021d0b')
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 
@@ -48,11 +48,17 @@ describe('/posts', () => {
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [createdBlog])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 1,
+                page: 1,
+                pageSize: 10,
+                totalCount: 1,
+                items: [createdBlog]
+            })
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it('should`n create entity with bad title', async () => {
@@ -71,7 +77,7 @@ describe('/posts', () => {
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it('should`n create entity with bad description', async () => {
@@ -90,7 +96,7 @@ describe('/posts', () => {
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it('should`n create entity with bad content', async () => {
@@ -110,7 +116,7 @@ describe('/posts', () => {
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it('should`n create entity with bad blogId', async () => {
@@ -130,7 +136,7 @@ describe('/posts', () => {
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     let createdEntity: PostViewModel
@@ -150,7 +156,7 @@ describe('/posts', () => {
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [createdEntity])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdEntity] })
     })
 
     it('should`n update entity with bad data', async () => {
@@ -209,12 +215,10 @@ describe('/posts', () => {
 
     it('should delete entity', async () => {
 
-        await request(app)
-            .delete(`${RouterPaths.posts}/${createdEntity.id}`)
-            .expect(HTTP_STATUSES.NO_CONTEND_204)
+        await postsTestManager.deletePosts(createdEntity.id)
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 })

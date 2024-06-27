@@ -49,5 +49,13 @@ export const postsTestManager = {
             .expect(expectedStatus)
 
         return res
+    },
+    async deletePosts(id: string, expectedStatus: HttpStatuses = HTTP_STATUSES.NO_CONTEND_204) {
+        const res = await request(app)
+            .delete(`${RouterPaths.posts}/${id}`)
+            .auth(auth.login, auth.password)
+            .expect(expectedStatus)
+
+        return res
     }
 }

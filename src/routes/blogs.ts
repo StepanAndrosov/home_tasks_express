@@ -6,7 +6,7 @@ import { BlogIdPostsPaginateModel } from '../features/blogs/models/BlogIdPostsPa
 import { BlogParamsModel } from '../features/blogs/models/BlogParamsModel'
 import { BlogViewModel } from '../features/blogs/models/BlogViewModel'
 import { BlogsPaginateModel } from '../features/blogs/models/BlogsPaginateModel'
-import { validationBlogName, validationDescription, validationWebsiteUrl } from '../features/blogs/validations'
+import { validBlogParamId, validationBlogName, validationDescription, validationWebsiteUrl } from '../features/blogs/validations'
 import { PostViewModel } from '../features/posts/models/PostViewModel'
 import { validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
 import { authenticationBasicMiddleware } from '../middlewares/authentication-basic'
@@ -43,7 +43,9 @@ export const getBlogsRouter = () => {
         })
 
     router.get('/:id',
-        async (req: RequestWithParams<BlogIdParamsModel>, res: Response<BlogViewModel>) => {
+        validBlogParamId(),
+        inputValidMiddleware,
+        async (req: Request, res: Response<BlogViewModel>) => {
 
             const foundBlog = await blogsQRepository.findBlog(req.params.id)
             if (!foundBlog) {

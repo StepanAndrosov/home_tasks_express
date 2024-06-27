@@ -49,5 +49,13 @@ export const blogsTestManager = {
             .expect(expectedStatus)
 
         return res
+    },
+    async deleteBlog(id: string, expectedStatus: HttpStatuses = HTTP_STATUSES.NO_CONTEND_204) {
+        const res = await request(app)
+            .delete(`${RouterPaths.blogs}/${id}`)
+            .auth(auth.login, auth.password)
+            .expect(expectedStatus)
+
+        return res
     }
 }

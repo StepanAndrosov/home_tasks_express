@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 
 // name*	string => maxLength: 15
 // description*	string => maxLength: 500
@@ -20,6 +20,8 @@ export const errLengthName = `the name must be shorter than ${validPostsLengthFi
 export const errRequiredDescription = 'the description required'
 export const errLengthDescription = `the description must be shorter than ${validPostsLengthFields.description} characters`
 
+export const errId = 'id does not valid'
+
 export const validationWebsiteUrl = () => body("websiteUrl").trim().notEmpty().withMessage(errRequiredWebsiteUrl)
     .isURL({ require_protocol: true, require_valid_protocol: true }).withMessage(errValidWebsiteUrl)
     .isLength({ max: validPostsLengthFields.websiteUrl }).withMessage(errLengthWebsiteUrl)
@@ -31,3 +33,6 @@ export const validationBlogName = () => body("name").trim().notEmpty().withMessa
 export const validationDescription = () => body("description").trim().notEmpty().withMessage(errRequiredDescription)
     .isLength({ max: validPostsLengthFields.description })
     .withMessage(errLengthDescription)
+
+
+export const validBlogParamId = () => param('id').isMongoId().withMessage(errId)

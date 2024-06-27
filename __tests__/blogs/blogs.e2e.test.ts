@@ -11,6 +11,7 @@ describe('/blogs', () => {
 
     beforeAll(async () => {
         const mongoServer = await MongoMemoryServer.create()
+        console.log(mongoServer.getUri())
         await db.run(mongoServer.getUri())
     })
 
@@ -21,12 +22,12 @@ describe('/blogs', () => {
     it('should return 200 and empty array', async () => {
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it('should return 404 and empty array', async () => {
         await request(app)
-            .get(RouterPaths.blogs + '/999999')
+            .get(RouterPaths.blogs + '/6676a23681ff6de724021d0b')
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 
@@ -40,7 +41,7 @@ describe('/blogs', () => {
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it('should`n create entity with bad name', async () => {
@@ -59,7 +60,7 @@ describe('/blogs', () => {
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it('should`n create entity with bad description', async () => {
@@ -78,7 +79,7 @@ describe('/blogs', () => {
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it('should`n create entity with bad websiteUrl', async () => {
@@ -98,7 +99,7 @@ describe('/blogs', () => {
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     let createdEntity: BlogViewModel
@@ -117,7 +118,7 @@ describe('/blogs', () => {
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [createdEntity])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdEntity] })
     })
 
     it('should`n update entity with bad data', async () => {
@@ -171,12 +172,10 @@ describe('/blogs', () => {
 
     it('should delete entity', async () => {
 
-        await request(app)
-            .delete(`${RouterPaths.blogs}/${createdEntity.id}`)
-            .expect(HTTP_STATUSES.NO_CONTEND_204)
+        await blogsTestManager.deleteBlog(createdEntity.id)
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 })
