@@ -150,12 +150,12 @@ describe('/comments', () => {
             .expect(HTTP_STATUSES.OK_200, createdEntity)
     })
 
-    // it('should delete entity', async () => {
+    it('should delete entity', async () => {
 
-    //     await usersTestManager.deleteUser(createdEntity.id)
+        await commentsTestManager.deleteComment(createdEntity.id, token)
 
-    //     await request(app)
-    //         .get(ROUTER_COMENTS_PATH)
-    //         .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
-    // })
+        await request(app)
+            .get(`${RouterPaths.posts}/${createdPost.id}${ROUTER_COMENTS_PATH}`)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+    })
 })
