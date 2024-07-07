@@ -4,6 +4,8 @@ import { UserCreateModel } from "../features/users/models/UserCreateModel";
 import { UserModel } from "../features/users/models/UserModel";
 import { UserViewModel } from "../features/users/models/UserViewModel";
 import { genHash } from "../utils/genHash";
+import { randomUUID } from "crypto";
+import { add } from "date-fns";
 
 export const getViewModelUser = (user: UserModel): UserViewModel => {
     return {
@@ -26,8 +28,16 @@ export const usersRepository = {
             _id: new ObjectId(),
             login: createData.login,
             email: createData.email,
-            password: passwordHash,
-            createdAt: new Date(Date.now()).toISOString()
+            passwordHash: passwordHash,
+            createdAt: new Date(Date.now()).toISOString(),
+            emailConfirmation: {
+                confirmationCode: randomUUID(),
+                expirationDate: add(new Date(), {
+                    hours: 1,
+                    minutes: 30,
+                }).toISOString(),
+                isConfirmed: false
+            }
         }
 
         await usersCollection.insertOne(newUser)

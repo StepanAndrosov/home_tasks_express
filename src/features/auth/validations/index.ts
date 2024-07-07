@@ -5,7 +5,8 @@ import { body } from "express-validator";
 
 export const validUsersLengthFields = {
     loginOrEmail: { min: 3, max: 10 },
-    password: { min: 6, max: 20 }
+    password: { min: 6, max: 20 },
+    login: { min: 3, max: 10 },
 }
 
 export const errRequiredLogin = 'login or email is required'

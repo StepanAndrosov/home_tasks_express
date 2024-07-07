@@ -2,23 +2,30 @@ import { WithId } from "mongodb"
 
 
 interface User {
-
     /**
     * User login  
     */
-    login: string,
+    login: string
     /**
     * User password hash with salt 
     */
-    password: string,
+    passwordHash: string
     /**
     * User email  
     */
-    email: string,
+    email: string
     /**
     * Created time user 
     */
     createdAt: string
+    /**
+    * Email confirmation data
+    */
+    emailConfirmation: {
+        confirmationCode: string
+        expirationDate: string
+        isConfirmed: boolean
+    }
 }
 
 export type UserModel = WithId<User>
