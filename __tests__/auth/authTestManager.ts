@@ -1,12 +1,12 @@
 import request from 'supertest';
 import { RouterPaths, app } from '../../src/app';
-import { LoginCreateModel } from '../../src/features/login/models/LoginCreateModel';
+import { LoginCreateModel } from '../../src/features/auth/models/LoginCreateModel';
 import { ErrorsMessagesType } from "../../src/types";
 import { HTTP_STATUSES, HttpStatuses } from "../../src/utils/helpers";
 
 export const ROUTER_AUTH_PATH = RouterPaths.auth
 
-export const loginTestManager = {
+export const authTestManager = {
 
     async loginWithErrors(data: LoginCreateModel, expectedStatus: HttpStatuses = HTTP_STATUSES.OK_200, errors?: ErrorsMessagesType) {
         const res = await request(app)

@@ -5,7 +5,7 @@ import { getTestingRouter } from './routes/testing'
 import { getBlogsRouter } from './routes/blogs'
 import { getPostsRouter } from './routes/posts'
 import { getUsersRouter } from './routes/users'
-import { getAuthRouter } from './routes/login'
+import { getAuthRouter } from './routes/auth'
 import { getCommentsRouter } from './routes/comments';
 
 

@@ -37,7 +37,7 @@ export const usersQRepository = {
             items: usersData.map((u) => getViewModelUser(u))
         }
     },
-    async findUsersByTerm(findData: { [term: string]: string }) {
+    async findUsersByTerm(findData: { [term: string]: string | ObjectId }) {
         const usersData = await usersCollection.find(findData).toArray()
         return usersData
     },

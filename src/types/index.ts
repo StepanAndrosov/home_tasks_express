@@ -21,14 +21,7 @@ export type ResponsePaginate<T> = {
     totalCount: number
     items: T[]
 }
-
-export enum ResultStatus {
-    Success = 'Success',
-    NotFound = 'NotFound',
-    Forbidden = 'Forbidden',
-    Unauthorized = 'Unauthorized',
-    BadRequest = 'BadRequest'
-}
+export type ResultStatus = 'Success' | 'NotFound' | 'Forbidden' | 'Unauthorized' | 'BadRequest'
 
 export type Result<T> = {
     status: ResultStatus

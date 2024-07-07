@@ -1,10 +1,13 @@
+import { ObjectId } from "mongodb";
+import { emailAdapter } from "../../../adapters/emailAdapter";
 import { usersQRepository } from "../../../queryRepositories/usersQRepository";
 import { usersRepository } from "../../../repositories/usersRepository";
+import { Result } from "../../../types";
 import { compareHash } from "../../../utils/genHash";
 import { LoginCreateModel } from "../models/LoginCreateModel";
 import { RegistrationCreateModel } from "../models/RegistrationCreateModel";
 
-export const loginService = {
+export const authService = {
     async login(loginData: LoginCreateModel) {
 
         const userLoginData = await usersQRepository.findUsersByOneOfTerms([
@@ -25,19 +28,41 @@ export const loginService = {
             user: { id: userLoginData[0]._id.toString(), name: userLoginData[0].login }
         }
     },
-    async registration(registrationData: RegistrationCreateModel) {
-        const userRegistrationData = await usersQRepository.findUsersByOneOfTerms([
-            { login: registrationData.login },
-            { email: registrationData.email }
-        ])
-        if (userRegistrationData.length)
-            return null
+    async registration(registrationData: RegistrationCreateModel): Promise<Result<undefined>> {
+        console.log(registrationData, 'registrationData')
+        const usersLoginData = await usersQRepository.findUsersByTerm({ login: registrationData.login })
+        if (usersLoginData.length)
+            return {
+                status: 'BadRequest',
+                errorMessages: [{ field: 'login', message: 'user already exists' }]
+            }
+        const usersEmailData = await usersQRepository.findUsersByTerm({ email: registrationData.email })
+        if (usersEmailData.length)
+            return {
+                status: 'BadRequest',
+                errorMessages: [{ field: 'email', message: 'user already exists' }]
+            }
 
-        return await usersRepository.createUser({
+        const user = await usersRepository.createUser({
             login: registrationData.login,
             email: registrationData.email,
             password: registrationData.password,
         })
 
+        console.log(user, 'user')
+
+        const userBD = await usersQRepository.findUsersByTerm({ _id: new ObjectId(user.id) })
+
+        console.log(userBD, 'userBD')
+
+        try {
+            await emailAdapter.sendMail(userBD[0].email, userBD[0].emailConfirmation.confirmationCode)
+        } catch (err) {
+            console.error('Send email error', err);
+        }
+
+        return {
+            status: 'Success'
+        }
     }
 }

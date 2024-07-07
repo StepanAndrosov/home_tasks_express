@@ -6,8 +6,8 @@ import { UserViewModel } from '../../src/features/users/models/UserViewModel'
 import { verifyJWT } from '../../src/utils/genJWT'
 import { HTTP_STATUSES } from '../../src/utils/helpers'
 import { DEFAULT_TEST_PASSWORD, createUser } from '../users/createUsers'
-import { ROUTER_AUTH_PATH, loginTestManager } from './loginTestManager'
-import { errLengthName } from '../../src/features/login/validations'
+import { ROUTER_AUTH_PATH, authTestManager } from './authTestManager'
+import { errLengthPassword } from '../../src/features/auth/validations'
 
 const TEST_SECRET_KEY = '123456'
 
@@ -34,7 +34,7 @@ describe('/login', () => {
     it('should login user', async () => {
 
         user = await createUser()
-        const response = await loginTestManager.loginUser({ loginOrEmail: user.login, password: DEFAULT_TEST_PASSWORD })
+        const response = await authTestManager.loginUser({ loginOrEmail: user.login, password: DEFAULT_TEST_PASSWORD })
 
         token = response.body.accessToken
 
@@ -53,12 +53,12 @@ describe('/login', () => {
 
         const error = {
             errorsMessages: [{
-                message: errLengthName,
+                message: errLengthPassword,
                 field: 'password'
             }]
         }
 
-        const response = await loginTestManager.loginWithErrors(
+        const response = await authTestManager.loginWithErrors(
             data,
             HTTP_STATUSES.BAD_REQUEST_400,
             error

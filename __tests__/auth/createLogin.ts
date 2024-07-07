@@ -1,9 +1,9 @@
 import request from 'supertest';
 import { app } from '../../src/app';
-import { LoginAccessTokenModel } from '../../src/features/login/models/LoginAccessTokenModel';
+import { LoginAccessTokenModel } from '../../src/features/auth/models/LoginAccessTokenModel';
 import { HTTP_STATUSES } from '../../src/utils/helpers';
 import { DEFAULT_TEST_PASSWORD } from '../users/createUsers';
-import { ROUTER_AUTH_PATH } from './loginTestManager';
+import { ROUTER_AUTH_PATH } from './authTestManager';
 
 export const createLogin = async (login: string) => {
     const resp = await request(app)
