@@ -29,7 +29,6 @@ export const authService = {
         }
     },
     async registration(registrationData: RegistrationCreateModel): Promise<Result<undefined>> {
-        console.log(registrationData, 'registrationData')
         const usersLoginData = await usersQRepository.findUsersByTerm({ login: registrationData.login })
         if (usersLoginData.length)
             return {
@@ -49,11 +48,7 @@ export const authService = {
             password: registrationData.password,
         })
 
-        console.log(user, 'user')
-
         const userBD = await usersQRepository.findUsersByTerm({ _id: new ObjectId(user.id) })
-
-        console.log(userBD, 'userBD')
 
         try {
             await emailAdapter.sendMail(userBD[0].email, userBD[0].emailConfirmation.confirmationCode)
