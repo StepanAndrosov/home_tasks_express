@@ -6,6 +6,7 @@ import { Result } from "../../../types";
 import { compareHash } from "../../../utils/genHash";
 import { LoginCreateModel } from "../models/LoginCreateModel";
 import { RegistrationCreateModel } from "../models/RegistrationCreateModel";
+import { RegistrationEmailResendingModel } from "../models/RegistrationCreateModel copy";
 
 export const authService = {
     async login(loginData: LoginCreateModel) {
@@ -52,6 +53,24 @@ export const authService = {
 
         try {
             await emailAdapter.sendMail(userBD[0].email, userBD[0].emailConfirmation.confirmationCode)
+        } catch (err) {
+            console.error('Send email error', err);
+        }
+
+        return {
+            status: 'Success'
+        }
+    },
+    async emailResending(resendingData: RegistrationEmailResendingModel): Promise<Result<undefined>> {
+
+        const user = await usersQRepository.findUsersByTerm({ email: resendingData.email })
+        if (!user.length)
+            return {
+                status: 'BadRequest',
+            }
+
+        try {
+            await emailAdapter.sendMail(user[0].email, user[0].emailConfirmation.confirmationCode)
         } catch (err) {
             console.error('Send email error', err);
         }

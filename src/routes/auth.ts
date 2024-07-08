@@ -11,6 +11,7 @@ import { usersQRepository } from '../queryRepositories/usersQRepository'
 import { ErrorsMessagesType, RequestWithBody } from '../types'
 import { JWTPayload, genJWT } from '../utils/genJWT'
 import { HTTP_STATUSES } from '../utils/helpers'
+import { RegistrationEmailResendingModel } from '../features/auth/models/RegistrationCreateModel copy'
 
 export const getAuthRouter = () => {
     const router = express.Router()
@@ -60,6 +61,18 @@ export const getAuthRouter = () => {
                     errorsMessages: registreationData.errorMessages ?? []
                 })
                 return
+            }
+            if (registreationData.status === 'Success')
+                res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+        })
+
+    router.post('/registration-email-resending',
+        validationEmail(),
+        inputValidMiddleware,
+        async (req: RequestWithBody<RegistrationEmailResendingModel>, res: Response<ErrorsMessagesType>) => {
+            const registreationData = await authService.emailResending(req.body)
+            if (registreationData.status === 'BadRequest') {
+                res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
             }
             if (registreationData.status === 'Success')
                 res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
