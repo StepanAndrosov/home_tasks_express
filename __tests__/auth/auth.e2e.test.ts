@@ -11,7 +11,7 @@ import { errLengthPassword } from '../../src/features/auth/validations'
 
 const TEST_SECRET_KEY = '123456'
 
-describe('/login', () => {
+describe('/auth', () => {
 
     beforeAll(async () => {
         const mongoServer = await MongoMemoryServer.create()
