@@ -4,14 +4,15 @@ import { LoginCreateModel } from '../features/auth/models/LoginCreateModel'
 import { LoginMeCheckModel } from '../features/auth/models/LoginMeCheckModel'
 import { RegistrationCreateModel } from '../features/auth/models/RegistrationCreateModel'
 import { authService } from '../features/auth/service'
-import { validationEmail, validationLogin, validationLoginOrEmail, validationPassword } from '../features/auth/validations'
+import { validationCode, validationEmail, validationLogin, validationLoginOrEmail, validationPassword } from '../features/auth/validations'
 import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer'
 import { inputValidMiddleware } from '../middlewares/input-valid'
 import { usersQRepository } from '../queryRepositories/usersQRepository'
 import { ErrorsMessagesType, RequestWithBody } from '../types'
 import { JWTPayload, genJWT } from '../utils/genJWT'
 import { HTTP_STATUSES } from '../utils/helpers'
-import { RegistrationEmailResendingModel } from '../features/auth/models/RegistrationCreateModel copy'
+import { RegistrationEmailResendingModel } from '../features/auth/models/RegistrationEmailResendingModel'
+import { ConfirmaionModel } from '../features/auth/models/ConfirmaionModel'
 
 export const getAuthRouter = () => {
     const router = express.Router()
@@ -71,6 +72,18 @@ export const getAuthRouter = () => {
         inputValidMiddleware,
         async (req: RequestWithBody<RegistrationEmailResendingModel>, res: Response<ErrorsMessagesType>) => {
             const registreationData = await authService.emailResending(req.body)
+            if (registreationData.status === 'BadRequest') {
+                res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+            }
+            if (registreationData.status === 'Success')
+                res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+        })
+
+    router.post('/registration-confirmation',
+        validationCode(),
+        inputValidMiddleware,
+        async (req: RequestWithBody<ConfirmaionModel>, res: Response<ErrorsMessagesType>) => {
+            const registreationData = await authService.confirmation(req.body)
             if (registreationData.status === 'BadRequest') {
                 res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
             }

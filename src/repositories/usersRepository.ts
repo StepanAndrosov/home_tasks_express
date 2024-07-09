@@ -6,6 +6,7 @@ import { UserViewModel } from "../features/users/models/UserViewModel";
 import { genHash } from "../utils/genHash";
 import { randomUUID } from "crypto";
 import { add } from "date-fns";
+import { UserUpdateConfirmationModel } from "../features/users/models/UserUpdateConfirmationModel";
 
 export const getViewModelUser = (user: UserModel): UserViewModel => {
     return {
@@ -43,6 +44,13 @@ export const usersRepository = {
         await usersCollection.insertOne(newUser)
 
         return getViewModelUser(newUser)
+    },
+    async updateUserConfirmationData(user: UserModel, updateData: UserUpdateConfirmationModel) {
+        const newUser = {
+            ...user,
+            emailConfirmation: updateData
+        }
+        await usersCollection.updateOne({ _id: newUser._id }, { $set: newUser })
     },
     async deleteUser(id: string) {
         await usersCollection.deleteOne({ _id: new ObjectId(id) })

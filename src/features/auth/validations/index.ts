@@ -22,6 +22,8 @@ export const errLengthLogin = `login must be shorter than ${validAuthLengthField
 export const errRequiredEmail = 'email is required'
 export const errValidEmail = 'email does not match email address'
 
+export const errRequiredCode = 'code is required'
+
 export const validationLoginOrEmail = () => body("loginOrEmail").trim().notEmpty().withMessage(errRequiredLoginOrEmail)
     .isLength({ min: validAuthLengthFields.loginOrEmail.min, max: validAuthLengthFields.loginOrEmail.max }).withMessage(errLengthLoginOrEmail)
 
@@ -47,6 +49,8 @@ export const validationLogin = () => body("login").trim().notEmpty().withMessage
 
 export const validationEmail = () => body("email").trim().notEmpty().withMessage(errRequiredEmail)
     .isEmail().withMessage(errValidEmail)
+
+export const validationCode = () => body("code").trim().notEmpty().withMessage(errRequiredCode)
 
 
 

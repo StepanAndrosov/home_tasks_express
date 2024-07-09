@@ -6,7 +6,11 @@ import { Result } from "../../../types";
 import { compareHash } from "../../../utils/genHash";
 import { LoginCreateModel } from "../models/LoginCreateModel";
 import { RegistrationCreateModel } from "../models/RegistrationCreateModel";
-import { RegistrationEmailResendingModel } from "../models/RegistrationCreateModel copy";
+import { RegistrationEmailResendingModel } from "../models/RegistrationEmailResendingModel";
+import { ConfirmaionModel } from "../models/ConfirmaionModel";
+import { UserUpdateConfirmationModel } from "../../users/models/UserUpdateConfirmationModel";
+import { randomUUID } from "crypto";
+import { add } from "date-fns";
 
 export const authService = {
     async login(loginData: LoginCreateModel) {
@@ -49,10 +53,10 @@ export const authService = {
             password: registrationData.password,
         })
 
-        const userBD = await usersQRepository.findUsersByTerm({ _id: new ObjectId(user.id) })
+        const userDB = await usersQRepository.findUsersByTerm({ _id: new ObjectId(user.id) })
 
         try {
-            await emailAdapter.sendMail(userBD[0].email, userBD[0].emailConfirmation.confirmationCode)
+            await emailAdapter.sendMail(userDB[0].email, userDB[0].emailConfirmation.confirmationCode)
         } catch (err) {
             console.error('Send email error', err);
         }
@@ -68,12 +72,62 @@ export const authService = {
             return {
                 status: 'BadRequest',
             }
+        if (user[0].emailConfirmation.isConfirmed)
+            return {
+                status: 'BadRequest',
+            }
+
+        const confirmationCode = randomUUID()
+
+        const newConfirmationData: UserUpdateConfirmationModel = {
+            ...user[0].emailConfirmation,
+            confirmationCode,
+            expirationDate: add(new Date(), {
+                hours: 1,
+                minutes: 30,
+            }).toISOString(),
+        }
+        await usersRepository.updateUserConfirmationData(user[0], newConfirmationData)
 
         try {
-            await emailAdapter.sendMail(user[0].email, user[0].emailConfirmation.confirmationCode)
+            await emailAdapter.sendMail(user[0].email, confirmationCode)
         } catch (err) {
             console.error('Send email error', err);
         }
+
+        return {
+            status: 'Success'
+        }
+    },
+    async confirmation(confirmationData: ConfirmaionModel): Promise<Result<undefined>> {
+
+        const user = await usersQRepository.findUsersByTerm({ 'emailConfirmation.confirmationCode': confirmationData.code })
+        if (!user.length) {
+            console.log('can`t fount user')
+            return {
+                status: 'BadRequest',
+            }
+        }
+
+        if (user[0].emailConfirmation.isConfirmed) {
+            console.log('isConfirmed')
+            return {
+                status: 'BadRequest',
+            }
+        }
+
+        if (new Date(user[0].emailConfirmation.expirationDate) < new Date()) {
+            console.log('code date is expired')
+            return {
+                status: 'BadRequest',
+            }
+        }
+
+        const newConfirmationData: UserUpdateConfirmationModel = {
+            ...user[0].emailConfirmation,
+            isConfirmed: true
+        }
+        await usersRepository.updateUserConfirmationData(user[0], newConfirmationData)
 
         return {
             status: 'Success'
