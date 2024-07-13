@@ -12,7 +12,7 @@ import { ErrorsMessagesType, RequestWithBody } from '../types'
 import { JWTPayload, genJWT } from '../utils/genJWT'
 import { HTTP_STATUSES } from '../utils/helpers'
 import { RegistrationEmailResendingModel } from '../features/auth/models/RegistrationEmailResendingModel'
-import { ConfirmaionModel } from '../features/auth/models/ConfirmaionModel'
+import { ConfirmationModel } from '../features/auth/models/ConfirmationModel'
 
 export const getAuthRouter = () => {
     const router = express.Router()
@@ -82,7 +82,7 @@ export const getAuthRouter = () => {
     router.post('/registration-confirmation',
         validationCode(),
         inputValidMiddleware,
-        async (req: RequestWithBody<ConfirmaionModel>, res: Response<ErrorsMessagesType>) => {
+        async (req: RequestWithBody<ConfirmationModel>, res: Response<ErrorsMessagesType>) => {
             const registreationData = await authService.confirmation(req.body)
             if (registreationData.status === 'BadRequest') {
                 res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)

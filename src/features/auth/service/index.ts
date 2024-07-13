@@ -7,7 +7,7 @@ import { compareHash } from "../../../utils/genHash";
 import { LoginCreateModel } from "../models/LoginCreateModel";
 import { RegistrationCreateModel } from "../models/RegistrationCreateModel";
 import { RegistrationEmailResendingModel } from "../models/RegistrationEmailResendingModel";
-import { ConfirmaionModel } from "../models/ConfirmaionModel";
+import { ConfirmationModel } from "../models/ConfirmationModel";
 import { UserUpdateConfirmationModel } from "../../users/models/UserUpdateConfirmationModel";
 import { randomUUID } from "crypto";
 import { add } from "date-fns";
@@ -68,6 +68,7 @@ export const authService = {
     async emailResending(resendingData: RegistrationEmailResendingModel): Promise<Result<undefined>> {
 
         const user = await usersQRepository.findUsersByTerm({ email: resendingData.email })
+        console.log(user)
         if (!user.length)
             return {
                 status: 'BadRequest',
@@ -99,7 +100,7 @@ export const authService = {
             status: 'Success'
         }
     },
-    async confirmation(confirmationData: ConfirmaionModel): Promise<Result<undefined>> {
+    async confirmation(confirmationData: ConfirmationModel): Promise<Result<undefined>> {
 
         const user = await usersQRepository.findUsersByTerm({ 'emailConfirmation.confirmationCode': confirmationData.code })
         if (!user.length) {
