@@ -4,11 +4,21 @@ export const emailAdapter = {
     async sendMail(to: string, confirmationCode: string) {
         // send mail with defined transport object
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            // service: 'gmail',
+            // auth: {
+            //     user: "stepan.news@gmail.com", // s37680930@gmail.com"
+            //     pass: "usvo lnlv atqa cnyb", // u67447099
+            // },
+            // transport: {
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            ignoreTLS: true,
             auth: {
                 user: "stepan.news@gmail.com", // s37680930@gmail.com"
-                pass: "usvo lnlv atqa cnyb", // u67447099
+                pass: "usvo lnlv atqa cnyb",
             },
+            //   },
         });
         try {
             const info = await transporter.sendMail({
@@ -29,8 +39,6 @@ export const emailAdapter = {
         } catch (err) {
             return false
         }
-
-
     }
 }
 
