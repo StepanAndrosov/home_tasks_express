@@ -72,10 +72,12 @@ export const authService = {
         if (!user.length)
             return {
                 status: 'BadRequest',
+                errorMessages: [{ field: 'email', message: 'wrong code' }]
             }
         if (user[0].emailConfirmation.isConfirmed)
             return {
                 status: 'BadRequest',
+                errorMessages: [{ field: 'email', message: 'wrong code' }]
             }
 
         const confirmationCode = randomUUID()
@@ -107,6 +109,7 @@ export const authService = {
             console.log('can`t fount user')
             return {
                 status: 'BadRequest',
+                errorMessages: [{ field: 'code', message: 'wrong code' }]
             }
         }
 
@@ -114,6 +117,7 @@ export const authService = {
             console.log('isConfirmed')
             return {
                 status: 'BadRequest',
+                errorMessages: [{ field: 'code', message: 'wrong code' }]
             }
         }
 
@@ -121,6 +125,7 @@ export const authService = {
             console.log('code date is expired')
             return {
                 status: 'BadRequest',
+                errorMessages: [{ field: 'code', message: 'wrong code' }]
             }
         }
 
