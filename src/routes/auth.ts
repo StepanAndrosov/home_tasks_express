@@ -73,7 +73,10 @@ export const getAuthRouter = () => {
         async (req: RequestWithBody<RegistrationEmailResendingModel>, res: Response<ErrorsMessagesType>) => {
             const registreationData = await authService.emailResending(req.body)
             if (registreationData.status === 'BadRequest') {
-                res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+                res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+                    errorsMessages: registreationData.errorMessages ?? []
+                })
+                return
             }
             if (registreationData.status === 'Success')
                 res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
@@ -85,7 +88,10 @@ export const getAuthRouter = () => {
         async (req: RequestWithBody<ConfirmationModel>, res: Response<ErrorsMessagesType>) => {
             const registreationData = await authService.confirmation(req.body)
             if (registreationData.status === 'BadRequest') {
-                res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+                res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+                    errorsMessages: registreationData.errorMessages ?? []
+                })
+                return
             }
             if (registreationData.status === 'Success')
                 res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
