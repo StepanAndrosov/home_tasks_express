@@ -29,7 +29,10 @@ export const getAuthRouter = () => {
             else {
 
                 const jwt = genJWT({ id: user.id?.toString() ?? '', name: user.name ?? '' })
+                const accessjwt = genJWT({ id: user.id?.toString() ?? '', name: user.name ?? '' }, process.env.JWT_REFRESH_EXPIRES_IN)
 
+                console.log('refreshToken', accessjwt)
+                res.cookie('refreshToken', accessjwt, { httpOnly: true, secure: true, })
                 res.json({ accessToken: jwt })
                 res.status(HTTP_STATUSES.OK_200)
             }

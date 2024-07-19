@@ -7,12 +7,14 @@ import { getPostsRouter } from './routes/posts'
 import { getUsersRouter } from './routes/users'
 import { getAuthRouter } from './routes/auth'
 import { getCommentsRouter } from './routes/comments';
+import cookieParser from 'cookie-parser'
 
 
 export const app = express()
 
 const jsonBody = express.json()
 app.use(jsonBody)
+app.use(cookieParser())
 
 export const RouterPaths = {
     blogs: '/blogs',

@@ -13,7 +13,7 @@ export const authenticationBearerMiddleware = (req: Request, res: Response<JWTPa
 
     // Verify token is set and correct
 
-    if (decoded?.exp! < Math.floor(Date.now())) {
+    if (decoded?.exp! < Math.floor(Date.now() / 1000)) {
         console.log(HTTP_STATUSES.FORBIDDEN_403)
         res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
         return
