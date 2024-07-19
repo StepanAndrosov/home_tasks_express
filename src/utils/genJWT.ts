@@ -17,7 +17,27 @@ export const genJWT = (
     });
 }
 
-export const verifyJWT = (token: string, secret: string | undefined = process.env.JWT_SECRET,): JWTPayload | null => {
+export const genPairJWT = (
+    newUser: { id: string, name: string },
+    expiresInAccess: string | number | undefined = process.env.JWT_EXPIRES_IN,
+    expiresInRefresh: string | number | undefined = process.env.JWT_REFRESH_EXPIRES_IN,
+    secret: string | undefined = process.env.JWT_SECRET
+) => {
+    const accessToken = jwt.sign({ id: newUser.id, name: newUser.name, iat: Date.now() }, secret ?? '123456', {
+        expiresIn: expiresInAccess
+    });
+
+    const refreshToken = jwt.sign({ id: newUser.id, name: newUser.name, iat: Date.now() }, secret ?? '123456', {
+        expiresIn: expiresInRefresh
+    });
+
+    return {
+        accessToken,
+        refreshToken
+    }
+}
+
+export const verifyJWT = (token: string, secret: string | undefined = process.env.JWT_SECRET): JWTPayload | null => {
     let result: JWTPayload | null = null
     jwt.verify(token, secret ?? '123456', (err, decoded) => {
         if (err) {

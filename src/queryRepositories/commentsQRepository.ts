@@ -3,7 +3,6 @@ import { commentsCollection } from "../db/db"
 import { getViewModelComment } from "../repositories/commentsRepository"
 import { SanitizedQuery } from "../utils/helpers"
 
-
 export const commentsQRepository = {
     async getComments(query: SanitizedQuery) {
 

@@ -1,16 +1,17 @@
+import { randomUUID } from "crypto";
+import { add } from "date-fns";
 import { ObjectId } from "mongodb";
 import { emailAdapter } from "../../../adapters/emailAdapter";
 import { usersQRepository } from "../../../queryRepositories/usersQRepository";
+import { blackListTokensRepository } from "../../../repositories/blackListTokensRepository";
 import { usersRepository } from "../../../repositories/usersRepository";
 import { Result } from "../../../types";
 import { compareHash } from "../../../utils/genHash";
+import { UserUpdateConfirmationModel } from "../../users/models/UserUpdateConfirmationModel";
+import { ConfirmationModel } from "../models/ConfirmationModel";
 import { LoginCreateModel } from "../models/LoginCreateModel";
 import { RegistrationCreateModel } from "../models/RegistrationCreateModel";
 import { RegistrationEmailResendingModel } from "../models/RegistrationEmailResendingModel";
-import { ConfirmationModel } from "../models/ConfirmationModel";
-import { UserUpdateConfirmationModel } from "../../users/models/UserUpdateConfirmationModel";
-import { randomUUID } from "crypto";
-import { add } from "date-fns";
 
 export const authService = {
     async login(loginData: LoginCreateModel) {
@@ -138,5 +139,8 @@ export const authService = {
         return {
             status: 'Success'
         }
+    },
+    async refreshToken(token: string) {
+        await blackListTokensRepository.createBlackToken(token)
     }
 }

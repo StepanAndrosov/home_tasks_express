@@ -1,18 +1,18 @@
-import express, { Response } from 'express'
+import express, { Request, Response } from 'express'
 import { LoginAccessTokenModel } from '../features/auth/models/LoginAccessTokenModel'
 import { LoginCreateModel } from '../features/auth/models/LoginCreateModel'
 import { LoginMeCheckModel } from '../features/auth/models/LoginMeCheckModel'
 import { RegistrationCreateModel } from '../features/auth/models/RegistrationCreateModel'
+import { RegistrationEmailResendingModel } from '../features/auth/models/RegistrationEmailResendingModel'
 import { authService } from '../features/auth/service'
-import { validationCode, validationEmail, validationLogin, validationLoginOrEmail, validationPassword } from '../features/auth/validations'
+import { validationEmail, validationLogin, validationLoginOrEmail, validationPassword } from '../features/auth/validations'
 import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer'
+import { authenticationRefreshMiddleware } from '../middlewares/authentication-refresh'
 import { inputValidMiddleware } from '../middlewares/input-valid'
 import { usersQRepository } from '../queryRepositories/usersQRepository'
 import { ErrorsMessagesType, RequestWithBody } from '../types'
-import { JWTPayload, genJWT } from '../utils/genJWT'
+import { JWTPayload, genPairJWT } from '../utils/genJWT'
 import { HTTP_STATUSES } from '../utils/helpers'
-import { RegistrationEmailResendingModel } from '../features/auth/models/RegistrationEmailResendingModel'
-import { ConfirmationModel } from '../features/auth/models/ConfirmationModel'
 
 export const getAuthRouter = () => {
     const router = express.Router()
@@ -28,12 +28,10 @@ export const getAuthRouter = () => {
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
             else {
 
-                const jwt = genJWT({ id: user.id?.toString() ?? '', name: user.name ?? '' })
-                const accessjwt = genJWT({ id: user.id?.toString() ?? '', name: user.name ?? '' }, process.env.JWT_REFRESH_EXPIRES_IN)
+                const { accessToken, refreshToken } = genPairJWT({ id: user.id?.toString() ?? '', name: user.name ?? '' })
 
-                console.log('refreshToken', accessjwt)
-                res.cookie('refreshToken', accessjwt, { httpOnly: true, secure: true, })
-                res.json({ accessToken: jwt })
+                res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, })
+                res.json({ accessToken: accessToken })
                 res.status(HTTP_STATUSES.OK_200)
             }
         })
@@ -86,9 +84,8 @@ export const getAuthRouter = () => {
         })
 
     router.post('/registration-confirmation',
-        validationCode(),
-        inputValidMiddleware,
-        async (req: RequestWithBody<ConfirmationModel>, res: Response<ErrorsMessagesType>) => {
+        authenticationBearerMiddleware,
+        async (req: Request, res: Response<ErrorsMessagesType>) => {
             const registreationData = await authService.confirmation(req.body)
             if (registreationData.status === 'BadRequest') {
                 res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
@@ -98,6 +95,17 @@ export const getAuthRouter = () => {
             }
             if (registreationData.status === 'Success')
                 res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+        })
+
+    router.post('/refresh-token',
+        authenticationRefreshMiddleware,
+        async (req: RequestWithBody<JWTPayload>, res: Response<ErrorsMessagesType>) => {
+
+            const accessToken = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
+
+            await authService.refreshToken(accessToken)
+
+            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     return router
