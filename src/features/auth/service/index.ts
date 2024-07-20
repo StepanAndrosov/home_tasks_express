@@ -16,7 +16,7 @@ import { RegistrationCreateModel } from "../models/RegistrationCreateModel";
 import { RegistrationEmailResendingModel } from "../models/RegistrationEmailResendingModel";
 
 export const authService = {
-    async login(loginData: LoginCreateModel) {
+    async login(loginData: LoginCreateModel): Promise<Result<UserModel>> {
 
         const userLoginData = await usersQRepository.findUsersByOneOfTerms([
             { login: loginData.loginOrEmail },
@@ -25,15 +25,20 @@ export const authService = {
 
         if (!userLoginData.length)
             return {
-                isCompare: false,
-                user: {}
+                status: 'BadRequest'
             }
 
         const isCompare = await compareHash(loginData.password, userLoginData[0].passwordHash)
+        if (isCompare) {
+            return {
+                status: 'Success',
+                data: userLoginData[0]
 
-        return {
-            isCompare,
-            user: { id: userLoginData[0]._id.toString(), name: userLoginData[0].login }
+            }
+        } else {
+            return {
+                status: 'BadRequest'
+            }
         }
     },
     async registration(registrationData: RegistrationCreateModel): Promise<Result<undefined>> {

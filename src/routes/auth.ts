@@ -23,13 +23,13 @@ export const getAuthRouter = () => {
         validationPassword(),
         inputValidMiddleware,
         async (req: RequestWithBody<LoginCreateModel>, res: Response<ErrorsMessagesType | LoginAccessTokenModel>) => {
-            const { isCompare, user } = await authService.login(req.body)
-            if (!isCompare)
+            const { status, data: userData } = await authService.login(req.body)
+            if (status === 'BadRequest')
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
             else {
 
-                const { accessToken, refreshToken } = genPairJWT({ id: user.id?.toString() ?? '', name: user.name ?? '' })
+                const { accessToken, refreshToken } = genPairJWT({ id: userData?._id.toString() ?? '', name: userData?.login ?? '' })
 
                 res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, })
                 res.json({ accessToken: accessToken })
