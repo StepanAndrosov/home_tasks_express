@@ -147,7 +147,7 @@ export const authService = {
 
         const userData = await usersQRepository.findUsersByTerm({ _id: new ObjectId(jwtPayload.id) })
 
-        if (!userData || userData.length)
+        if (!userData || !userData.length)
             return {
                 status: 'BadRequest',
             }

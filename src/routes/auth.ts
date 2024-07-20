@@ -13,6 +13,7 @@ import { usersQRepository } from '../queryRepositories/usersQRepository'
 import { ErrorsMessagesType, RequestWithBody } from '../types'
 import { JWTPayload, genPairJWT } from '../utils/genJWT'
 import { HTTP_STATUSES } from '../utils/helpers'
+import { blackListTokensRepository } from '../repositories/blackListTokensRepository'
 
 export const getAuthRouter = () => {
     const router = express.Router()
@@ -100,11 +101,10 @@ export const getAuthRouter = () => {
     router.post('/refresh-token',
         authenticationRefreshMiddleware,
         async (req: RequestWithBody<JWTPayload>, res: Response<ErrorsMessagesType | LoginAccessTokenModel>) => {
-
             const headerAccessToken = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
 
             const { status, data: userData } = await authService.refreshToken(headerAccessToken, req.body)
-
+            console.log(status)
             if (status === 'BadRequest') {
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
@@ -115,6 +115,17 @@ export const getAuthRouter = () => {
                 res.json({ accessToken: accessToken })
                 res.status(HTTP_STATUSES.NO_CONTEND_204)
             }
+        })
+
+    router.post('/logout',
+        authenticationRefreshMiddleware,
+        async (req: RequestWithBody<JWTPayload>, res: Response) => {
+
+            const token = req.cookies.refreshToken
+
+            await blackListTokensRepository.createBlackToken(token)
+
+            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     return router
