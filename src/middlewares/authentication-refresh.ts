@@ -22,7 +22,7 @@ export const authenticationRefreshMiddleware = async (req: Request, res: Respons
 
     // Verify token is set and correct
     if (decoded?.exp! < Date.now()) {
-        res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
+        res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
         return
     }
 

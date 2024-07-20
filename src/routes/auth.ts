@@ -23,7 +23,9 @@ export const getAuthRouter = () => {
         validationPassword(),
         inputValidMiddleware,
         async (req: RequestWithBody<LoginCreateModel>, res: Response<ErrorsMessagesType | LoginAccessTokenModel>) => {
+            console.log(req.body, 'login')
             const { status, data: userData } = await authService.login(req.body)
+            console.log(status, 'login')
             if (status === 'BadRequest')
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
@@ -102,6 +104,9 @@ export const getAuthRouter = () => {
         authenticationRefreshMiddleware,
         async (req: RequestWithBody<JWTPayload>, res: Response<ErrorsMessagesType | LoginAccessTokenModel>) => {
             const headerAccessToken = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
+
+            const cookieToken = req.cookies.refreshToken
+            await blackListTokensRepository.createBlackToken(cookieToken)
 
             const { status, data: userData } = await authService.refreshToken(headerAccessToken, req.body)
             console.log(status)
