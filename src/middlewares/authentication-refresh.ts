@@ -7,12 +7,10 @@ export const authenticationRefreshMiddleware = (req: Request, res: Response<JWTP
 
     const token = req.cookies.refreshToken
 
-    console.log(token, '_Middleware')
-
     const decoded = verifyJWT(token)
 
     // Verify token is set and correct
-    if (decoded?.exp! < Math.floor(Date.now() / 1000)) {
+    if (decoded?.exp! < Date.now()) {
         res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
         return
     }

@@ -7,6 +7,8 @@ import { blackListTokensRepository } from "../../../repositories/blackListTokens
 import { usersRepository } from "../../../repositories/usersRepository";
 import { Result } from "../../../types";
 import { compareHash } from "../../../utils/genHash";
+import { JWTPayload } from "../../../utils/genJWT";
+import { UserModel } from "../../users/models/UserModel";
 import { UserUpdateConfirmationModel } from "../../users/models/UserUpdateConfirmationModel";
 import { ConfirmationModel } from "../models/ConfirmationModel";
 import { LoginCreateModel } from "../models/LoginCreateModel";
@@ -140,7 +142,18 @@ export const authService = {
             status: 'Success'
         }
     },
-    async refreshToken(token: string) {
+    async refreshToken(token: string, jwtPayload: JWTPayload): Promise<Result<UserModel>> {
         await blackListTokensRepository.createBlackToken(token)
+
+        const userData = await usersQRepository.findUsersByTerm({ _id: new ObjectId(jwtPayload.id) })
+
+        if (!userData || userData.length)
+            return {
+                status: 'BadRequest',
+            }
+        return {
+            status: 'Success',
+            data: userData[0]
+        }
     }
 }

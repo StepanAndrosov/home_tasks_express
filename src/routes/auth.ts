@@ -99,13 +99,22 @@ export const getAuthRouter = () => {
 
     router.post('/refresh-token',
         authenticationRefreshMiddleware,
-        async (req: RequestWithBody<JWTPayload>, res: Response<ErrorsMessagesType>) => {
+        async (req: RequestWithBody<JWTPayload>, res: Response<ErrorsMessagesType | LoginAccessTokenModel>) => {
 
-            const accessToken = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
+            const headerAccessToken = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
 
-            await authService.refreshToken(accessToken)
+            const { status, data: userData } = await authService.refreshToken(headerAccessToken, req.body)
 
-            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+            if (status === 'BadRequest') {
+                res
+                    .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+            } else {
+                const { accessToken, refreshToken } = genPairJWT({ id: userData?._id.toString() ?? '', name: userData?.login ?? '' })
+
+                res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, })
+                res.json({ accessToken: accessToken })
+                res.status(HTTP_STATUSES.NO_CONTEND_204)
+            }
         })
 
     return router
