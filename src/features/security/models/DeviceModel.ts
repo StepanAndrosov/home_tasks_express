@@ -1,4 +1,4 @@
-import { WithId } from "mongodb"
+import { ObjectId, WithId } from "mongodb"
 
 
 interface Device {
@@ -6,6 +6,7 @@ interface Device {
     title: string
     lastActiveDate: string
     deviceId: string
+    userId: ObjectId
 }
 
 export type DeviceModel = WithId<Device>

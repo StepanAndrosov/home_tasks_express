@@ -1,25 +1,24 @@
-import { errLengthContent } from './../features/comments/validations/index';
-import express, { Request, Response } from 'express'
-import { BlogViewModel } from '../features/blogs/models/BlogViewModel'
-import { PostCreateModel } from '../features/posts/models/PostCreateModel'
-import { PostIdParamsModel } from '../features/posts/models/PostIdParamsModel'
-import { PostViewModel } from '../features/posts/models/PostViewModel'
-import { PostsPaginateModel } from '../features/posts/models/PostsPaginateModel'
-import { validationPostBlogId, validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations'
-import { authenticationBasicMiddleware } from '../middlewares/authentication-basic'
-import { inputValidMiddleware } from '../middlewares/input-valid'
-import { blogsQRepository } from '../queryRepositories/blogsQRepository'
-import { postsQRepository } from '../queryRepositories/postsQRepository'
-import { postsRepository } from '../repositories/postsRepository'
-import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndQuery } from '../types'
-import { HTTP_STATUSES, sanitizeQuery, } from '../utils/helpers'
-import { PostIdCommentsParamsModel } from '../features/posts/models/PostIdCommentsParamsModel'
-import { CommentsPaginateModel } from '../features/comments/models/CommentsPaginateModel'
-import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer'
-import { validationCommentContent } from '../features/comments/validations'
-import { CommentViewModel } from '../features/comments/models/CommentViewModel'
-import { commentsRepository } from '../repositories/commentsRepository'
-import { usersQRepository } from '../queryRepositories/usersQRepository'
+import express, { Request, Response } from 'express';
+import { BlogViewModel } from '../features/blogs/models/BlogViewModel';
+import { CommentViewModel } from '../features/comments/models/CommentViewModel';
+import { CommentsPaginateModel } from '../features/comments/models/CommentsPaginateModel';
+import { validationCommentContent } from '../features/comments/validations';
+import { PostCreateModel } from '../features/posts/models/PostCreateModel';
+import { PostIdCommentsParamsModel } from '../features/posts/models/PostIdCommentsParamsModel';
+import { PostIdParamsModel } from '../features/posts/models/PostIdParamsModel';
+import { PostViewModel } from '../features/posts/models/PostViewModel';
+import { PostsPaginateModel } from '../features/posts/models/PostsPaginateModel';
+import { validationPostBlogId, validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations';
+import { authenticationBasicMiddleware } from '../middlewares/authentication-basic';
+import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer';
+import { inputValidMiddleware } from '../middlewares/input-valid';
+import { blogsQRepository } from '../queryRepositories/blogsQRepository';
+import { postsQRepository } from '../queryRepositories/postsQRepository';
+import { usersQRepository } from '../queryRepositories/usersQRepository';
+import { commentsRepository } from '../repositories/commentsRepository';
+import { postsRepository } from '../repositories/postsRepository';
+import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndQuery } from '../types';
+import { HTTP_STATUSES, sanitizeQuery, } from '../utils/helpers';
 
 export const getPostsRouter = () => {
     const router = express.Router()
