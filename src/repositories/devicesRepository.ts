@@ -38,5 +38,8 @@ export const deviceRepository = {
         devicesDeleteIds.forEach(async (dId) => {
             await devicesCollection.deleteOne({ _id: dId })
         })
+    },
+    async deleteDevice(deleteDeviceId: string) {
+        await devicesCollection.deleteOne({ _id: new ObjectId(deleteDeviceId) })
     }
 }

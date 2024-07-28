@@ -1,11 +1,10 @@
 import express, { Request, Response } from 'express';
-import { HTTP_STATUSES } from '../utils/helpers';
+import { devicesService } from '../features/security/service';
 import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer';
+import { deviceQRepository } from '../queryRepositories/devicesQRepository';
 import { RequestWithBody } from '../types';
 import { JWTPayload } from '../utils/genJWT';
-import { deviceQRepository } from '../queryRepositories/devicesQRepository';
-import { deviceRepository } from '../repositories/devicesRepository';
-import { devicesService } from '../features/security/service';
+import { HTTP_STATUSES } from '../utils/helpers';
 
 
 export const getSecurityRouter = () => {
@@ -13,7 +12,7 @@ export const getSecurityRouter = () => {
 
     router.get('/devices', authenticationBearerMiddleware, async (req: RequestWithBody<JWTPayload>, res: Response) => {
 
-        const devices = await deviceQRepository.getDevices(req.body.id)
+        const devices = await deviceQRepository.getUserDevices(req.body.id)
         res.json(devices)
         res.status(HTTP_STATUSES.OK_200)
     })
@@ -27,6 +26,22 @@ export const getSecurityRouter = () => {
             await devicesService.deleteDevices(refreshToken, req.body.id)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+        })
+
+    router.delete('/devices/:deviceId',
+        authenticationBearerMiddleware,
+        async (req: Request, res: Response) => {
+
+            const refreshToken = req.cookies.refreshToken
+
+            const { status } = await devicesService.deleteDevice(refreshToken, req.body.id)
+
+            if (status === 'BadRequest')
+                res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+            if (status === 'Forbidden')
+                res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
+            else
+                res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
 
