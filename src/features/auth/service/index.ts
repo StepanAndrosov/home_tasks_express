@@ -17,12 +17,12 @@ import { RegistrationEmailResendingModel } from "../models/RegistrationEmailRese
 
 export const authService = {
     async login(loginData: LoginCreateModel): Promise<Result<UserModel>> {
-
+        console.log(loginData)
         const userLoginData = await usersQRepository.findUsersByOneOfTerms([
             { login: loginData.loginOrEmail },
             { email: loginData.loginOrEmail }
         ])
-
+        console.log(userLoginData)
         if (!userLoginData.length)
             return {
                 status: 'BadRequest'

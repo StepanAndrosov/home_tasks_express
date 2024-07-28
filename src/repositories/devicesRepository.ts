@@ -29,5 +29,14 @@ export const deviceRepository = {
             userId
         }
         await devicesCollection.insertOne(newDevice)
+    },
+    async deleteDevices(userId: string, currentDevice: string) {
+        const devices = await devicesCollection.find({ userId: new ObjectId(userId) }).toArray()
+
+        const devicesDeleteIds = devices.filter((d) => d._id.toString() !== currentDevice).map((d) => d._id)
+
+        devicesDeleteIds.forEach(async (dId) => {
+            await devicesCollection.deleteOne({ _id: dId })
+        })
     }
 }

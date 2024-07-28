@@ -14,11 +14,13 @@ import { ErrorsMessagesType, RequestWithBody } from '../types'
 import { JWTPayload, genPairJWT } from '../utils/genJWT'
 import { HTTP_STATUSES } from '../utils/helpers'
 import { blackListTokensRepository } from '../repositories/blackListTokensRepository'
+import { customRateLimitMiddleware } from '../middlewares/custom-rate-limit'
 
 export const getAuthRouter = () => {
     const router = express.Router()
 
     router.post('/login',
+        customRateLimitMiddleware,
         validationLoginOrEmail(),
         validationPassword(),
         inputValidMiddleware,
@@ -55,6 +57,7 @@ export const getAuthRouter = () => {
         })
 
     router.post('/registration',
+        customRateLimitMiddleware,
         validationLogin(),
         validationEmail(),
         validationPassword(),
@@ -72,6 +75,7 @@ export const getAuthRouter = () => {
         })
 
     router.post('/registration-email-resending',
+        customRateLimitMiddleware,
         validationEmail(),
         inputValidMiddleware,
         async (req: RequestWithBody<RegistrationEmailResendingModel>, res: Response<ErrorsMessagesType>) => {
@@ -88,6 +92,7 @@ export const getAuthRouter = () => {
 
     router.post('/registration-confirmation',
         authenticationBearerMiddleware,
+        customRateLimitMiddleware,
         async (req: Request, res: Response<ErrorsMessagesType>) => {
             const registreationData = await authService.confirmation(req.body)
             if (registreationData.status === 'BadRequest') {
