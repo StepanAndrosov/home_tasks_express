@@ -9,6 +9,7 @@ export const HTTP_STATUSES = {
     NOT_FOUND_404: 404,
     NOT_AUTHORIZED_401: 401,
     FORBIDDEN_403: 403,
+    TOO_MANY_REQUESTS: 429
 } as const
 
 type StatusesKeys = keyof typeof HTTP_STATUSES
