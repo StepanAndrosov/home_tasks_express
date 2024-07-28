@@ -9,12 +9,14 @@ import { getAuthRouter } from './routes/auth'
 import { getCommentsRouter } from './routes/comments';
 import cookieParser from 'cookie-parser'
 import { getSecurityRouter } from './routes/security'
+import useragent from 'express-useragent'
 
 export const app = express()
 
 const jsonBody = express.json()
 app.use(jsonBody)
 app.use(cookieParser())
+app.use(useragent.express())
 app.set('trust proxy', true)
 
 export const RouterPaths = {

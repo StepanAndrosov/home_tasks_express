@@ -15,6 +15,7 @@ import { JWTPayload, genPairJWT } from '../utils/genJWT'
 import { HTTP_STATUSES } from '../utils/helpers'
 import { blackListTokensRepository } from '../repositories/blackListTokensRepository'
 import { customRateLimitMiddleware } from '../middlewares/custom-rate-limit'
+import { deviceRepository } from '../repositories/devicesRepository'
 
 export const getAuthRouter = () => {
     const router = express.Router()
@@ -28,10 +29,17 @@ export const getAuthRouter = () => {
 
             const { status, data: userData } = await authService.login(req.body)
 
+            const ip = req.headers['x-forwarded-for'] as string || req.socket.remoteAddress as string
+
+            const useragent = `${req.useragent?.browser} ${req.useragent?.version}`
+
+
             if (status === 'BadRequest')
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
             else {
+
+                await deviceRepository.createDevice({ ip, title: useragent }, userData?._id!)
 
                 const { accessToken, refreshToken } = genPairJWT({ id: userData?._id.toString() ?? '', name: userData?.login ?? '' })
 
@@ -111,7 +119,8 @@ export const getAuthRouter = () => {
             const headerAccessToken = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
 
             const cookieToken = req.cookies.refreshToken
-            await blackListTokensRepository.createBlackToken(cookieToken)
+            if (cookieToken)
+                await blackListTokensRepository.createBlackToken(cookieToken)
 
             const { status, data: userData } = await authService.refreshToken(headerAccessToken, req.body)
             console.log(status)
@@ -132,8 +141,8 @@ export const getAuthRouter = () => {
         async (req: RequestWithBody<JWTPayload>, res: Response) => {
 
             const token = req.cookies.refreshToken
-
-            await blackListTokensRepository.createBlackToken(token)
+            if (token)
+                await blackListTokensRepository.createBlackToken(token)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
