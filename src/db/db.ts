@@ -6,6 +6,7 @@ import { UserModel } from "../features/users/models/UserModel";
 import { CommentModel } from "../features/comments/models/CommentModel";
 import { AccessTokenModel } from "../features/auth/models/AccessTokenModel";
 import { DeviceModel } from "../features/security/models/DeviceModel";
+import { CustomRateModel } from "../features/security/models/CustomRateModel";
 
 let client = {} as MongoClient
 
@@ -15,6 +16,7 @@ export let usersCollection = {} as Collection<UserModel>
 export let commentsCollection = {} as Collection<CommentModel>
 export let blackTokensCollection = {} as Collection<AccessTokenModel>
 export let devicesCollection = {} as Collection<DeviceModel>
+export let customRateCollection = {} as Collection<CustomRateModel>
 
 export const db = {
     client: {} as MongoClient,
@@ -29,6 +31,7 @@ export const db = {
             commentsCollection = client.db().collection<CommentModel>('comments')
             blackTokensCollection = client.db().collection<AccessTokenModel>('black-tokens')
             devicesCollection = client.db().collection<DeviceModel>('devices')
+            customRateCollection = client.db().collection<CustomRateModel>('custom-rate')
 
             await client.connect()
             console.log('✅ Connected successfully to server')

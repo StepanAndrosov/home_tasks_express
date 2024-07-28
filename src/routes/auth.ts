@@ -23,9 +23,9 @@ export const getAuthRouter = () => {
         validationPassword(),
         inputValidMiddleware,
         async (req: RequestWithBody<LoginCreateModel>, res: Response<ErrorsMessagesType | LoginAccessTokenModel>) => {
-            console.log(req.body, 'login')
+
             const { status, data: userData } = await authService.login(req.body)
-            console.log(status, 'login')
+
             if (status === 'BadRequest')
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
