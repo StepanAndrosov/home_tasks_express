@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { devicesService } from '../features/security/service';
-import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer';
+import { authenticationRefreshMiddleware } from '../middlewares/authentication-refresh';
 import { deviceQRepository } from '../queryRepositories/devicesQRepository';
 import { RequestWithBody } from '../types';
 import { JWTPayload } from '../utils/genJWT';
@@ -10,7 +10,7 @@ import { HTTP_STATUSES } from '../utils/helpers';
 export const getSecurityRouter = () => {
     const router = express.Router()
 
-    router.get('/devices', authenticationBearerMiddleware, async (req: RequestWithBody<JWTPayload>, res: Response) => {
+    router.get('/devices', authenticationRefreshMiddleware, async (req: RequestWithBody<JWTPayload>, res: Response) => {
 
         const devices = await deviceQRepository.getUserDevices(req.body.id)
         res.json(devices)
@@ -18,7 +18,7 @@ export const getSecurityRouter = () => {
     })
 
     router.delete('/devices',
-        authenticationBearerMiddleware,
+        authenticationRefreshMiddleware,
         async (req: RequestWithBody<JWTPayload>, res: Response) => {
 
             const refreshToken = req.cookies.refreshToken
@@ -29,7 +29,7 @@ export const getSecurityRouter = () => {
         })
 
     router.delete('/devices/:deviceId',
-        authenticationBearerMiddleware,
+        authenticationRefreshMiddleware,
         async (req: Request, res: Response) => {
 
             const refreshToken = req.cookies.refreshToken
