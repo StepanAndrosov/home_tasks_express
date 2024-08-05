@@ -63,11 +63,8 @@ export const authService = {
 
         const userDB = await usersQRepository.findUsersByTerm({ _id: new ObjectId(user.id) })
 
-        try {
-            await emailAdapter.sendMail(userDB[0].email, userDB[0].emailConfirmation.confirmationCode)
-        } catch (err) {
-            console.error('Send email error', err);
-        }
+        emailAdapter.sendMail(userDB[0].email, userDB[0].emailConfirmation.confirmationCode)
+            .catch((err) => console.error('Send email error', err))
 
         return {
             status: 'Success'
