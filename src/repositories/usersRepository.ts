@@ -22,7 +22,7 @@ export const usersRepository = {
         await usersCollection.drop()
     },
     async createUser(createData: UserCreateModel) {
-
+        console.log(createData.email, 'createDataUser')
         const passwordHash = await genHash(createData.password)
 
         const newUser = {

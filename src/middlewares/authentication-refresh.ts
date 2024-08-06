@@ -8,8 +8,6 @@ export const authenticationRefreshMiddleware = async (req: Request, res: Respons
 
     const token = req.cookies.refreshToken
 
-    console.log(token)
-
     const isBlackToken = await blackListTokensQRepository.findBlackToken(token)
     if (isBlackToken) {
         // check black list 

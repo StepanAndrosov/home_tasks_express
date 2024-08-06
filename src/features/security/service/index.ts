@@ -1,9 +1,24 @@
-import { deviceQRepository } from "../../../queryRepositories/devicesQRepository"
-import { deviceRepository } from "../../../repositories/devicesRepository"
+import { ObjectId } from "mongodb"
+import { devicesQRepository } from "../../../queryRepositories/devicesQRepository"
+import { devicesRepository } from "../../../repositories/devicesRepository"
 import { Result } from "../../../types"
+import { DeviceCreateModel } from "../models/DeviceCreateModel"
 
 
 export const devicesService = {
+    async createDevice(createData: DeviceCreateModel, userId: ObjectId) {
+        const foundedDevices = await devicesQRepository.findDevicesByOneOfTerms(
+            [
+                { ip: createData.ip },
+                { title: createData.title }
+            ]
+        )
+        if (foundedDevices.length)
+            return
+
+        await devicesRepository.createDevice(createData, userId)
+
+    },
     async deleteDevices(refreshToken: string, userId: string) {
         // find and decode refresh token payload 
         const [_, payload] = refreshToken.split('.')
@@ -11,7 +26,7 @@ export const devicesService = {
 
         const deviceId = JSON.parse(decoded).deviceId as string
 
-        await deviceRepository.deleteDevices(userId, deviceId)
+        await devicesRepository.deleteDevices(userId, deviceId)
 
     },
     async deleteDevice(refreshToken: string, userId: string): Promise<Result<undefined>> {
@@ -21,7 +36,7 @@ export const devicesService = {
 
         const deviceId = JSON.parse(decoded).deviceId as string
 
-        const foundedDevice = await deviceQRepository.findDevice(deviceId)
+        const foundedDevice = await devicesQRepository.findDevice(deviceId)
 
         if (!foundedDevice) {
             return {
@@ -35,7 +50,7 @@ export const devicesService = {
             }
         }
 
-        await deviceRepository.deleteDevice(deviceId)
+        await devicesRepository.deleteDevice(deviceId)
 
         return { status: 'Success' }
     }

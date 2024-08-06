@@ -14,7 +14,7 @@ export const getViewModelDevice = (device: DeviceModel): DeviceViewModel => {
     }
 }
 
-export const deviceRepository = {
+export const devicesRepository = {
     async testDeleteData() {
         await devicesCollection.drop()
     },
@@ -28,6 +28,7 @@ export const deviceRepository = {
             deviceId: randomUUID(),
             userId
         }
+        console.log(newDevice.deviceId, 'deviceId')
         await devicesCollection.insertOne(newDevice)
     },
     async deleteDevices(userId: string, currentDevice: string) {

@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { devicesService } from '../features/security/service';
 import { authenticationRefreshMiddleware } from '../middlewares/authentication-refresh';
-import { deviceQRepository } from '../queryRepositories/devicesQRepository';
+import { devicesQRepository } from '../queryRepositories/devicesQRepository';
 import { RequestWithBody } from '../types';
 import { JWTPayload } from '../utils/genJWT';
 import { HTTP_STATUSES } from '../utils/helpers';
@@ -12,7 +12,7 @@ export const getSecurityRouter = () => {
 
     router.get('/devices', authenticationRefreshMiddleware, async (req: RequestWithBody<JWTPayload>, res: Response) => {
 
-        const devices = await deviceQRepository.getUserDevices(req.body.id)
+        const devices = await devicesQRepository.getUserDevices(req.body.id)
         res.json(devices)
         res.status(HTTP_STATUSES.OK_200)
     })

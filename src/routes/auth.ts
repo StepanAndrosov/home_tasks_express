@@ -15,7 +15,8 @@ import { JWTPayload, genPairJWT } from '../utils/genJWT'
 import { HTTP_STATUSES } from '../utils/helpers'
 import { blackListTokensRepository } from '../repositories/blackListTokensRepository'
 import { customRateLimitMiddleware } from '../middlewares/custom-rate-limit'
-import { deviceRepository } from '../repositories/devicesRepository'
+import { devicesRepository } from '../repositories/devicesRepository'
+import { devicesService } from '../features/security/service'
 
 export const getAuthRouter = () => {
     const router = express.Router()
@@ -38,8 +39,7 @@ export const getAuthRouter = () => {
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
             else {
-
-                await deviceRepository.createDevice({ ip, title: useragent }, userData?._id!)
+                await devicesService.createDevice({ ip, title: useragent }, userData?._id!)
 
                 const { accessToken, refreshToken } = genPairJWT({ id: userData?._id.toString() ?? '', name: userData?.login ?? '' })
 

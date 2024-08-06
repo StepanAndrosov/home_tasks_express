@@ -3,7 +3,7 @@ import { devicesCollection } from "../db/db"
 import { getViewModelDevice } from "../repositories/devicesRepository"
 
 
-export const deviceQRepository = {
+export const devicesQRepository = {
     async getUserDevices(userId: string) {
 
         const devicesData = await devicesCollection.find({ userId: new ObjectId(userId) }).toArray()
@@ -17,5 +17,9 @@ export const deviceQRepository = {
         if (!devicesData) return null;;
 
         return devicesData
-    }
+    },
+    async findDevicesByOneOfTerms(findData: { [term: string]: string }[]) {
+        const usersData = await devicesCollection.find({ $or: findData }).toArray()
+        return usersData
+    },
 }

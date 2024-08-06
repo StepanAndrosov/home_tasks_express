@@ -63,8 +63,8 @@ export const authService = {
 
         const userDB = await usersQRepository.findUsersByTerm({ _id: new ObjectId(user.id) })
 
-        emailAdapter.sendMail(userDB[0].email, userDB[0].emailConfirmation.confirmationCode)
-            .catch((err) => console.error('Send email error', err))
+        // emailAdapter.sendMail(userDB[0].email, userDB[0].emailConfirmation.confirmationCode)
+        //     .catch((err) => console.error('Send email error', err))
 
         return {
             status: 'Success'
@@ -73,7 +73,7 @@ export const authService = {
     async emailResending(resendingData: RegistrationEmailResendingModel): Promise<Result<undefined>> {
 
         const user = await usersQRepository.findUsersByTerm({ email: resendingData.email })
-        console.log(user)
+
         if (!user.length)
             return {
                 status: 'BadRequest',
@@ -97,11 +97,8 @@ export const authService = {
         }
         await usersRepository.updateUserConfirmationData(user[0], newConfirmationData)
 
-        try {
-            await emailAdapter.sendMail(user[0].email, confirmationCode)
-        } catch (err) {
-            console.error('Send email error', err);
-        }
+        // emailAdapter.sendMail(user[0].email, confirmationCode)
+        //     .catch((err) => console.error('Send email error', err))
 
         return {
             status: 'Success'

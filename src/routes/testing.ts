@@ -4,7 +4,7 @@ import { blogsRepository } from '../repositories/blogsRepository'
 import { postsRepository } from '../repositories/postsRepository'
 import { usersRepository } from '../repositories/usersRepository'
 import { commentsRepository } from '../repositories/commentsRepository'
-import { deviceRepository } from '../repositories/devicesRepository'
+import { devicesRepository } from '../repositories/devicesRepository'
 
 
 export const getTestingRouter = () => {
@@ -15,7 +15,7 @@ export const getTestingRouter = () => {
         await postsRepository.testDeleteData()
         await usersRepository.testDeleteData()
         await commentsRepository.testDeleteData()
-        await deviceRepository.testDeleteData()
+        await devicesRepository.testDeleteData()
         res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
     })
 
