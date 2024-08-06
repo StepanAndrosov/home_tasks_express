@@ -34,7 +34,6 @@ export const getAuthRouter = () => {
 
             const useragent = `${req.useragent?.browser} ${req.useragent?.version}`
 
-
             if (status === 'BadRequest')
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
@@ -78,8 +77,10 @@ export const getAuthRouter = () => {
                 })
                 return
             }
-            if (registreationData.status === 'Success')
+            if (registreationData.status === 'Success') {
                 res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+                return
+            }
         })
 
     router.post('/registration-email-resending',
@@ -94,8 +95,10 @@ export const getAuthRouter = () => {
                 })
                 return
             }
-            if (registreationData.status === 'Success')
+            if (registreationData.status === 'Success') {
                 res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+                return
+            }
         })
 
     router.post('/registration-confirmation',
@@ -109,8 +112,10 @@ export const getAuthRouter = () => {
                 })
                 return
             }
-            if (registreationData.status === 'Success')
+            if (registreationData.status === 'Success') {
                 res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+                return
+            }
         })
 
     router.post('/refresh-token',
@@ -127,12 +132,14 @@ export const getAuthRouter = () => {
             if (status === 'BadRequest') {
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+                return
             } else {
                 const { accessToken, refreshToken } = genPairJWT({ id: userData?._id.toString() ?? '', name: userData?.login ?? '' })
 
                 res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, })
                 res.json({ accessToken: accessToken })
                 res.status(HTTP_STATUSES.NO_CONTEND_204)
+                return
             }
         })
 
@@ -145,6 +152,7 @@ export const getAuthRouter = () => {
                 await blackListTokensRepository.createBlackToken(token)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+            return
         })
 
     return router

@@ -9,7 +9,6 @@ export const devicesService = {
     async createDevice(createData: DeviceCreateModel, userId: ObjectId) {
         const foundedDevices = await devicesQRepository.findDevicesByOneOfTerms(
             [
-                { ip: createData.ip },
                 { title: createData.title }
             ]
         )
