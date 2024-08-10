@@ -17,6 +17,7 @@ import { blackListTokensRepository } from '../repositories/blackListTokensReposi
 import { customRateLimitMiddleware } from '../middlewares/custom-rate-limit'
 import { devicesRepository } from '../repositories/devicesRepository'
 import { devicesService } from '../features/security/service'
+import { randomUUID } from 'crypto'
 
 export const getAuthRouter = () => {
     const router = express.Router()
@@ -38,9 +39,10 @@ export const getAuthRouter = () => {
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
             else {
-                await devicesService.createDevice({ ip, title: useragent }, userData?._id!)
+                const deviceId = randomUUID()
+                await devicesService.createDevice({ ip, title: useragent }, userData?._id!, deviceId)
 
-                const { accessToken, refreshToken } = genPairJWT({ id: userData?._id.toString() ?? '', name: userData?.login ?? '' })
+                const { accessToken, refreshToken } = genPairJWT({ id: userData?._id.toString() ?? '', name: userData?.login ?? '' }, deviceId)
 
                 res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, })
                 res.json({ accessToken: accessToken })
@@ -124,6 +126,10 @@ export const getAuthRouter = () => {
             const headerAccessToken = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
 
             const cookieToken = req.cookies.refreshToken
+
+            const { deviceId } = JSON.parse(Buffer.from(cookieToken.split('.')[1], 'base64').toString())
+
+            console.log(deviceId, 'deviceId')
             if (cookieToken)
                 await blackListTokensRepository.createBlackToken(cookieToken)
 
@@ -134,7 +140,7 @@ export const getAuthRouter = () => {
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
                 return
             } else {
-                const { accessToken, refreshToken } = genPairJWT({ id: userData?._id.toString() ?? '', name: userData?.login ?? '' })
+                const { accessToken, refreshToken } = genPairJWT({ id: userData?._id.toString() ?? '', name: userData?.login ?? '' }, deviceId)
 
                 res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, })
                 res.json({ accessToken: accessToken })
@@ -147,9 +153,11 @@ export const getAuthRouter = () => {
         authenticationRefreshMiddleware,
         async (req: RequestWithBody<JWTPayload>, res: Response) => {
 
-            const token = req.cookies.refreshToken
-            if (token)
-                await blackListTokensRepository.createBlackToken(token)
+            const cookieToken = req.cookies.refreshToken
+            const { deviceId } = JSON.parse(Buffer.from(cookieToken.split('.')[1], 'base64').toString())
+            await devicesRepository.deleteDevice(deviceId)
+            if (cookieToken)
+                await blackListTokensRepository.createBlackToken(cookieToken)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
             return

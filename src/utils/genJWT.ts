@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto'
 import jwt from 'jsonwebtoken'
 
 export interface JWTPayload {
@@ -20,6 +19,7 @@ export const genJWT = (
 
 export const genPairJWT = (
     newUser: { id: string, name: string },
+    deviceId: string,
     expiresInAccess: string | number | undefined = process.env.JWT_EXPIRES_IN,
     expiresInRefresh: string | number | undefined = process.env.JWT_REFRESH_EXPIRES_IN,
     secret: string | undefined = process.env.JWT_SECRET
@@ -27,7 +27,7 @@ export const genPairJWT = (
     const accessToken = jwt.sign({ id: newUser.id, name: newUser.name, iat: Date.now() }, secret ?? '123456', {
         expiresIn: Number(expiresInAccess)
     });
-    const refreshToken = jwt.sign({ id: newUser.id, name: newUser.name, iat: Date.now(), deviceId: randomUUID() }, secret ?? '123456', {
+    const refreshToken = jwt.sign({ id: newUser.id, name: newUser.name, iat: Date.now(), deviceId }, secret ?? '123456', {
         expiresIn: Number(expiresInRefresh)
     });
 

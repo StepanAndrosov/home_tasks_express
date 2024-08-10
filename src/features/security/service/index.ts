@@ -6,7 +6,7 @@ import { DeviceCreateModel } from "../models/DeviceCreateModel"
 
 
 export const devicesService = {
-    async createDevice(createData: DeviceCreateModel, userId: ObjectId) {
+    async createDevice(createData: DeviceCreateModel, userId: ObjectId, deviceId: string) {
         const foundedDevices = await devicesQRepository.findDevicesByOneOfTerms(
             [
                 { title: createData.title }
@@ -15,7 +15,7 @@ export const devicesService = {
         if (foundedDevices.length)
             return
 
-        await devicesRepository.createDevice(createData, userId)
+        await devicesRepository.createDevice(createData, userId, deviceId)
 
     },
     async deleteDevices(refreshToken: string, userId: string) {
