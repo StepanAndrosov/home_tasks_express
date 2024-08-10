@@ -35,21 +35,23 @@ export const devicesService = {
 
         const deviceId = JSON.parse(decoded).deviceId as string
 
-        const foundedDevice = await devicesQRepository.findDevice(deviceId)
+        const foundedDevice = await devicesQRepository.findDevicesByOneOfTerms([
+            { deviceId }
+        ])
 
-        if (!foundedDevice) {
+        if (!foundedDevice[0]) {
             return {
                 status: 'BadRequest'
             }
         }
 
-        if (foundedDevice.userId.toString() !== userId) {
+        if (foundedDevice[0].userId.toString() !== userId) {
             return {
                 status: 'Forbidden'
             }
         }
 
-        await devicesRepository.deleteDevice(deviceId)
+        await devicesRepository.deleteDevice(foundedDevice[0]._id.toString())
 
         return { status: 'Success' }
     }

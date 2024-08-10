@@ -26,6 +26,7 @@ export const getSecurityRouter = () => {
             await devicesService.deleteDevices(refreshToken, req.body.id)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+            return
         })
 
     router.delete('/devices/:deviceId',
@@ -36,12 +37,18 @@ export const getSecurityRouter = () => {
 
             const { status } = await devicesService.deleteDevice(refreshToken, req.body.id)
 
-            if (status === 'BadRequest')
+            if (status === 'BadRequest') {
                 res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
-            if (status === 'Forbidden')
+                return
+            }
+            if (status === 'Forbidden') {
                 res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
-            else
+                return
+            }
+            else {
                 res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+                return
+            }
         })
 
 

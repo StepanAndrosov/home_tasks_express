@@ -154,8 +154,8 @@ export const getAuthRouter = () => {
         async (req: RequestWithBody<JWTPayload>, res: Response) => {
 
             const cookieToken = req.cookies.refreshToken
-            const { deviceId } = JSON.parse(Buffer.from(cookieToken.split('.')[1], 'base64').toString())
-            await devicesRepository.deleteDevice(deviceId)
+
+            await devicesService.deleteDevice(cookieToken, req.body.id)
             if (cookieToken)
                 await blackListTokensRepository.createBlackToken(cookieToken)
 
