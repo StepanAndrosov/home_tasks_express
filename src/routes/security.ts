@@ -4,7 +4,8 @@ import { authenticationRefreshMiddleware } from '../middlewares/authentication-r
 import { devicesQRepository } from '../queryRepositories/devicesQRepository';
 import { RequestWithBody } from '../types';
 import { JWTPayload } from '../utils/genJWT';
-import { HTTP_STATUSES } from '../utils/helpers';
+import { getDeviceIdByToken, HTTP_STATUSES } from '../utils/helpers';
+import { blackListTokensRepository } from '../repositories/blackListTokensRepository';
 
 
 export const getSecurityRouter = () => {
@@ -32,13 +33,15 @@ export const getSecurityRouter = () => {
     router.delete('/devices/:deviceId',
         authenticationRefreshMiddleware,
         async (req: Request, res: Response) => {
-
             const refreshToken = req.cookies.refreshToken
+            const { deviceId } = getDeviceIdByToken(refreshToken)
+            if (deviceId)
+                await blackListTokensRepository.createBlackToken(deviceId)
 
-            const { status } = await devicesService.deleteDevice(refreshToken, req.body.id)
+            const { status } = await devicesService.deleteDevice(req.params.deviceId, req.body.id)
 
             if (status === 'BadRequest') {
-                res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
             if (status === 'Forbidden') {

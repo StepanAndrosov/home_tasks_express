@@ -19,7 +19,11 @@ export const devicesQRepository = {
         return devicesData
     },
     async findDevicesByOneOfTerms(findData: { [term: string]: string }[]) {
-        const usersData = await devicesCollection.find({ $or: findData }).toArray()
-        return usersData
+        const devicesData = await devicesCollection.find({ $or: findData }).toArray()
+        return devicesData
+    },
+    async findDevicesBySeveralTerms(findData: { [term: string]: string | ObjectId }[]) {
+        const devicesData = await devicesCollection.find({ $and: findData }).toArray()
+        return devicesData
     },
 }

@@ -6,18 +6,16 @@ import { RegistrationCreateModel } from '../features/auth/models/RegistrationCre
 import { RegistrationEmailResendingModel } from '../features/auth/models/RegistrationEmailResendingModel'
 import { authService } from '../features/auth/service'
 import { validationEmail, validationLogin, validationLoginOrEmail, validationPassword } from '../features/auth/validations'
+import { devicesService } from '../features/security/service'
 import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer'
 import { authenticationRefreshMiddleware } from '../middlewares/authentication-refresh'
+import { customRateLimitMiddleware } from '../middlewares/custom-rate-limit'
 import { inputValidMiddleware } from '../middlewares/input-valid'
 import { usersQRepository } from '../queryRepositories/usersQRepository'
-import { ErrorsMessagesType, RequestWithBody } from '../types'
-import { JWTPayload, genPairJWT } from '../utils/genJWT'
-import { HTTP_STATUSES } from '../utils/helpers'
 import { blackListTokensRepository } from '../repositories/blackListTokensRepository'
-import { customRateLimitMiddleware } from '../middlewares/custom-rate-limit'
-import { devicesRepository } from '../repositories/devicesRepository'
-import { devicesService } from '../features/security/service'
-import { randomUUID } from 'crypto'
+import { ErrorsMessagesType, RequestWithBody } from '../types'
+import { genPairJWT, JWTPayload } from '../utils/genJWT'
+import { getDeviceIdByToken, HTTP_STATUSES } from '../utils/helpers'
 
 export const getAuthRouter = () => {
     const router = express.Router()
@@ -35,12 +33,13 @@ export const getAuthRouter = () => {
 
             const useragent = `${req.useragent?.browser} ${req.useragent?.version}`
 
+            const cookieToken = req.cookies.refreshToken
+
             if (status === 'BadRequest')
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
             else {
-                const deviceId = randomUUID()
-                await devicesService.createDevice({ ip, title: useragent }, userData?._id!, deviceId)
+                const { deviceId } = await devicesService.createDevice({ ip, title: useragent }, userData?._id!, cookieToken)
 
                 const { accessToken, refreshToken } = genPairJWT({ id: userData?._id.toString() ?? '', name: userData?.login ?? '' }, deviceId)
 
@@ -155,9 +154,11 @@ export const getAuthRouter = () => {
 
             const cookieToken = req.cookies.refreshToken
 
-            await devicesService.deleteDevice(cookieToken, req.body.id)
-            if (cookieToken)
-                await blackListTokensRepository.createBlackToken(cookieToken)
+            const { deviceId } = getDeviceIdByToken(cookieToken)
+
+            await devicesService.deleteDevice(deviceId, req.body.id)
+            if (deviceId)
+                await blackListTokensRepository.createBlackToken(deviceId)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
             return
