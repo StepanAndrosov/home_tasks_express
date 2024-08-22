@@ -141,8 +141,9 @@ export const authService = {
             status: 'Success'
         }
     },
-    async refreshToken(token: string, jwtPayload: JWTPayload): Promise<Result<UserModel>> {
-        await blackListTokensRepository.createBlackToken(token)
+    async refreshToken(jwtPayload: JWTPayload): Promise<Result<UserModel>> {
+        // if(token)
+        // await blackListTokensRepository.createBlackToken(token)
 
         const userData = await usersQRepository.findUsersByTerm({ _id: new ObjectId(jwtPayload.id) })
 

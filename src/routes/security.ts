@@ -4,7 +4,7 @@ import { authenticationRefreshMiddleware } from '../middlewares/authentication-r
 import { devicesQRepository } from '../queryRepositories/devicesQRepository';
 import { RequestWithBody } from '../types';
 import { JWTPayload } from '../utils/genJWT';
-import { getDeviceIdByToken, HTTP_STATUSES } from '../utils/helpers';
+import { getDeviceInfoByToken, HTTP_STATUSES } from '../utils/helpers';
 import { blackListTokensRepository } from '../repositories/blackListTokensRepository';
 
 
@@ -34,7 +34,7 @@ export const getSecurityRouter = () => {
         authenticationRefreshMiddleware,
         async (req: Request, res: Response) => {
             const refreshToken = req.cookies.refreshToken
-            const { deviceId } = getDeviceIdByToken(refreshToken)
+            const { deviceId } = getDeviceInfoByToken(refreshToken)
             if (deviceId)
                 await blackListTokensRepository.createBlackToken(deviceId)
 

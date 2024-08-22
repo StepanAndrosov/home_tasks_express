@@ -15,7 +15,7 @@ import { usersQRepository } from '../queryRepositories/usersQRepository'
 import { blackListTokensRepository } from '../repositories/blackListTokensRepository'
 import { ErrorsMessagesType, RequestWithBody } from '../types'
 import { genPairJWT, JWTPayload } from '../utils/genJWT'
-import { getDeviceIdByToken, HTTP_STATUSES } from '../utils/helpers'
+import { getDeviceInfoByToken, HTTP_STATUSES } from '../utils/helpers'
 
 export const getAuthRouter = () => {
     const router = express.Router()
@@ -39,7 +39,7 @@ export const getAuthRouter = () => {
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
             else {
-                const { deviceId } = await devicesService.createDevice({ ip, title: useragent }, userData?._id!, cookieToken)
+                const { deviceId } = await devicesService.createDevice({ ip, title: useragent }, userData?._id.toString() ?? '', cookieToken)
 
                 const { accessToken, refreshToken } = genPairJWT({ id: userData?._id.toString() ?? '', name: userData?.login ?? '' }, deviceId)
 
@@ -122,17 +122,17 @@ export const getAuthRouter = () => {
     router.post('/refresh-token',
         authenticationRefreshMiddleware,
         async (req: RequestWithBody<JWTPayload>, res: Response<ErrorsMessagesType | LoginAccessTokenModel>) => {
-            const headerAccessToken = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
+            // const headerAccessToken = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
 
             const cookieToken = req.cookies.refreshToken
 
-            const { deviceId } = JSON.parse(Buffer.from(cookieToken.split('.')[1], 'base64').toString())
+            const { deviceId } = getDeviceInfoByToken(cookieToken)
 
             console.log(deviceId, 'deviceId')
-            if (cookieToken)
-                await blackListTokensRepository.createBlackToken(cookieToken)
+            // if (cookieToken)
+            //     await blackListTokensRepository.createBlackToken(cookieToken)
 
-            const { status, data: userData } = await authService.refreshToken(headerAccessToken, req.body)
+            const { status, data: userData } = await authService.refreshToken(req.body)
             console.log(status)
             if (status === 'BadRequest') {
                 res
@@ -154,11 +154,9 @@ export const getAuthRouter = () => {
 
             const cookieToken = req.cookies.refreshToken
 
-            const { deviceId } = getDeviceIdByToken(cookieToken)
+            const { deviceId } = getDeviceInfoByToken(cookieToken)
 
             await devicesService.deleteDevice(deviceId, req.body.id)
-            if (deviceId)
-                await blackListTokensRepository.createBlackToken(deviceId)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
             return

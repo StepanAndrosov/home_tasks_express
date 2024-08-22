@@ -6,7 +6,7 @@ import { getViewModelDevice } from "../repositories/devicesRepository"
 export const devicesQRepository = {
     async getUserDevices(userId: string) {
 
-        const devicesData = await devicesCollection.find({ userId: new ObjectId(userId) }).toArray()
+        const devicesData = await devicesCollection.find({ userId }).toArray()
 
         return devicesData.map((d) => getViewModelDevice(d))
     },

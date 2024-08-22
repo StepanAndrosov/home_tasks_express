@@ -55,7 +55,7 @@ export type SanitizedUsersQuery = ReturnType<typeof sanitizeUsersQuery>
  * @refreshTokeh 
  * is stored in cookies and has a deviceId in payload
  */
-export const getDeviceIdByToken = (refreshToken?: string) => {
+export const getDeviceInfoByToken = (refreshToken?: string) => {
     if (!refreshToken) return {
         deviceId: ''
     }
@@ -64,9 +64,13 @@ export const getDeviceIdByToken = (refreshToken?: string) => {
     const decoded = Buffer.from(payload, 'base64').toString()
 
     const deviceId = JSON.parse(decoded).deviceId as string
+    const lastActiveDate = JSON.parse(decoded).lastActiveDate as string
+    const userId = JSON.parse(decoded).userId as string
 
     return {
-        deviceId
+        deviceId,
+        lastActiveDate,
+        userId
     }
 }
 

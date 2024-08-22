@@ -1,19 +1,16 @@
 
 import { NextFunction, Request, Response } from "express"
-import { getDeviceIdByToken, HTTP_STATUSES } from "../utils/helpers"
-import { JWTPayload, verifyJWT } from "../utils/genJWT"
 import { blackListTokensQRepository } from "../queryRepositories/blackListTokensQRepository"
+import { JWTPayload, verifyJWT } from "../utils/genJWT"
+import { HTTP_STATUSES } from "../utils/helpers"
 
 export const authenticationRefreshMiddleware = async (req: Request, res: Response<JWTPayload>, next: NextFunction) => {
 
     const token = req.cookies.refreshToken
 
-    const { deviceId } = getDeviceIdByToken(token)
-
-    const isBlackToken = await blackListTokensQRepository.findBlackToken(deviceId)
+    const isBlackToken = await blackListTokensQRepository.findBlackToken(token)
     if (isBlackToken) {
-        // check black list 
-        console.log('deviceId blacklisted')
+        console.log('token blacklisted')
         res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
         return
     }

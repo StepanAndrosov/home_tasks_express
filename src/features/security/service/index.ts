@@ -1,23 +1,25 @@
-import { ObjectId } from "mongodb"
 import { devicesQRepository } from "../../../queryRepositories/devicesQRepository"
 import { devicesRepository } from "../../../repositories/devicesRepository"
 import { Result } from "../../../types"
 import { DeviceCreateModel } from "../models/DeviceCreateModel"
 import { randomUUID } from "crypto"
-import { getDeviceIdByToken } from "../../../utils/helpers"
+import { getDeviceInfoByToken } from "../../../utils/helpers"
 
 
 export const devicesService = {
-    async createDevice(createData: DeviceCreateModel, userId: ObjectId, refreshToken?: string) {
+    async createDevice(createData: DeviceCreateModel, userId: string, refreshToken?: string) {
+
+        const { lastActiveDate } = getDeviceInfoByToken(refreshToken)
 
         const foundedDevices = await devicesQRepository.findDevicesBySeveralTerms(
             [
                 { userId },
-                { title: createData.title },
-                { ip: createData.ip },
+                { lastActiveDate: lastActiveDate ?? '' },
+
             ]
         )
         if (foundedDevices.length && refreshToken) {
+            await devicesRepository.updateLastActiveDevice(foundedDevices[0])
             return {
                 deviceId: foundedDevices[0].deviceId
             }
@@ -32,7 +34,7 @@ export const devicesService = {
     },
     async deleteDevices(refreshToken: string, userId: string) {
 
-        const { deviceId } = getDeviceIdByToken(refreshToken)
+        const { deviceId } = getDeviceInfoByToken(refreshToken)
 
         await devicesRepository.deleteDevices(userId, deviceId)
 
