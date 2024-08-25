@@ -26,7 +26,7 @@ export const getAuthRouter = () => {
         validationPassword(),
         inputValidMiddleware,
         async (req: RequestWithBody<LoginCreateModel>, res: Response<ErrorsMessagesType | LoginAccessTokenModel>) => {
-
+            console.log('/login ====================>')
             const { status, data: userData } = await authService.login(req.body)
 
             const ip = req.headers['x-forwarded-for'] as string || req.socket.remoteAddress as string
@@ -69,6 +69,7 @@ export const getAuthRouter = () => {
         validationPassword(),
         inputValidMiddleware,
         async (req: RequestWithBody<RegistrationCreateModel>, res: Response<ErrorsMessagesType>) => {
+            console.log('/registration ====================>')
             const registreationData = await authService.registration(req.body)
             if (registreationData.status === 'BadRequest') {
                 res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
@@ -87,6 +88,7 @@ export const getAuthRouter = () => {
         validationEmail(),
         inputValidMiddleware,
         async (req: RequestWithBody<RegistrationEmailResendingModel>, res: Response<ErrorsMessagesType>) => {
+            console.log('/registration-email-resending ====================>')
             const registreationData = await authService.emailResending(req.body)
             if (registreationData.status === 'BadRequest') {
                 res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
@@ -104,6 +106,7 @@ export const getAuthRouter = () => {
         authenticationBearerMiddleware,
         customRateLimitMiddleware,
         async (req: Request, res: Response<ErrorsMessagesType>) => {
+            console.log('/registration-confirmation ====================>')
             const registreationData = await authService.confirmation(req.body)
             if (registreationData.status === 'BadRequest') {
                 res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
@@ -150,6 +153,7 @@ export const getAuthRouter = () => {
         async (req: RequestWithBody<JWTPayload>, res: Response) => {
 
             const cookieToken = req.cookies.refreshToken
+            await blackListTokensRepository.createBlackToken(cookieToken)
 
             const { deviceId } = getDeviceInfoByToken(cookieToken)
 

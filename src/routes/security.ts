@@ -4,8 +4,7 @@ import { authenticationRefreshMiddleware } from '../middlewares/authentication-r
 import { devicesQRepository } from '../queryRepositories/devicesQRepository';
 import { RequestWithBody } from '../types';
 import { JWTPayload } from '../utils/genJWT';
-import { getDeviceInfoByToken, HTTP_STATUSES } from '../utils/helpers';
-import { blackListTokensRepository } from '../repositories/blackListTokensRepository';
+import { HTTP_STATUSES } from '../utils/helpers';
 
 
 export const getSecurityRouter = () => {
@@ -33,10 +32,6 @@ export const getSecurityRouter = () => {
     router.delete('/devices/:deviceId',
         authenticationRefreshMiddleware,
         async (req: Request, res: Response) => {
-            const refreshToken = req.cookies.refreshToken
-            const { deviceId } = getDeviceInfoByToken(refreshToken)
-            if (deviceId)
-                await blackListTokensRepository.createBlackToken(deviceId)
 
             const { status } = await devicesService.deleteDevice(req.params.deviceId, req.body.id)
 

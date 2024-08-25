@@ -4,6 +4,9 @@ import { customRateCollection } from "../db/db"
 import { CustomRateCreateModel } from "../features/security/models/CustomRateCreateModel"
 
 export const customRateRepository = {
+    async testDeleteData() {
+        await customRateCollection.drop()
+    },
     async createCustomRate(customRateData: CustomRateCreateModel) {
         const newCustomRate = {
             _id: new ObjectId(),

@@ -5,6 +5,8 @@ import { postsRepository } from '../repositories/postsRepository'
 import { usersRepository } from '../repositories/usersRepository'
 import { commentsRepository } from '../repositories/commentsRepository'
 import { devicesRepository } from '../repositories/devicesRepository'
+import { blackListTokensRepository } from '../repositories/blackListTokensRepository'
+import { customRateRepository } from '../repositories/customRateRepository'
 
 
 export const getTestingRouter = () => {
@@ -16,6 +18,8 @@ export const getTestingRouter = () => {
         await usersRepository.testDeleteData()
         await commentsRepository.testDeleteData()
         await devicesRepository.testDeleteData()
+        await blackListTokensRepository.testDeleteData()
+        await customRateRepository.testDeleteData()
         res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
     })
 

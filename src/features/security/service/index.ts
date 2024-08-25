@@ -9,15 +9,16 @@ import { getDeviceInfoByToken } from "../../../utils/helpers"
 export const devicesService = {
     async createDevice(createData: DeviceCreateModel, userId: string, refreshToken?: string) {
 
-        const { lastActiveDate } = getDeviceInfoByToken(refreshToken)
+        const { deviceId } = getDeviceInfoByToken(refreshToken)
 
         const foundedDevices = await devicesQRepository.findDevicesBySeveralTerms(
             [
                 { userId },
-                { lastActiveDate: lastActiveDate ?? '' },
+                { deviceId },
 
             ]
         )
+
         if (foundedDevices.length && refreshToken) {
             await devicesRepository.updateLastActiveDevice(foundedDevices[0])
             return {
@@ -26,7 +27,7 @@ export const devicesService = {
         } else {
             const deviceId = randomUUID()
             await devicesRepository.createDevice(createData, userId, deviceId)
-
+            console.log(deviceId, 'create device')
             return {
                 deviceId
             }
@@ -44,23 +45,17 @@ export const devicesService = {
         const foundedDevice = await devicesQRepository.findDevicesByOneOfTerms([
             { deviceId }
         ])
-
-
         if (!foundedDevice[0]) {
             return {
                 status: 'BadRequest'
             }
         }
-
         console.log(foundedDevice[0].deviceId, 'deleteDevice')
-
-
         if (foundedDevice[0].userId.toString() !== userId) {
             return {
                 status: 'Forbidden'
             }
         }
-
         await devicesRepository.deleteDevice(foundedDevice[0]._id.toString())
 
         return { status: 'Success' }
