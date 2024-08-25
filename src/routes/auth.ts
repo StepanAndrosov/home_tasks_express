@@ -30,9 +30,7 @@ export const getAuthRouter = () => {
             const { status, data: userData } = await authService.login(req.body)
 
             const ip = req.headers['x-forwarded-for'] as string || req.socket.remoteAddress as string
-
             const useragent = `${req.useragent?.browser} ${req.useragent?.version}`
-
             const cookieToken = req.cookies.refreshToken
 
             if (status === 'BadRequest')
@@ -123,22 +121,21 @@ export const getAuthRouter = () => {
         authenticationRefreshMiddleware,
         async (req: RequestWithBody<JWTPayload>, res: Response<ErrorsMessagesType | LoginAccessTokenModel>) => {
             // const headerAccessToken = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
-
+            const ip = req.headers['x-forwarded-for'] as string || req.socket.remoteAddress as string
+            const useragent = `${req.useragent?.browser} ${req.useragent?.version}`
             const cookieToken = req.cookies.refreshToken
 
-            const { deviceId } = getDeviceInfoByToken(cookieToken)
+            if (cookieToken)
+                await blackListTokensRepository.createBlackToken(cookieToken)
 
-            console.log(deviceId, 'deviceId')
-            // if (cookieToken)
-            //     await blackListTokensRepository.createBlackToken(cookieToken)
-
-            const { status, data: userData } = await authService.refreshToken(req.body)
+            const { status, data: userData } = await authService.checkUser(req.body)
             console.log(status)
             if (status === 'BadRequest') {
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
                 return
             } else {
+                const { deviceId } = await devicesService.createDevice({ ip, title: useragent }, userData?._id.toString() ?? '', cookieToken)
                 const { accessToken, refreshToken } = genPairJWT({ id: userData?._id.toString() ?? '', name: userData?.login ?? '' }, deviceId)
 
                 res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, })

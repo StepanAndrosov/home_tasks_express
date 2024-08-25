@@ -141,7 +141,7 @@ export const authService = {
             status: 'Success'
         }
     },
-    async refreshToken(jwtPayload: JWTPayload): Promise<Result<UserModel>> {
+    async checkUser(jwtPayload: JWTPayload): Promise<Result<UserModel>> {
         // if(token)
         // await blackListTokensRepository.createBlackToken(token)
 

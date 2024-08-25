@@ -19,6 +19,7 @@ export const authenticationRefreshMiddleware = async (req: Request, res: Respons
 
     // Verify token is set and correct
     if (decoded?.exp! < Date.now()) {
+        console.log('token expired')
         res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
         return
     }
