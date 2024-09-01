@@ -103,7 +103,6 @@ export const getAuthRouter = () => {
         })
 
     router.post('/registration-confirmation',
-        authenticationBearerMiddleware,
         customRateLimitMiddleware,
         async (req: Request, res: Response<ErrorsMessagesType>) => {
             console.log('/registration-confirmation ====================>')
