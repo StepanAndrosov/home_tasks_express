@@ -24,4 +24,4 @@ interface Blog {
     isMembership: boolean
 }
 
-export type BlogModel = WithId<Blog>
+export type IBlogModel = WithId<Blog>

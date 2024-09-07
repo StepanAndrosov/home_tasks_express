@@ -1,6 +1,7 @@
 import { Collection, MongoClient } from "mongodb";
+import mongoose from 'mongoose'
 
-import { BlogModel } from "../features/blogs/models/BlogModel";
+import { IBlogModel } from "../features/blogs/models/IBlogModel";
 import { PostModel } from "../features/posts/models/PostModel";
 import { UserModel } from "../features/users/models/UserModel";
 import { CommentModel } from "../features/comments/models/CommentModel";
@@ -10,7 +11,7 @@ import { CustomRateModel } from "../features/security/models/CustomRateModel";
 
 let client = {} as MongoClient
 
-export let blogsCollection = {} as Collection<BlogModel>
+export let blogsCollection = {} as Collection<IBlogModel>
 export let postsCollection = {} as Collection<PostModel>
 export let usersCollection = {} as Collection<UserModel>
 export let commentsCollection = {} as Collection<CommentModel>
@@ -23,9 +24,13 @@ export const db = {
 
     async run(MONGO_URL: string) {
         try {
+            await mongoose.connect(MONGO_URL)
+            console.log('✅ It is ok')
+
+            // ==========================================================
             client = new MongoClient(MONGO_URL)
 
-            blogsCollection = client.db().collection<BlogModel>('blogs')
+            blogsCollection = client.db().collection<IBlogModel>('blogs')
             postsCollection = client.db().collection<PostModel>('posts')
             usersCollection = client.db().collection<UserModel>('users')
             commentsCollection = client.db().collection<CommentModel>('comments')
@@ -39,6 +44,9 @@ export const db = {
         } catch (e) {
             console.log('❌ Unsuccessfully connected to server')
             await client.close()
+
+            console.log('❌  No connection')
+            await mongoose.disconnect()
             return false
         }
     },

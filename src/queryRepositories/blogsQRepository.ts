@@ -1,11 +1,11 @@
 
 import { ObjectId } from "mongodb";
-import { blogsCollection, postsCollection } from "../db/db";
+import { postsCollection } from "../db/db";
+import { BlogModel } from "../features/blogs/domain/blog.entity";
 import { BlogIdPostsPaginateModel } from "../features/blogs/models/BlogIdPostsPaginateModel";
 import { getViewModelBlog } from "../repositories/blogsRepository";
 import { getViewModelPost } from "../repositories/postsRepository";
 import { SanitizedQuery } from "../utils/helpers";
-
 
 export const blogsQRepository = {
     async getBlogs(query: SanitizedQuery) {
@@ -18,14 +18,12 @@ export const blogsQRepository = {
 
         const skip = (query.pageNumber - 1) * query.pageSize
 
-        const blogsData = await blogsCollection.find(filter)
-            .sort(query.sortBy, query.sortDirection)
+        const blogsData = await BlogModel.find(filter)
+            // .sort(query.sortBy, query.sortDirection)  !TODO realize sort by name and sort direction
             .skip(skip)
             .limit(query.pageSize)
-            .toArray()
 
-
-        const totalCount = await blogsCollection.countDocuments(filter)
+        const totalCount = await BlogModel.countDocuments(filter)
         const pagesCount = Math.ceil(totalCount / query.pageSize)
 
         return {
@@ -37,7 +35,7 @@ export const blogsQRepository = {
         }
     },
     async findBlog(id: string) {
-        const blogData = await blogsCollection.findOne({ _id: new ObjectId(id) })
+        const blogData = await BlogModel.findOne({ _id: new ObjectId(id) })
         if (!blogData) return null
         return getViewModelBlog(blogData)
     },

@@ -1,14 +1,14 @@
 import { ObjectId } from "mongodb";
 import { blogsCollection, postsCollection } from "../db/db";
 import { BlogCreateModel } from "../features/blogs/models/BlogCreateModel";
-import { BlogModel } from "../features/blogs/models/BlogModel";
+import { IBlogModel } from "../features/blogs/models/IBlogModel";
 import { BlogUpdateModel } from "../features/blogs/models/BlogUpdateModel";
 import { BlogViewModel } from "../features/blogs/models/BlogViewModel";
 import { BlogIdPostCreateModel } from "../features/blogs/models/BlogIdPostCreateModel";
 import { getViewModelPost } from "./postsRepository";
 
 
-export const getViewModelBlog = (blog: BlogModel): BlogViewModel => {
+export const getViewModelBlog = (blog: IBlogModel): BlogViewModel => {
     return {
         id: blog._id.toString(),
         name: blog.name,
@@ -19,7 +19,7 @@ export const getViewModelBlog = (blog: BlogModel): BlogViewModel => {
     }
 }
 
-const getModelBlog = (blog: BlogViewModel): BlogModel => {
+const getModelBlog = (blog: BlogViewModel): IBlogModel => {
     return {
         _id: new ObjectId(blog.id),
         name: blog.name,
@@ -65,13 +65,13 @@ export const blogsRepository = {
     },
     async updateBlog(foundBlog: BlogViewModel, updateData: BlogUpdateModel) {
 
-        const foundBlogModel = getModelBlog(foundBlog)
+        const foundIBlogModel = getModelBlog(foundBlog)
 
         const newBlog = {
-            ...foundBlogModel,
+            ...foundIBlogModel,
             ...updateData
         }
-        await blogsCollection.updateOne({ _id: foundBlogModel._id }, { $set: newBlog })
+        await blogsCollection.updateOne({ _id: foundIBlogModel._id }, { $set: newBlog })
     },
     async deleteBlog(id: string) {
         await blogsCollection.deleteOne({ _id: new ObjectId(id) })
