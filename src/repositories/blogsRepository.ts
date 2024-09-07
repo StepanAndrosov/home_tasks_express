@@ -1,30 +1,13 @@
 import { ObjectId } from "mongodb";
-import { blogsCollection, postsCollection } from "../db/db";
-import { BlogCreateModel } from "../features/blogs/models/BlogCreateModel";
-import { IBlogModel } from "../features/blogs/models/IBlogModel";
-import { BlogUpdateModel } from "../features/blogs/models/BlogUpdateModel";
 import { BlogViewModel } from "../features/blogs/models/BlogViewModel";
-import { BlogIdPostCreateModel } from "../features/blogs/models/BlogIdPostCreateModel";
+import { IBlogModel } from "../features/blogs/models/IBlogModel";
 import { getViewModelPost } from "./postsRepository";
-import { BlogModel } from "../features/blogs/domain/blog.entity";
-import { CreateBlogDto } from "../features/blogs/domain/createBlogDto";
-import { UpdateBlogDto } from "../features/blogs/domain/updateBlogDto";
-
+import { CreatePostDto, PostModel } from "../features/posts/domain";
+import { CreateBlogDto, UpdateBlogDto, BlogModel } from "../features/blogs/domain";
 
 export const getViewModelBlog = (blog: IBlogModel): BlogViewModel => {
     return {
         id: blog._id.toString(),
-        name: blog.name,
-        description: blog.description,
-        websiteUrl: blog.websiteUrl,
-        createdAt: blog.createdAt,
-        isMembership: blog.isMembership
-    }
-}
-
-const getModelBlog = (blog: BlogViewModel): IBlogModel => {
-    return {
-        _id: new ObjectId(blog.id),
         name: blog.name,
         description: blog.description,
         websiteUrl: blog.websiteUrl,
@@ -44,18 +27,10 @@ export const blogsRepository = {
 
         return getViewModelBlog(newBlog)
     },
-    async createBlogIdPosts(blogId: string, body: BlogIdPostCreateModel, blogName: string) {
-        const newPost = {
-            _id: new ObjectId(),
-            title: body.title,
-            shortDescription: body.shortDescription,
-            content: body.content,
-            blogId,
-            blogName,
-            createdAt: new Date(Date.now()).toISOString()
-        }
+    async createBlogIdPosts(dto: CreatePostDto, blogId: string, blogName: string) {
+        const newPost = PostModel.createPost(dto, blogId, blogName)
 
-        await postsCollection.insertOne(newPost)
+        await newPost.save()
 
         return getViewModelPost(newPost)
     },

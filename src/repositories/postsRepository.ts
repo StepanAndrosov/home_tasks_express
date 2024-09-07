@@ -1,7 +1,7 @@
 import { v4 } from "uuid";
 import { commentsCollection, postsCollection } from "../db/db";
 import { PostCreateModel } from "../features/posts/models/PostCreateModel";
-import { PostModel } from "../features/posts/models/PostModel";
+import { PostModel } from "../features/posts/models/IPostModel";
 import { PostUpdateModel } from "../features/posts/models/PostUpdateModel";
 import { PostViewModel } from "../features/posts/models/PostViewModel";
 import { ObjectId, WithId } from "mongodb";

@@ -1,9 +1,7 @@
 import mongoose, { HydratedDocument, Model } from 'mongoose'
-import { IBlogModel } from '../models/IBlogModel'
-import { CreateBlogDto } from './createBlogDto';
 import { ObjectId } from "mongodb";
-import { UpdateBlogDto } from './updateBlogDto';
-
+import { IBlogModel } from '../models/IBlogModel'
+import { CreateBlogDto } from './';
 
 type BlogMethods = typeof blogMethods;
 type BlogStatics = typeof blogStatics;
@@ -38,4 +36,4 @@ const blogStatics = {
 
 BlogSchema.statics = blogStatics;
 
-export const BlogModel = mongoose.model<IBlogModel, BlogModelType>('blogs', BlogSchema)
+export const BlogModel = mongoose.model<IBlogModel, BlogModelType>('blog', BlogSchema)

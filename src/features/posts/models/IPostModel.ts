@@ -29,5 +29,5 @@ interface Post {
     createdAt: string
 }
 
-export type PostModel = WithId<Post>
+export type IPostModel = WithId<Post>
 

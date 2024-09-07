@@ -1,13 +1,12 @@
 import request from 'supertest';
 import { RouterPaths, app } from '../../src/app';
-import { BlogCreateModel } from '../../src/features/blogs/models/BlogCreateModel';
 import { ErrorsMessagesType } from "../../src/types";
 import { HTTP_STATUSES, HttpStatuses } from "../../src/utils/helpers";
-import { BlogUpdateModel } from '../../src/features/blogs/models/BlogUpdateModel';
 import { auth } from '../../src/middlewares/authentication-basic';
+import { CreateBlogDto, UpdateBlogDto } from '../../src/features/blogs/domain';
 
 export const blogsTestManager = {
-    async createBlogNonAuth(data: BlogCreateModel, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201) {
+    async createBlogNonAuth(data: CreateBlogDto, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201) {
         const res = await request(app)
             .post(RouterPaths.blogs)
             .send(data)
@@ -15,7 +14,7 @@ export const blogsTestManager = {
 
         return res
     },
-    async createBlogWithErrors(data: BlogCreateModel, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201, errors?: ErrorsMessagesType) {
+    async createBlogWithErrors(data: CreateBlogDto, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201, errors?: ErrorsMessagesType) {
         const res = await request(app)
             .post(RouterPaths.blogs)
             .auth(auth.login, auth.password)
@@ -24,7 +23,7 @@ export const blogsTestManager = {
 
         return res
     },
-    async createBlog(data: BlogCreateModel, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201) {
+    async createBlog(data: CreateBlogDto, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201) {
         const res = await request(app)
             .post(RouterPaths.blogs)
             .auth(auth.login, auth.password)
@@ -33,7 +32,7 @@ export const blogsTestManager = {
 
         return res
     },
-    async updateBlogWithErrors(id: string, data: BlogUpdateModel, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201, errors?: ErrorsMessagesType) {
+    async updateBlogWithErrors(id: string, data: UpdateBlogDto, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201, errors?: ErrorsMessagesType) {
         const res = await request(app)
             .put(`${RouterPaths.blogs}/${id}`)
             .auth(auth.login, auth.password)
@@ -41,7 +40,7 @@ export const blogsTestManager = {
             .expect(expectedStatus, errors)
         return res
     },
-    async updateBlog(id: string, data: BlogUpdateModel, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201) {
+    async updateBlog(id: string, data: UpdateBlogDto, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201) {
         const res = await request(app)
             .put(`${RouterPaths.blogs}/${id}`)
             .auth(auth.login, auth.password)

@@ -2,10 +2,10 @@
 import { ObjectId } from "mongodb";
 import { postsCollection } from "../db/db";
 import { BlogModel } from "../features/blogs/domain/blog.entity";
-import { BlogIdPostsPaginateModel } from "../features/blogs/models/BlogIdPostsPaginateModel";
 import { getViewModelBlog } from "../repositories/blogsRepository";
 import { getViewModelPost } from "../repositories/postsRepository";
 import { SanitizedQuery } from "../utils/helpers";
+import { PostsPaginateModel } from "../features/posts/models/PostsPaginateModel";
 
 export const blogsQRepository = {
     async getBlogs(query: SanitizedQuery) {
@@ -39,7 +39,7 @@ export const blogsQRepository = {
         if (!blogData) return null
         return getViewModelBlog(blogData)
     },
-    async getBlogIdPosts(blogId: string, query: SanitizedQuery): Promise<BlogIdPostsPaginateModel> {
+    async getBlogIdPosts(blogId: string, query: SanitizedQuery): Promise<PostsPaginateModel> {
 
         const search = query.searchNameTerm ? { title: { $regex: query.searchNameTerm, $options: 'i' } } : {}
         const skip = (query.pageNumber - 1) * query.pageSize
