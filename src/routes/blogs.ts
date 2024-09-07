@@ -97,14 +97,16 @@ export const getBlogsRouter = () => {
         validationWebsiteUrl(),
         inputValidMiddleware,
         async (req: Request, res: Response<ErrorsMessagesType>) => {
-            const foundBlog = await blogsQRepository.findBlog(req.params.id)
-            if (!foundBlog) {
+
+            const updateRes = await blogsRepository.updateBlog(req.params.id, req.body)
+            if (updateRes) {
+                res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+                return
+            }
+            else {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
-            await blogsRepository.updateBlog(foundBlog.id, req.body)
-
-            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
     router.delete('/:id',

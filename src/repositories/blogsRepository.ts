@@ -35,7 +35,7 @@ const getModelBlog = (blog: BlogViewModel): IBlogModel => {
 
 export const blogsRepository = {
     async testDeleteData() {
-        await blogsCollection.drop()
+        // await blogsCollection.drop()
     },
     async createBlog(createData: CreateBlogDto) {
         const newBlog = BlogModel.createBlog(createData)
@@ -62,14 +62,17 @@ export const blogsRepository = {
     async updateBlog(id: string, updateData: UpdateBlogDto) {
         const foundBlogModel = await BlogModel.findOne({ _id: new ObjectId(id) })
 
-        foundBlogModel!.name = updateData.name
-        foundBlogModel!.description = updateData.description
-        foundBlogModel!.websiteUrl = updateData.websiteUrl
+        if (!foundBlogModel) return false
 
-        await foundBlogModel?.save()
+        foundBlogModel.name = updateData.name
+        foundBlogModel.description = updateData.description
+        foundBlogModel.websiteUrl = updateData.websiteUrl
 
+        await foundBlogModel.save()
+
+        return true
     },
     async deleteBlog(id: string) {
-        await blogsCollection.deleteOne({ _id: new ObjectId(id) })
+        await BlogModel.deleteOne({ _id: new ObjectId(id) })
     }
 }
