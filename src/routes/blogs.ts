@@ -102,7 +102,7 @@ export const getBlogsRouter = () => {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
-            await blogsRepository.updateBlog(foundBlog, req.body)
+            await blogsRepository.updateBlog(foundBlog.id, req.body)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })

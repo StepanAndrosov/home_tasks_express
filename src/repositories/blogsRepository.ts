@@ -6,6 +6,9 @@ import { BlogUpdateModel } from "../features/blogs/models/BlogUpdateModel";
 import { BlogViewModel } from "../features/blogs/models/BlogViewModel";
 import { BlogIdPostCreateModel } from "../features/blogs/models/BlogIdPostCreateModel";
 import { getViewModelPost } from "./postsRepository";
+import { BlogModel } from "../features/blogs/domain/blog.entity";
+import { CreateBlogDto } from "../features/blogs/domain/createBlogDto";
+import { UpdateBlogDto } from "../features/blogs/domain/updateBlogDto";
 
 
 export const getViewModelBlog = (blog: IBlogModel): BlogViewModel => {
@@ -34,17 +37,10 @@ export const blogsRepository = {
     async testDeleteData() {
         await blogsCollection.drop()
     },
-    async createBlog(createData: BlogCreateModel) {
-        const newBlog = {
-            _id: new ObjectId(),
-            name: createData.name,
-            description: createData.description,
-            websiteUrl: createData.websiteUrl,
-            createdAt: new Date(Date.now()).toISOString(),
-            isMembership: false
-        }
+    async createBlog(createData: CreateBlogDto) {
+        const newBlog = BlogModel.createBlog(createData)
 
-        await blogsCollection.insertOne(newBlog)
+        await newBlog.save()
 
         return getViewModelBlog(newBlog)
     },
@@ -54,7 +50,7 @@ export const blogsRepository = {
             title: body.title,
             shortDescription: body.shortDescription,
             content: body.content,
-            blogId: blogId,
+            blogId,
             blogName,
             createdAt: new Date(Date.now()).toISOString()
         }
@@ -63,15 +59,15 @@ export const blogsRepository = {
 
         return getViewModelPost(newPost)
     },
-    async updateBlog(foundBlog: BlogViewModel, updateData: BlogUpdateModel) {
+    async updateBlog(id: string, updateData: UpdateBlogDto) {
+        const foundBlogModel = await BlogModel.findOne({ _id: new ObjectId(id) })
 
-        const foundIBlogModel = getModelBlog(foundBlog)
+        foundBlogModel!.name = updateData.name
+        foundBlogModel!.description = updateData.description
+        foundBlogModel!.websiteUrl = updateData.websiteUrl
 
-        const newBlog = {
-            ...foundIBlogModel,
-            ...updateData
-        }
-        await blogsCollection.updateOne({ _id: foundIBlogModel._id }, { $set: newBlog })
+        await foundBlogModel?.save()
+
     },
     async deleteBlog(id: string) {
         await blogsCollection.deleteOne({ _id: new ObjectId(id) })
