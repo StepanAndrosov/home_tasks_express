@@ -28,4 +28,4 @@ interface User {
     }
 }
 
-export type UserModel = WithId<User>
+export type IUserModel = WithId<User>

@@ -8,7 +8,7 @@ import { usersRepository } from "../../../repositories/usersRepository";
 import { Result } from "../../../types";
 import { compareHash } from "../../../utils/genHash";
 import { JWTPayload } from "../../../utils/genJWT";
-import { UserModel } from "../../users/models/UserModel";
+import { IUserModel } from "../../users/models/IUserModel";
 import { UserUpdateConfirmationModel } from "../../users/models/UserUpdateConfirmationModel";
 import { ConfirmationModel } from "../models/ConfirmationModel";
 import { LoginCreateModel } from "../models/LoginCreateModel";
@@ -16,7 +16,7 @@ import { RegistrationCreateModel } from "../models/RegistrationCreateModel";
 import { RegistrationEmailResendingModel } from "../models/RegistrationEmailResendingModel";
 
 export const authService = {
-    async login(loginData: LoginCreateModel): Promise<Result<UserModel>> {
+    async login(loginData: LoginCreateModel): Promise<Result<IUserModel>> {
 
         const userLoginData = await usersQRepository.findUsersByOneOfTerms([
             { login: loginData.loginOrEmail },
@@ -95,7 +95,7 @@ export const authService = {
                 minutes: 30,
             }).toISOString(),
         }
-        await usersRepository.updateUserConfirmationData(user[0], newConfirmationData)
+        await usersRepository.updateUserConfirmationData(user[0]._id, newConfirmationData)
 
         // emailAdapter.sendMail(user[0].email, confirmationCode)
         //     .catch((err) => console.error('Send email error', err))
@@ -135,13 +135,13 @@ export const authService = {
             ...user[0].emailConfirmation,
             isConfirmed: true
         }
-        await usersRepository.updateUserConfirmationData(user[0], newConfirmationData)
+        await usersRepository.updateUserConfirmationData(user[0]._id, newConfirmationData)
 
         return {
             status: 'Success'
         }
     },
-    async checkUser(jwtPayload: JWTPayload): Promise<Result<UserModel>> {
+    async checkUser(jwtPayload: JWTPayload): Promise<Result<IUserModel>> {
         // if(token)
         // await blackListTokensRepository.createBlackToken(token)
 

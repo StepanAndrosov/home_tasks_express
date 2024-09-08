@@ -1,8 +1,8 @@
 
-import { usersCollection } from "../db/db";
-import { SanitizedUsersQuery } from "../utils/helpers";
-import { getViewModelUser } from "../repositories/usersRepository";
 import { ObjectId } from "mongodb";
+import { UserModel } from "../features/users/domain/user.entity";
+import { getViewModelUser } from "../repositories/usersRepository";
+import { SanitizedUsersQuery } from "../utils/helpers";
 
 export const usersQRepository = {
     async getUsers(query: SanitizedUsersQuery) {
@@ -20,13 +20,12 @@ export const usersQRepository = {
 
         const skip = (query.pageNumber - 1) * query.pageSize
 
-        const usersData = await usersCollection.find(filter)
-            .sort(query.sortBy, query.sortDirection)
+        const usersData = await UserModel.find(filter)
+            // .sort(query.sortBy, query.sortDirection)
             .skip(skip)
             .limit(query.pageSize)
-            .toArray()
 
-        const totalCount = await usersCollection.countDocuments(filter)
+        const totalCount = await UserModel.countDocuments(filter)
         const pagesCount = Math.ceil(totalCount / query.pageSize)
 
         return {
@@ -38,15 +37,15 @@ export const usersQRepository = {
         }
     },
     async findUsersByTerm(findData: { [term: string]: string | ObjectId }) {
-        const usersData = await usersCollection.find(findData).toArray()
+        const usersData = await UserModel.find(findData)
         return usersData
     },
     async findUsersByOneOfTerms(findData: { [term: string]: string }[]) {
-        const usersData = await usersCollection.find({ $or: findData }).toArray()
+        const usersData = await UserModel.find({ $or: findData })
         return usersData
     },
     async findUserById(id: string) {
-        const userData = await usersCollection.findOne({ _id: new ObjectId(id) })
+        const userData = await UserModel.findOne({ _id: new ObjectId(id) })
         if (!userData) return null
         return getViewModelUser(userData)
     },

@@ -1,14 +1,12 @@
 import { ObjectId } from "mongodb";
-import { usersCollection } from "../db/db";
-import { UserCreateModel } from "../features/users/models/UserCreateModel";
-import { UserModel } from "../features/users/models/UserModel";
+import { CreateUserDto } from "../features/users/domain/CreateUserDto";
+import { UserModel } from "../features/users/domain/user.entity";
+import { IUserModel } from "../features/users/models/IUserModel";
+import { UserUpdateConfirmationModel } from "../features/users/models/UserUpdateConfirmationModel";
 import { UserViewModel } from "../features/users/models/UserViewModel";
 import { genHash } from "../utils/genHash";
-import { randomUUID } from "crypto";
-import { add } from "date-fns";
-import { UserUpdateConfirmationModel } from "../features/users/models/UserUpdateConfirmationModel";
 
-export const getViewModelUser = (user: UserModel): UserViewModel => {
+export const getViewModelUser = (user: IUserModel): UserViewModel => {
     return {
         id: user._id.toString(),
         login: user.login,
@@ -19,40 +17,24 @@ export const getViewModelUser = (user: UserModel): UserViewModel => {
 
 export const usersRepository = {
     async testDeleteData() {
-        await usersCollection.drop()
+        await UserModel.deleteMany({})
     },
-    async createUser(createData: UserCreateModel) {
+    async createUser(createData: CreateUserDto) {
         console.log(createData.email, 'createDataUser')
         const passwordHash = await genHash(createData.password)
-
-        const newUser = {
-            _id: new ObjectId(),
-            login: createData.login,
-            email: createData.email,
-            passwordHash: passwordHash,
-            createdAt: new Date(Date.now()).toISOString(),
-            emailConfirmation: {
-                confirmationCode: randomUUID(),
-                expirationDate: add(new Date(), {
-                    hours: 1,
-                    minutes: 30,
-                }).toISOString(),
-                isConfirmed: false
-            }
-        }
-
-        await usersCollection.insertOne(newUser)
+        const newUser = UserModel.createUser(createData, passwordHash)
+        await newUser.save()
 
         return getViewModelUser(newUser)
     },
-    async updateUserConfirmationData(user: UserModel, updateData: UserUpdateConfirmationModel) {
-        const newUser = {
-            ...user,
-            emailConfirmation: updateData
-        }
-        await usersCollection.updateOne({ _id: newUser._id }, { $set: newUser })
+    async updateUserConfirmationData(id: ObjectId, updateData: UserUpdateConfirmationModel) {
+        const foundedUser = await UserModel.findOne({ _id: id })
+        if (!foundedUser) return false
+        foundedUser.emailConfirmation = updateData
+        await foundedUser.save()
+        return true
     },
     async deleteUser(id: string) {
-        await usersCollection.deleteOne({ _id: new ObjectId(id) })
+        await UserModel.deleteOne({ _id: new ObjectId(id) })
     }
 }
