@@ -1,6 +1,6 @@
 
 import { CustomRateCreateModel } from "../features/security/models/CustomRateCreateModel"
-import { CRateModel } from "../features/security/domain/cRate.entity"
+import { CRateModel } from "../features/security/domain"
 
 export const customRateRepository = {
     async testDeleteData() {

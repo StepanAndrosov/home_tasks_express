@@ -1,5 +1,4 @@
 
-
 export class CreateCRateDto {
     constructor(
         public ip: string,

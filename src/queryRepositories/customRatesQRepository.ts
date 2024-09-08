@@ -1,4 +1,4 @@
-import { CRateModel } from "../features/security/domain/cRate.entity"
+import { CRateModel } from "../features/security/domain"
 
 export const customRatesQRepository = {
     async getCustomRates(custom: { ip: string, url: string }) {

@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import mongoose, { HydratedDocument, Model } from 'mongoose';
 import { IDeviceModel } from '../models/IDeviceModel';
-import { CreateDeviceDto } from "./CreateDeviceDto";
+import { CreateDeviceDto } from "./";
 
 type DeviceMethods = typeof deviceMethods;
 type DeviceStatics = typeof deviceStatics;

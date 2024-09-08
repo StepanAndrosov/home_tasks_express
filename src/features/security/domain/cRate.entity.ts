@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import mongoose, { HydratedDocument, Model } from 'mongoose';
 import { ICustomRateModel } from "../models/ICustomRateModel";
-import { CreateCRateDto } from "./CreateCRateDto";
+import { CreateCRateDto } from "./";
 
 type CRateMethods = typeof cRateMethods;
 type CRateStatics = typeof cRateStatics;
