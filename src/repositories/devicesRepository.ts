@@ -1,10 +1,10 @@
 import { ObjectId } from "mongodb"
-import { devicesCollection } from "../db/db"
-import { DeviceCreateModel } from "../features/security/models/DeviceCreateModel"
-import { DeviceModel } from "../features/security/models/DeviceModel"
+import { CreateDeviceDto } from "../features/security/domain/CreateDeviceDto"
+import { DeviceModel } from "../features/security/domain/device.entity"
 import { DeviceViewModel } from "../features/security/models/DeviceViewModel"
+import { IDeviceModel } from "../features/security/models/IDeviceModel"
 
-export const getViewModelDevice = (device: DeviceModel): DeviceViewModel => {
+export const getViewModelDevice = (device: IDeviceModel): DeviceViewModel => {
     return {
         ip: device.ip,
         title: device.title,
@@ -15,38 +15,32 @@ export const getViewModelDevice = (device: DeviceModel): DeviceViewModel => {
 
 export const devicesRepository = {
     async testDeleteData() {
-        await devicesCollection.drop()
+        await DeviceModel.deleteMany({})
     },
-    async createDevice(createData: DeviceCreateModel, userId: string, deviceId: string) {
+    async createDevice(createData: CreateDeviceDto, userId: string, deviceId: string) {
 
-        const newDevice = {
-            _id: new ObjectId(),
-            ip: createData.ip,
-            title: createData.title,
-            lastActiveDate: new Date(Date.now()).toISOString(),
-            deviceId,
-            userId
-        }
-        await devicesCollection.insertOne(newDevice)
+        const newDevice = DeviceModel.createDevice(createData, userId, deviceId)
+
+        await newDevice.save()
     },
-    async updateLastActiveDevice(foundDevice: DeviceModel) {
+    async updateLastActiveDevice(id: ObjectId) {
+        const foundedDevice = await DeviceModel.findOne({ _id: id })
 
-        const newDevice = {
-            ...foundDevice,
-            lastActiveDate: new Date(Date.now()).toISOString(),
-        }
-        await devicesCollection.updateOne({ _id: foundDevice._id }, { $set: newDevice })
+        if (!foundedDevice) return false
+        foundedDevice.lastActiveDate = new Date(Date.now()).toISOString()
+        await foundedDevice.save()
+        return true
     },
     async deleteDevices(userId: string, currentDevice: string) {
-        const devices = await devicesCollection.find({ userId }).toArray()
+        const devices = await DeviceModel.find({ userId })
 
         const devicesDeleteIds = devices.filter((d) => d.deviceId.toString() !== currentDevice).map((d) => d._id)
 
         devicesDeleteIds.forEach(async (dId) => {
-            await devicesCollection.deleteOne({ _id: dId })
+            await DeviceModel.deleteOne({ _id: dId })
         })
     },
-    async deleteDevice(deleteDeviceId: string) {
-        await devicesCollection.deleteOne({ _id: new ObjectId(deleteDeviceId) })
+    async deleteDevice(id: string) {
+        await DeviceModel.deleteOne({ _id: new ObjectId(id) })
     }
 }

@@ -8,5 +8,5 @@ interface Device {
     userId: string
 }
 
-export type DeviceModel = WithId<Device>
+export type IDeviceModel = WithId<Device>
 

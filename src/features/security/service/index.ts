@@ -20,7 +20,7 @@ export const devicesService = {
         )
 
         if (foundedDevices.length && refreshToken) {
-            await devicesRepository.updateLastActiveDevice(foundedDevices[0])
+            await devicesRepository.updateLastActiveDevice(foundedDevices[0]._id)
             return {
                 deviceId: foundedDevices[0].deviceId
             }
