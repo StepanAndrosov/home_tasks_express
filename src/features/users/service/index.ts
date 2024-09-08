@@ -1,10 +1,10 @@
-import { UserCreateModel } from "../models/UserCreateModel"
 import { usersQRepository } from "../../../queryRepositories/usersQRepository"
 import { usersRepository } from "../../../repositories/usersRepository"
+import { CreateUserDto } from "../domain/CreateUserDto"
 
 
 export const usersService = {
-    async createUser(createData: UserCreateModel) {
+    async createUser(createData: CreateUserDto) {
 
         const usersLoginData = await usersQRepository.findUsersByTerm({ login: createData.login })
         if (usersLoginData.length)

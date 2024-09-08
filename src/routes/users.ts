@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express'
-import { UserCreateModel } from '../features/users/models/UserCreateModel'
 import { UsersPaginateModel } from '../features/users/models/UserPaginateModel'
 import { UserViewModel } from '../features/users/models/UserViewModel'
 import { validationEmail, validationLogin, validationPassword } from '../features/users/validations'
@@ -10,6 +9,7 @@ import { usersRepository } from '../repositories/usersRepository'
 import { ErrorsMessagesType, RequestWithBody } from '../types'
 import { HTTP_STATUSES, sanitizeUsersQuery } from '../utils/helpers'
 import { usersService } from '../features/users/service'
+import { CreateUserDto } from '../features/users/domain/CreateUserDto'
 
 export const getUsersRouter = () => {
     const router = express.Router()
@@ -29,7 +29,7 @@ export const getUsersRouter = () => {
         validationEmail(),
         validationPassword(),
         inputValidMiddleware,
-        async (req: RequestWithBody<UserCreateModel>, res: Response<UserViewModel | ErrorsMessagesType>) => {
+        async (req: RequestWithBody<CreateUserDto>, res: Response<UserViewModel | ErrorsMessagesType>) => {
 
             const createDataUser = await usersService.createUser(req.body)
 

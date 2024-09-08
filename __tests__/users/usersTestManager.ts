@@ -1,14 +1,14 @@
 import request from 'supertest';
 import { RouterPaths, app } from '../../src/app';
-import { UserCreateModel } from '../../src/features/users/models/UserCreateModel';
 import { auth } from '../../src/middlewares/authentication-basic';
 import { ErrorsMessagesType } from "../../src/types";
 import { HTTP_STATUSES, HttpStatuses } from "../../src/utils/helpers";
+import { CreateUserDto } from '../../src/features/users/domain/CreateUserDto';
 
 export const ROUTER_USERS_PATH = RouterPaths.users
 
 export const usersTestManager = {
-    async createUserNonAuth(data: UserCreateModel, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201) {
+    async createUserNonAuth(data: CreateUserDto, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201) {
         const res = await request(app)
             .post(ROUTER_USERS_PATH)
             .send(data)
@@ -16,7 +16,7 @@ export const usersTestManager = {
 
         return res
     },
-    async createUserWithErrors(data: UserCreateModel, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201, errors?: ErrorsMessagesType) {
+    async createUserWithErrors(data: CreateUserDto, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201, errors?: ErrorsMessagesType) {
         const res = await request(app)
             .post(ROUTER_USERS_PATH)
             .auth(auth.login, auth.password)
@@ -25,7 +25,7 @@ export const usersTestManager = {
 
         return res
     },
-    async createUser(data: UserCreateModel, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201) {
+    async createUser(data: CreateUserDto, expectedStatus: HttpStatuses = HTTP_STATUSES.CREATED_201) {
         const res = await request(app)
             .post(ROUTER_USERS_PATH)
             .auth(auth.login, auth.password)
