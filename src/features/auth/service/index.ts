@@ -1,9 +1,7 @@
 import { randomUUID } from "crypto";
 import { add } from "date-fns";
 import { ObjectId } from "mongodb";
-import { emailAdapter } from "../../../adapters/emailAdapter";
 import { usersQRepository } from "../../../queryRepositories/usersQRepository";
-import { blackListTokensRepository } from "../../../repositories/blackListTokensRepository";
 import { usersRepository } from "../../../repositories/usersRepository";
 import { Result } from "../../../types";
 import { compareHash } from "../../../utils/genHash";
@@ -142,9 +140,6 @@ export const authService = {
         }
     },
     async checkUser(jwtPayload: JWTPayload): Promise<Result<IUserModel>> {
-        // if(token)
-        // await blackListTokensRepository.createBlackToken(token)
-
         const userData = await usersQRepository.findUsersByTerm({ _id: new ObjectId(jwtPayload.id) })
 
         if (!userData || !userData.length)

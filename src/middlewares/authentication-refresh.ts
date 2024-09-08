@@ -1,6 +1,5 @@
 
 import { NextFunction, Request, Response } from "express"
-import { blackListTokensQRepository } from "../queryRepositories/blackListTokensQRepository"
 import { JWTPayload, verifyJWT } from "../utils/genJWT"
 import { getDeviceInfoByToken, HTTP_STATUSES } from "../utils/helpers"
 import { devicesQRepository } from "../queryRepositories/devicesQRepository"
@@ -9,7 +8,7 @@ export const authenticationRefreshMiddleware = async (req: Request, res: Respons
 
     const token = req.cookies.refreshToken
 
-    const { deviceId } = getDeviceInfoByToken(token)
+    const { deviceId, lastActiveDate } = getDeviceInfoByToken(token)
 
     const foundedDevice = await devicesQRepository.findDevicesByOneOfTerms([
         { deviceId }
@@ -20,9 +19,8 @@ export const authenticationRefreshMiddleware = async (req: Request, res: Respons
         return
     }
 
-    const isBlackToken = await blackListTokensQRepository.findBlackToken(token)
-    if (isBlackToken) {
-        console.log('token blacklisted')
+    if (foundedDevice[0].lastActiveDate !== lastActiveDate) {
+        console.log('wrong lastActiveDate')
         res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
         return
     }

@@ -12,7 +12,6 @@ import { authenticationRefreshMiddleware } from '../middlewares/authentication-r
 import { customRateLimitMiddleware } from '../middlewares/custom-rate-limit'
 import { inputValidMiddleware } from '../middlewares/input-valid'
 import { usersQRepository } from '../queryRepositories/usersQRepository'
-import { blackListTokensRepository } from '../repositories/blackListTokensRepository'
 import { ErrorsMessagesType, RequestWithBody } from '../types'
 import { genPairJWT, JWTPayload } from '../utils/genJWT'
 import { getDeviceInfoByToken, HTTP_STATUSES } from '../utils/helpers'
@@ -122,13 +121,9 @@ export const getAuthRouter = () => {
     router.post('/refresh-token',
         authenticationRefreshMiddleware,
         async (req: RequestWithBody<JWTPayload>, res: Response<ErrorsMessagesType | LoginAccessTokenModel>) => {
-            // const headerAccessToken = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
             const ip = req.headers['x-forwarded-for'] as string || req.socket.remoteAddress as string
             const useragent = `${req.useragent?.browser} ${req.useragent?.version}`
             const cookieToken = req.cookies.refreshToken
-
-            if (cookieToken)
-                await blackListTokensRepository.createBlackToken(cookieToken)
 
             const { status, data: userData } = await authService.checkUser(req.body)
             console.log(status)
@@ -152,10 +147,7 @@ export const getAuthRouter = () => {
         async (req: RequestWithBody<JWTPayload>, res: Response) => {
 
             const cookieToken = req.cookies.refreshToken
-            await blackListTokensRepository.createBlackToken(cookieToken)
-
             const { deviceId } = getDeviceInfoByToken(cookieToken)
-
             await devicesService.deleteDevice(deviceId, req.body.id)
 
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
