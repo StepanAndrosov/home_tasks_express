@@ -1,5 +1,5 @@
 import mongoose, { HydratedDocument, Model } from 'mongoose'
-import { CreatePostDto } from './createPostDto';
+import { CreatePostDto } from './CreatePostDto';
 import { ObjectId } from "mongodb";
 import { IPostModel } from '../models/IPostModel';
 

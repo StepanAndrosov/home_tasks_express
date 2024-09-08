@@ -18,7 +18,7 @@ export const getViewModelBlog = (blog: IBlogModel): BlogViewModel => {
 
 export const blogsRepository = {
     async testDeleteData() {
-        // await blogsCollection.drop()
+        await BlogModel.deleteMany({})
     },
     async createBlog(createData: CreateBlogDto) {
         const newBlog = BlogModel.createBlog(createData)

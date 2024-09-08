@@ -1,3 +1,3 @@
 export * from './blog.entity'
-export * from './createBlogDto'
-export * from './updateBlogDto'
+export * from './CreateBlogDto'
+export * from './UpdateBlogDto'

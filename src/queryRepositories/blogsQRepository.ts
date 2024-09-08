@@ -1,11 +1,11 @@
 
 import { ObjectId } from "mongodb";
-import { postsCollection } from "../db/db";
 import { BlogModel } from "../features/blogs/domain/blog.entity";
+import { PostModel } from "../features/posts/domain";
+import { PostsPaginateModel } from "../features/posts/models/PostsPaginateModel";
 import { getViewModelBlog } from "../repositories/blogsRepository";
 import { getViewModelPost } from "../repositories/postsRepository";
 import { SanitizedQuery } from "../utils/helpers";
-import { PostsPaginateModel } from "../features/posts/models/PostsPaginateModel";
 
 export const blogsQRepository = {
     async getBlogs(query: SanitizedQuery) {
@@ -49,15 +49,13 @@ export const blogsQRepository = {
             ...search,
         }
 
-        const postsData = await postsCollection.find(filter)
-            .sort(query.sortBy, query.sortDirection)
+        const postsData = await PostModel.find(filter)
+            // .sort(query.sortBy, query.sortDirection)
             .skip(skip)
             .limit(query.pageSize)
-            .toArray()
 
-        const totalCount = await postsCollection.countDocuments(filter)
+        const totalCount = await PostModel.countDocuments(filter)
         const pagesCount = Math.ceil(totalCount / query.pageSize)
-
 
         return {
             pagesCount,

@@ -1,18 +1,14 @@
 import { Collection, MongoClient } from "mongodb";
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 
-import { IBlogModel } from "../features/blogs/models/IBlogModel";
-import { IPostModel } from "../features/posts/models/IPostModel";
-import { UserModel } from "../features/users/models/UserModel";
-import { CommentModel } from "../features/comments/models/CommentModel";
 import { AccessTokenModel } from "../features/auth/models/AccessTokenModel";
-import { DeviceModel } from "../features/security/models/DeviceModel";
+import { CommentModel } from "../features/comments/models/CommentModel";
 import { CustomRateModel } from "../features/security/models/CustomRateModel";
+import { DeviceModel } from "../features/security/models/DeviceModel";
+import { UserModel } from "../features/users/models/UserModel";
 
 let client = {} as MongoClient
 
-export let blogsCollection = {} as Collection<IBlogModel>
-export let postsCollection = {} as Collection<IPostModel>
 export let usersCollection = {} as Collection<UserModel>
 export let commentsCollection = {} as Collection<CommentModel>
 export let blackTokensCollection = {} as Collection<AccessTokenModel>
@@ -30,8 +26,6 @@ export const db = {
             // ==========================================================
             client = new MongoClient(MONGO_URL)
 
-            blogsCollection = client.db().collection<IBlogModel>('blogs')
-            postsCollection = client.db().collection<IPostModel>('posts')
             usersCollection = client.db().collection<UserModel>('users')
             commentsCollection = client.db().collection<CommentModel>('comments')
             blackTokensCollection = client.db().collection<AccessTokenModel>('black-tokens')

@@ -1,24 +1,23 @@
 
-import { commentsCollection, postsCollection } from "../db/db";
+import { commentsCollection } from "../db/db";
 import { SanitizedQuery } from "../utils/helpers";
 import { getViewModelPost } from "../repositories/postsRepository";
 import { ObjectId } from "mongodb";
 import { CommentsPaginateModel } from './../features/comments/models/CommentsPaginateModel';
 import { getViewModelComment } from "../repositories/commentsRepository";
+import { PostModel } from "../features/posts/domain";
 
 export const postsQRepository = {
     async getPosts(query: SanitizedQuery) {
 
         const skip = (query.pageNumber - 1) * query.pageSize
 
-        const postsData = await postsCollection.find({})
-            .sort(query.sortBy, query.sortDirection)
+        const postsData = await PostModel.find({})
+            // .sort(query.sortBy, query.sortDirection)
             .skip(skip)
             .limit(query.pageSize)
-            .toArray()
 
-
-        const totalCount = await postsCollection.countDocuments()
+        const totalCount = await PostModel.countDocuments()
         const pagesCount = Math.ceil(totalCount / query.pageSize)
 
 
@@ -31,7 +30,7 @@ export const postsQRepository = {
         }
     },
     async findPost(id: string) {
-        const postData = await postsCollection.findOne({ _id: new ObjectId(id) })
+        const postData = await PostModel.findOne({ _id: new ObjectId(id) })
         if (!postData) return null
         return getViewModelPost(postData)
     },

@@ -74,14 +74,11 @@ export const getPostsRouter = () => {
         inputValidMiddleware,
         async (req: Request, res: Response<ErrorsMessagesType>) => {
 
-            const foundPost = await postsQRepository.findPost(req.params.id)
-            if (!foundPost) {
+            const updated = await postsRepository.updatePost(req.params.id, req.body)
+            if (!updated) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
-
-            await postsRepository.updatePost(foundPost, req.body)
-
             res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
         })
 
