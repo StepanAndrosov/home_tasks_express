@@ -6,4 +6,4 @@ interface CustomRate {
     date: string
 }
 
-export type CustomRateModel = WithId<CustomRate>
+export type ICustomRateModel = WithId<CustomRate>

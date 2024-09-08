@@ -1,13 +1,12 @@
+import { randomUUID } from "crypto"
 import { devicesQRepository } from "../../../queryRepositories/devicesQRepository"
 import { devicesRepository } from "../../../repositories/devicesRepository"
 import { Result } from "../../../types"
-import { DeviceCreateModel } from "../models/DeviceCreateModel"
-import { randomUUID } from "crypto"
 import { getDeviceInfoByToken } from "../../../utils/helpers"
-
+import { CreateDeviceDto } from "../domain/CreateDeviceDto"
 
 export const devicesService = {
-    async createDevice(createData: DeviceCreateModel, userId: string, refreshToken?: string) {
+    async createDevice(createData: CreateDeviceDto, userId: string, refreshToken?: string) {
 
         const { deviceId } = getDeviceInfoByToken(refreshToken)
 
