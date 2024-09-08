@@ -32,8 +32,6 @@ export const getCommentsRouter = () => {
         inputValidMiddleware,
         async (req: Request, res: Response<ErrorsMessagesType>) => {
 
-            console.log(req.params, req.body)
-
             const foundComment = await commentsQRepository.findComment(req.params.commentId)
 
             if (!foundComment) {
@@ -44,10 +42,11 @@ export const getCommentsRouter = () => {
                 res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
                 return
             }
-
-            await commentsRepository.updateComment(foundComment, { content: req.body.content })
-
-            res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+            const updated = await commentsRepository.updateComment(req.params.commentId, req.body.content)
+            if (updated) {
+                res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+                return
+            }
         })
 
     router.delete('/:commentId',

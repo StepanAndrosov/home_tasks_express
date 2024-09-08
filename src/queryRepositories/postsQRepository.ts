@@ -1,11 +1,11 @@
 
-import { commentsCollection } from "../db/db";
-import { SanitizedQuery } from "../utils/helpers";
-import { getViewModelPost } from "../repositories/postsRepository";
 import { ObjectId } from "mongodb";
-import { CommentsPaginateModel } from './../features/comments/models/CommentsPaginateModel';
-import { getViewModelComment } from "../repositories/commentsRepository";
+import { CommentModel } from "../features/comments/domain/comment.entity";
 import { PostModel } from "../features/posts/domain";
+import { getViewModelComment } from "../repositories/commentsRepository";
+import { getViewModelPost } from "../repositories/postsRepository";
+import { SanitizedQuery } from "../utils/helpers";
+import { CommentsPaginateModel } from './../features/comments/models/CommentsPaginateModel';
 
 export const postsQRepository = {
     async getPosts(query: SanitizedQuery) {
@@ -44,13 +44,12 @@ export const postsQRepository = {
             ...search,
         }
 
-        const commentsData = await commentsCollection.find(filter)
-            .sort(query.sortBy, query.sortDirection)
+        const commentsData = await CommentModel.find(filter)
+            // .sort(query.sortBy, query.sortDirection)
             .skip(skip)
             .limit(query.pageSize)
-            .toArray()
 
-        const totalCount = await commentsCollection.countDocuments(filter)
+        const totalCount = await CommentModel.countDocuments(filter)
         const pagesCount = Math.ceil(totalCount / query.pageSize)
 
         return {

@@ -23,4 +23,4 @@ interface Comment {
     createdAt: string
 }
 
-export type CommentModel = WithId<Comment>
+export type ICommentModel = WithId<Comment>

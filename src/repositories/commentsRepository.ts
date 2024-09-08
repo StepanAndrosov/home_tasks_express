@@ -1,11 +1,10 @@
 import { ObjectId } from "mongodb"
-import { CommentModel } from "../features/comments/models/CommentModel"
+import { CreateCommentDto } from "../features/comments/domain/CreateCommentDtos"
+import { CommentModel } from "../features/comments/domain/comment.entity"
 import { CommentViewModel } from "../features/comments/models/CommentViewModel"
-import { commentsCollection } from "../db/db"
-import { CommentCreateModel } from "../features/comments/models/CommentCreateModel"
-import { CommentUpdateModel } from "../features/comments/models/CommentUpdateModel"
+import { ICommentModel } from "../features/comments/models/ICommentModel"
 
-export const getViewModelComment = (comment: CommentModel): CommentViewModel => {
+export const getViewModelComment = (comment: ICommentModel): CommentViewModel => {
     return {
         id: comment._id.toString(),
         content: comment.content,
@@ -17,47 +16,28 @@ export const getViewModelComment = (comment: CommentModel): CommentViewModel => 
     }
 }
 
-const getModelComment = (comment: CommentViewModel) => {
-    return {
-        _id: new ObjectId(comment.id),
-        content: comment.content,
-        commentatorInfo: {
-            userId: comment.commentatorInfo.userId,
-            userLogin: comment.commentatorInfo.userLogin
-        },
-        createdAt: comment.createdAt,
-    }
-}
-
 export const commentsRepository = {
     async testDeleteData() {
-        await commentsCollection.drop()
+        await CommentModel.deleteMany({})
     },
-    async createComment(createData: CommentCreateModel, commentatorInfo: { userId: string, userLogin: string }) {
-        const newComment = {
-            _id: new ObjectId(),
-            content: createData.content,
-            commentatorInfo: commentatorInfo,
-            createdAt: new Date(Date.now()).toISOString(),
-            postId: createData.postId
-        }
+    async createComment(createData: CreateCommentDto, commentatorInfo: { userId: string, userLogin: string }) {
+        const newComment = CommentModel.createComment(createData, commentatorInfo)
 
-        await commentsCollection.insertOne(newComment)
+        await newComment.save()
 
         return getViewModelComment(newComment)
     },
 
-    async updateComment(foundComment: CommentViewModel, updateData: CommentUpdateModel) {
+    async updateComment(id: string, content: string) {
+        const foundedComment = await CommentModel.findOne({ _id: new ObjectId(id) })
 
-        const foundCommentModel = getModelComment(foundComment)
+        if (!foundedComment) return false
 
-        const newComment = {
-            ...foundCommentModel,
-            ...updateData
-        }
-        await commentsCollection.updateOne({ _id: foundCommentModel._id }, { $set: newComment })
+        foundedComment.content = content
+
+        return true
     },
     async deleteComment(id: string) {
-        await commentsCollection.deleteOne({ _id: new ObjectId(id) })
+        await CommentModel.deleteOne({ _id: new ObjectId(id) })
     }
 }
