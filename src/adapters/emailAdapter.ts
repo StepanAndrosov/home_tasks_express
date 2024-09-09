@@ -1,7 +1,37 @@
 import nodemailer from "nodemailer";
 
+type SendAction = 'confirmation' | 'resend' | undefined
+const getSendText = (code: string, action: SendAction) => {
+    let text = ''
+    switch (action) {
+        case 'resend':
+            text = `
+                <h1>Thank for your registration</h1>
+                <p>To finish registration please follow the link below:
+                    <a href='https://somesite.com/confirm-email/confirm-email?code=${code}'>complete registration</a>
+                </p>
+                `
+        case 'confirmation':
+            text = `
+                <h1>Password recovery</h1>
+                <p>To finish password recovery please follow the link below:
+                    <a href='https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>
+                </p>
+                `
+        default:
+            text = `
+                <h1>Thank for your registration</h1>
+                <p>To finish registration please follow the link below:
+                    <a href='https://somesite.com/confirm-email/confirm-email?code=${code}'>complete registration</a>
+                </p>
+                `
+    }
+
+    return text
+}
+
 export const emailAdapter = {
-    async sendMail(to: string, confirmationCode: string) {
+    async sendMail(to: string, code: string, action: SendAction) {
         // send mail with defined transport object
         const transporter = nodemailer.createTransport({
             // service: 'gmail',
@@ -25,12 +55,7 @@ export const emailAdapter = {
                 from: '"Blogs.com 👻" <s37680930@gmail.com>', // sender address
                 to, // receiver address
                 subject: "Registration confirmation code", // subject line
-                html: `
-                <h1>Thank for your registration</h1>
-                <p>To finish registration please follow the link below:
-                    <a href='https://somesite.com/confirm-email/confirm-email?code=${confirmationCode}'>complete registration</a>
-                </p>
-                `,
+                html: getSendText(code, action),
             });
 
             console.log("Message sent: %s", info.messageId);
@@ -39,6 +64,6 @@ export const emailAdapter = {
         } catch (err) {
             return false
         }
-    }
+    },
 }
 

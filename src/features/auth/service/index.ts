@@ -12,6 +12,9 @@ import { ConfirmationModel } from "../models/ConfirmationModel";
 import { LoginCreateModel } from "../models/LoginCreateModel";
 import { RegistrationCreateModel } from "../models/RegistrationCreateModel";
 import { RegistrationEmailResendingModel } from "../models/RegistrationEmailResendingModel";
+import { PasswordRecoveryModel } from "../models/PasswordRecoveryModel";
+import { emailAdapter } from "../../../adapters/emailAdapter";
+import { NewPasswordModel } from "../models/NewPasswordModel";
 
 export const authService = {
     async login(loginData: LoginCreateModel): Promise<Result<IUserModel>> {
@@ -61,8 +64,24 @@ export const authService = {
 
         const userDB = await usersQRepository.findUsersByTerm({ _id: new ObjectId(user.id) })
 
-        // emailAdapter.sendMail(userDB[0].email, userDB[0].emailConfirmation.confirmationCode)
-        //     .catch((err) => console.error('Send email error', err))
+        emailAdapter.sendMail(userDB[0].email, userDB[0].emailConfirmation.confirmationCode, "confirmation")
+            .catch((err) => console.error('Send email error', err))
+
+        return {
+            status: 'Success'
+        }
+    },
+    async passwordRecovery(recoveryData: PasswordRecoveryModel): Promise<Result<undefined>> {
+        const user = await usersQRepository.findUsersByTerm({ email: recoveryData.email })
+
+        emailAdapter.sendMail(user[0].email, user[0].emailConfirmation.confirmationCode, "resend")
+            .catch((err) => console.error('Send email error', err))
+
+        return {
+            status: 'Success'
+        }
+    },
+    async newPassword(newPasswordData: NewPasswordModel): Promise<Result<undefined>> {
 
         return {
             status: 'Success'

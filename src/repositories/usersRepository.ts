@@ -5,6 +5,7 @@ import { IUserModel } from "../features/users/models/IUserModel";
 import { UserUpdateConfirmationModel } from "../features/users/models/UserUpdateConfirmationModel";
 import { UserViewModel } from "../features/users/models/UserViewModel";
 import { genHash } from "../utils/genHash";
+import { UserUpdateRecoveryPasswordModel } from "../features/users/models/UserUpdateRecoveryPasswordModel";
 
 export const getViewModelUser = (user: IUserModel): UserViewModel => {
     return {
@@ -31,6 +32,13 @@ export const usersRepository = {
         const foundedUser = await UserModel.findOne({ _id: id })
         if (!foundedUser) return false
         foundedUser.emailConfirmation = updateData
+        await foundedUser.save()
+        return true
+    },
+    async updateUserRecoveryPasswordData(id: ObjectId, updateData?: UserUpdateRecoveryPasswordModel) {
+        const foundedUser = await UserModel.findOne({ _id: id })
+        if (!foundedUser) return false
+        foundedUser.resendPasswordConfirmation = updateData
         await foundedUser.save()
         return true
     },

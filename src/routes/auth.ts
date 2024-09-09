@@ -15,6 +15,8 @@ import { usersQRepository } from '../queryRepositories/usersQRepository'
 import { ErrorsMessagesType, RequestWithBody } from '../types'
 import { genPairJWT, JWTPayload } from '../utils/genJWT'
 import { getDeviceInfoByToken, HTTP_STATUSES } from '../utils/helpers'
+import { PasswordRecoveryModel } from '../features/auth/models/PasswordRecoveryModel'
+import { NewPasswordModel } from '../features/auth/models/NewPasswordModel'
 
 export const getAuthRouter = () => {
     const router = express.Router()
@@ -61,6 +63,42 @@ export const getAuthRouter = () => {
             }
         })
 
+    router.post('/password-recovery',
+        customRateLimitMiddleware,
+        validationEmail(),
+        inputValidMiddleware,
+        async (req: RequestWithBody<PasswordRecoveryModel>, res: Response<ErrorsMessagesType>) => {
+            console.log('/password-recovery ====================>')
+            const registreationData = await authService.passwordRecovery(req.body)
+            if (registreationData.status === 'BadRequest') {
+                res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+                    errorsMessages: registreationData.errorMessages ?? []
+                })
+                return
+            }
+            if (registreationData.status === 'Success') {
+                res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+                return
+            }
+        })
+    router.post('/new-password',
+        customRateLimitMiddleware,
+        validationEmail(),
+        inputValidMiddleware,
+        async (req: RequestWithBody<NewPasswordModel>, res: Response<ErrorsMessagesType>) => {
+            console.log('/password-recovery ====================>')
+            const registreationData = await authService.newPassword(req.body)
+            if (registreationData.status === 'BadRequest') {
+                res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+                    errorsMessages: registreationData.errorMessages ?? []
+                })
+                return
+            }
+            if (registreationData.status === 'Success') {
+                res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+                return
+            }
+        })
     router.post('/registration',
         customRateLimitMiddleware,
         validationLogin(),

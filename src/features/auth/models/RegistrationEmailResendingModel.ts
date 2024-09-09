@@ -1,3 +1,3 @@
 export interface RegistrationEmailResendingModel {
-    email: string,
+    email: string
 }

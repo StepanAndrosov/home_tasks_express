@@ -1,4 +1,4 @@
 export interface LoginCreateModel {
-    loginOrEmail: string,
-    password: string,
+    loginOrEmail: string
+    password: string
 }

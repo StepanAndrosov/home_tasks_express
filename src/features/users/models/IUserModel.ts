@@ -26,6 +26,13 @@ interface User {
         expirationDate: string
         isConfirmed: boolean
     }
+    /**
+    * Resend Password confirmation data
+    */
+    resendPasswordConfirmation?: {
+        recoveryCode: string
+        expirationDate: string
+    }
 }
 
 export type IUserModel = WithId<User>

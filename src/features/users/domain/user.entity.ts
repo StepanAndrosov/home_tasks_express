@@ -21,6 +21,10 @@ export const UserSchema = new mongoose.Schema<IUserModel, UserModelType, UserMet
         confirmationCode: { type: String },
         expirationDate: { type: String },
         isConfirmed: { type: Boolean },
+    },
+    resendPasswordConfirmation: {
+        recoveryCode: { type: String },
+        expirationDate: { type: String }
     }
 })
 
