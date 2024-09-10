@@ -15,6 +15,7 @@ import { RegistrationEmailResendingModel } from "../models/RegistrationEmailRese
 import { PasswordRecoveryModel } from "../models/PasswordRecoveryModel";
 import { emailAdapter } from "../../../adapters/emailAdapter";
 import { NewPasswordModel } from "../models/NewPasswordModel";
+import { UserUpdateRecoveryPasswordModel } from "../../users/models/UserUpdateRecoveryPasswordModel";
 
 export const authService = {
     async login(loginData: LoginCreateModel): Promise<Result<IUserModel>> {
@@ -72,9 +73,23 @@ export const authService = {
         }
     },
     async passwordRecovery(recoveryData: PasswordRecoveryModel): Promise<Result<undefined>> {
-        const user = await usersQRepository.findUsersByTerm({ email: recoveryData.email })
+        const users = await usersQRepository.findUsersByTerm({ email: recoveryData.email })
+        const user = users[0]
+        if (!user) return {
+            status: 'Success'
+        }
 
-        emailAdapter.sendMail(user[0].email, user[0].emailConfirmation.confirmationCode, "resend")
+        const newRecoveryData: UserUpdateRecoveryPasswordModel = {
+            recoveryCode: randomUUID(),
+            expirationDate: add(new Date(), {
+                hours: 1,
+                minutes: 30,
+            }).toISOString(),
+        }
+
+        await usersRepository.updateUserRecoveryPasswordData(user._id, newRecoveryData)
+
+        emailAdapter.sendMail(user.email, newRecoveryData.recoveryCode, "resend")
             .catch((err) => console.error('Send email error', err))
 
         return {
@@ -83,6 +98,34 @@ export const authService = {
     },
     async newPassword(newPasswordData: NewPasswordModel): Promise<Result<undefined>> {
 
+        const users = await usersQRepository.findUsersByTerm({ 'resendPasswordConfirmation.recoveryCode': newPasswordData.recoveryCode })
+        const user = users[0]
+        if (!user) {
+            console.log('can`t fount user')
+            return {
+                status: 'BadRequest',
+                errorMessages: [{ field: 'code', message: 'wrong code' }]
+            }
+        }
+
+        if (!user.resendPasswordConfirmation) {
+            console.log('resendPasswordConfirmation doen`t exist')
+            return {
+                status: 'BadRequest',
+                errorMessages: [{ field: 'code', message: 'wrong code' }]
+            }
+        }
+
+        if (new Date(user.resendPasswordConfirmation.expirationDate) < new Date()) {
+            console.log('code date is expired')
+            return {
+                status: 'BadRequest',
+                errorMessages: [{ field: 'code', message: 'wrong code' }]
+            }
+        }
+
+        await usersRepository.updateUserPassword(user._id, newPasswordData.newPassword)
+        await usersRepository.updateUserRecoveryPasswordData(user._id)
         return {
             status: 'Success'
         }
@@ -102,11 +145,9 @@ export const authService = {
                 errorMessages: [{ field: 'email', message: 'wrong code' }]
             }
 
-        const confirmationCode = randomUUID()
-
         const newConfirmationData: UserUpdateConfirmationModel = {
             ...user[0].emailConfirmation,
-            confirmationCode,
+            confirmationCode: randomUUID(),
             expirationDate: add(new Date(), {
                 hours: 1,
                 minutes: 30,
@@ -114,8 +155,8 @@ export const authService = {
         }
         await usersRepository.updateUserConfirmationData(user[0]._id, newConfirmationData)
 
-        // emailAdapter.sendMail(user[0].email, confirmationCode)
-        //     .catch((err) => console.error('Send email error', err))
+        emailAdapter.sendMail(user[0].email, newConfirmationData.confirmationCode, "confirmation")
+            .catch((err) => console.error('Send email error', err))
 
         return {
             status: 'Success'

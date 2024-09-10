@@ -24,6 +24,8 @@ export const errValidEmail = 'email does not match email address'
 
 export const errRequiredCode = 'code is required'
 
+export const errRequiredRecovery = 'recovery code is required'
+
 export const validationLoginOrEmail = () => body("loginOrEmail").trim().notEmpty().withMessage(errRequiredLoginOrEmail)
     .isLength({ min: validAuthLengthFields.loginOrEmail.min, max: validAuthLengthFields.loginOrEmail.max }).withMessage(errLengthLoginOrEmail)
 
@@ -51,6 +53,12 @@ export const validationEmail = () => body("email").trim().notEmpty().withMessage
     .isEmail().withMessage(errValidEmail)
 
 export const validationCode = () => body("code").trim().notEmpty().withMessage(errRequiredCode)
+
+export const validationNewPassword = () => body("newPassword").trim().notEmpty().withMessage(errRequiredPassword)
+    .isLength({ min: validAuthLengthFields.password.min, max: validAuthLengthFields.password.max })
+    .withMessage(errLengthPassword)
+
+export const validationRecoveryCode = () => body("recoveryCode").trim().notEmpty().withMessage(errRequiredRecovery)
 
 
 

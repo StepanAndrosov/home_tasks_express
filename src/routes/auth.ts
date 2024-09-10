@@ -5,7 +5,7 @@ import { LoginMeCheckModel } from '../features/auth/models/LoginMeCheckModel'
 import { RegistrationCreateModel } from '../features/auth/models/RegistrationCreateModel'
 import { RegistrationEmailResendingModel } from '../features/auth/models/RegistrationEmailResendingModel'
 import { authService } from '../features/auth/service'
-import { validationEmail, validationLogin, validationLoginOrEmail, validationPassword } from '../features/auth/validations'
+import { validationEmail, validationLogin, validationLoginOrEmail, validationNewPassword, validationPassword, validationRecoveryCode } from '../features/auth/validations'
 import { devicesService } from '../features/security/service'
 import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer'
 import { authenticationRefreshMiddleware } from '../middlewares/authentication-refresh'
@@ -83,10 +83,11 @@ export const getAuthRouter = () => {
         })
     router.post('/new-password',
         customRateLimitMiddleware,
-        validationEmail(),
+        validationNewPassword(),
+        validationRecoveryCode(),
         inputValidMiddleware,
         async (req: RequestWithBody<NewPasswordModel>, res: Response<ErrorsMessagesType>) => {
-            console.log('/password-recovery ====================>')
+            console.log('/new-password ====================>')
             const registreationData = await authService.newPassword(req.body)
             if (registreationData.status === 'BadRequest') {
                 res.status(HTTP_STATUSES.BAD_REQUEST_400).send({

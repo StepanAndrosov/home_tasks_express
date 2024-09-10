@@ -42,6 +42,14 @@ export const usersRepository = {
         await foundedUser.save()
         return true
     },
+    async updateUserPassword(id: ObjectId, newPassword: string) {
+        const foundedUser = await UserModel.findOne({ _id: id })
+        if (!foundedUser) return false
+        const passwordHash = await genHash(newPassword)
+        foundedUser.passwordHash = passwordHash
+        await foundedUser.save()
+        return true
+    },
     async deleteUser(id: string) {
         await UserModel.deleteOne({ _id: new ObjectId(id) })
     }
