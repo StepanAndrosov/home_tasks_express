@@ -89,7 +89,7 @@ export const authService = {
 
         await usersRepository.updateUserRecoveryPasswordData(user._id, newRecoveryData)
 
-        emailAdapter.sendMail(user.email, newRecoveryData.recoveryCode, "resend")
+        emailAdapter.sendMail(user.email, newRecoveryData.recoveryCode, "recovery")
             .catch((err) => console.error('Send email error', err))
 
         return {
