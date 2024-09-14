@@ -104,7 +104,7 @@ export const authService = {
             console.log('can`t fount user')
             return {
                 status: 'BadRequest',
-                errorMessages: [{ field: 'code', message: 'wrong code' }]
+                errorMessages: [{ field: 'recoveryCode', message: 'wrong code' }]
             }
         }
 
@@ -112,7 +112,7 @@ export const authService = {
             console.log('resendPasswordConfirmation doen`t exist')
             return {
                 status: 'BadRequest',
-                errorMessages: [{ field: 'code', message: 'wrong code' }]
+                errorMessages: [{ field: 'recoveryCode', message: 'wrong code' }]
             }
         }
 
@@ -120,7 +120,7 @@ export const authService = {
             console.log('code date is expired')
             return {
                 status: 'BadRequest',
-                errorMessages: [{ field: 'code', message: 'wrong code' }]
+                errorMessages: [{ field: 'recoveryCode', message: 'wrong code' }]
             }
         }
 
