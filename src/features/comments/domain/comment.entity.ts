@@ -1,7 +1,8 @@
+import { ObjectId } from "mongodb";
 import mongoose, { HydratedDocument, Model } from 'mongoose';
 import { ICommentModel } from '../models/ICommentModel';
 import { CreateCommentDto } from './CreateCommentDtos';
-import { ObjectId } from "mongodb"
+import { LikeStatus } from "../../likes/models/LikeStatus";
 
 type CommentMethods = typeof commentMethods;
 type CommentStatics = typeof commentStatics;
@@ -22,7 +23,30 @@ export const CommentSchema = new mongoose.Schema<ICommentModel, CommentModelType
     }
 })
 
-const commentMethods = {}
+const commentMethods = {
+    increaseLike() {
+        const comment = this as CommentDocument
+        comment.likesInfo.likesCount = comment.likesInfo.likesCount++
+    },
+    decreaseLike() {
+        const comment = this as CommentDocument
+        if (!!comment.likesInfo.likesCount)
+            comment.likesInfo.likesCount = comment.likesInfo.likesCount--
+    },
+    increaseDisLike() {
+        const comment = this as CommentDocument
+        comment.likesInfo.dislikesCount = comment.likesInfo.dislikesCount++
+    },
+    decreaseDisLike() {
+        const comment = this as CommentDocument
+        if (!!comment.likesInfo.dislikesCount)
+            comment.likesInfo.dislikesCount = comment.likesInfo.dislikesCount--
+    },
+    updateMyStatusLike(status: LikeStatus) {
+        const comment = this as CommentDocument
+        comment.likesInfo.myStatus = status
+    }
+}
 
 const commentStatics = {
     createComment(dto: CreateCommentDto, commentatorInfo: { userId: string, userLogin: string }) {
