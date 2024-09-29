@@ -15,6 +15,11 @@ export const CommentSchema = new mongoose.Schema<ICommentModel, CommentModelType
     postId: { type: String, required: true },
     createdAt: { type: String, required: true },
     commentatorInfo: { userId: { type: String, required: true }, userLogin: { type: String, required: true } },
+    likesInfo: {
+        likesCount: { type: Number, required: true },
+        dislikesCount: { type: Number, required: true },
+        myStatus: { type: String, required: true },
+    }
 })
 
 const commentMethods = {}
@@ -27,6 +32,11 @@ const commentStatics = {
         newComment.commentatorInfo = commentatorInfo
         newComment.createdAt = new Date(Date.now()).toISOString()
         newComment.postId = dto.postId
+        newComment.likesInfo = {
+            likesCount: 0,
+            dislikesCount: 0,
+            myStatus: 'None'
+        }
 
         return newComment;
     },

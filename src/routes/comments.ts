@@ -1,3 +1,4 @@
+import { JWTPayload } from './../utils/genJWT';
 import express, { Request, Response } from 'express'
 import { CommentViewModel } from '../features/comments/models/CommentViewModel'
 import { validParamId, validationCommentContent } from '../features/comments/validations'
@@ -6,8 +7,9 @@ import { authenticationBearerMiddleware } from '../middlewares/authentication-be
 import { inputValidMiddleware } from '../middlewares/input-valid'
 import { commentsQRepository } from '../queryRepositories/commentsQRepository'
 import { commentsRepository } from '../repositories/commentsRepository'
-import { ErrorsMessagesType } from '../types'
+import { ErrorsMessagesType, RequestWithBody, RequestWithParamsAndBody } from '../types'
 import { HTTP_STATUSES } from '../utils/helpers'
+import { LikeStatus } from '../features/likes/models/LikeStatus'
 
 export const getCommentsRouter = () => {
     const router = express.Router()
@@ -48,6 +50,30 @@ export const getCommentsRouter = () => {
                 return
             }
         })
+
+    router.put('/:commentId/like-status',
+        authenticationBearerMiddleware,
+        validationCommentContent(),
+        inputValidMiddleware,
+        async (req: RequestWithParamsAndBody<{ commentId: string }, { likeStatus: LikeStatus } & JWTPayload>, res: Response<ErrorsMessagesType>) => {
+
+            const foundComment = await commentsQRepository.findComment(req.params.commentId)
+
+            if (!foundComment) {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return
+            }
+            if (req.body.id !== foundComment?.commentatorInfo.userId) {
+                res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
+                return
+            }
+            // const updated = await commentsRepository.updateComment(req.params.commentId, req.body.content)
+            // if (updated) {
+            //     res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+            //     return
+            // }
+        })
+
 
     router.delete('/:commentId',
         authenticationBearerMiddleware,

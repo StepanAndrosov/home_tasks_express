@@ -1,7 +1,7 @@
 import mongoose, { HydratedDocument, Model } from 'mongoose'
 import { ObjectId } from "mongodb";
 import { IBlogModel } from '../models/IBlogModel'
-import { CreateBlogDto } from './';
+import { CreateBlogDto, UpdateBlogDto } from './';
 
 type BlogMethods = typeof blogMethods;
 type BlogStatics = typeof blogStatics;
@@ -18,7 +18,15 @@ export const BlogSchema = new mongoose.Schema<IBlogModel, BlogModelType, BlogMet
     isMembership: { type: Boolean }
 })
 
-const blogMethods = {}
+const blogMethods = {
+    updateBlog(updateData: UpdateBlogDto) {
+        const blog = this as BlogDocument
+        blog.name = updateData.name
+        blog.description = updateData.description
+        blog.websiteUrl = updateData.websiteUrl
+
+    }
+}
 
 const blogStatics = {
     createBlog(dto: CreateBlogDto) {
@@ -35,5 +43,6 @@ const blogStatics = {
 };
 
 BlogSchema.statics = blogStatics;
+BlogSchema.methods = blogMethods;
 
 export const BlogModel = mongoose.model<IBlogModel, BlogModelType>('blog', BlogSchema)

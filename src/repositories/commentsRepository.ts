@@ -16,17 +16,17 @@ export const getViewModelComment = (comment: ICommentModel): CommentViewModel =>
     }
 }
 
-export const commentsRepository = {
+class CommentsRepository {
     async testDeleteData() {
         await CommentModel.deleteMany({})
-    },
+    }
     async createComment(createData: CreateCommentDto, commentatorInfo: { userId: string, userLogin: string }) {
         const newComment = CommentModel.createComment(createData, commentatorInfo)
 
         await newComment.save()
 
         return getViewModelComment(newComment)
-    },
+    }
 
     async updateComment(id: string, content: string) {
         const foundedComment = await CommentModel.findOne({ _id: new ObjectId(id) })
@@ -36,8 +36,10 @@ export const commentsRepository = {
         foundedComment.content = content
 
         return true
-    },
+    }
     async deleteComment(id: string) {
         await CommentModel.deleteOne({ _id: new ObjectId(id) })
     }
 }
+
+export const commentsRepository = new CommentsRepository()

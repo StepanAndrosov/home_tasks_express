@@ -1,4 +1,5 @@
 import { WithId } from "mongodb"
+import { LikeStatus } from "../../likes/models/LikeStatus"
 
 
 interface Comment {
@@ -21,6 +22,11 @@ interface Comment {
     * Created time comment 
     */
     createdAt: string
+    likesInfo: {
+        likesCount: number
+        dislikesCount: number
+        myStatus: LikeStatus
+    }
 }
 
 export type ICommentModel = WithId<Comment>

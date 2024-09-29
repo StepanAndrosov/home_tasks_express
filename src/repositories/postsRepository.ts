@@ -16,11 +16,10 @@ export const getViewModelPost = (post: IPostModel): PostViewModel => {
     }
 }
 
-export const postsRepository = {
+class PostsRepository {
     async testDeleteData() {
         await PostModel.deleteMany({})
-    },
-
+    }
     async createPost(dto: CreatePostDto, blogName: string) {
 
         const newPost = PostModel.createPost(dto, dto.blogId, blogName)
@@ -28,7 +27,7 @@ export const postsRepository = {
         await newPost.save()
 
         return getViewModelPost(newPost)
-    },
+    }
     async updatePost(id: string, updateData: PostUpdateModel) {
 
         const foundPostModel = await PostModel.findOne({ _id: new ObjectId(id) })
@@ -43,8 +42,10 @@ export const postsRepository = {
         await foundPostModel.save()
 
         return true
-    },
+    }
     async deletePost(id: string) {
         await PostModel.deleteOne({ _id: new ObjectId(id) })
     }
 }
+
+export const postsRepository = new PostsRepository()

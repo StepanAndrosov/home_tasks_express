@@ -16,10 +16,10 @@ export const getViewModelUser = (user: IUserModel): UserViewModel => {
     }
 }
 
-export const usersRepository = {
+class UsersRepository {
     async testDeleteData() {
         await UserModel.deleteMany({})
-    },
+    }
     async createUser(createData: CreateUserDto) {
         console.log(createData.email, 'createDataUser')
         const passwordHash = await genHash(createData.password)
@@ -27,21 +27,21 @@ export const usersRepository = {
         await newUser.save()
 
         return getViewModelUser(newUser)
-    },
+    }
     async updateUserConfirmationData(id: ObjectId, updateData: UserUpdateConfirmationModel) {
         const foundedUser = await UserModel.findOne({ _id: id })
         if (!foundedUser) return false
         foundedUser.emailConfirmation = updateData
         await foundedUser.save()
         return true
-    },
+    }
     async updateUserRecoveryPasswordData(id: ObjectId, updateData?: UserUpdateRecoveryPasswordModel) {
         const foundedUser = await UserModel.findOne({ _id: id })
         if (!foundedUser) return false
         foundedUser.resendPasswordConfirmation = updateData
         await foundedUser.save()
         return true
-    },
+    }
     async updateUserPassword(id: ObjectId, newPassword: string) {
         const foundedUser = await UserModel.findOne({ _id: id })
         if (!foundedUser) return false
@@ -49,8 +49,10 @@ export const usersRepository = {
         foundedUser.passwordHash = passwordHash
         await foundedUser.save()
         return true
-    },
+    }
     async deleteUser(id: string) {
         await UserModel.deleteOne({ _id: new ObjectId(id) })
     }
 }
+
+export const usersRepository = new UsersRepository()

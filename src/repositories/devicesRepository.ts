@@ -13,16 +13,16 @@ export const getViewModelDevice = (device: IDeviceModel): DeviceViewModel => {
     }
 }
 
-export const devicesRepository = {
+class DevicesRepository {
     async testDeleteData() {
         await DeviceModel.deleteMany({})
-    },
+    }
     async createDevice(createData: CreateDeviceDto, userId: string, deviceId: string) {
 
         const newDevice = DeviceModel.createDevice(createData, userId, deviceId)
 
         await newDevice.save()
-    },
+    }
     async updateLastActiveDevice(id: ObjectId) {
         const foundedDevice = await DeviceModel.findOne({ _id: id })
 
@@ -30,7 +30,7 @@ export const devicesRepository = {
         foundedDevice.lastActiveDate = new Date(Date.now()).toISOString()
         await foundedDevice.save()
         return true
-    },
+    }
     async deleteDevices(userId: string, currentDevice: string) {
         const devices = await DeviceModel.find({ userId })
 
@@ -39,8 +39,10 @@ export const devicesRepository = {
         devicesDeleteIds.forEach(async (dId) => {
             await DeviceModel.deleteOne({ _id: dId })
         })
-    },
+    }
     async deleteDevice(id: string) {
         await DeviceModel.deleteOne({ _id: new ObjectId(id) })
     }
 }
+
+export const devicesRepository = new DevicesRepository()

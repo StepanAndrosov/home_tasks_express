@@ -16,38 +16,38 @@ export const getViewModelBlog = (blog: IBlogModel): BlogViewModel => {
     }
 }
 
-export const blogsRepository = {
+class BlogsRepository {
     async testDeleteData() {
         await BlogModel.deleteMany({})
-    },
+    }
     async createBlog(createData: CreateBlogDto) {
         const newBlog = BlogModel.createBlog(createData)
 
         await newBlog.save()
 
         return getViewModelBlog(newBlog)
-    },
+    }
     async createBlogIdPosts(dto: CreatePostDto, blogId: string, blogName: string) {
         const newPost = PostModel.createPost(dto, blogId, blogName)
 
         await newPost.save()
 
         return getViewModelPost(newPost)
-    },
+    }
     async updateBlog(id: string, updateData: UpdateBlogDto) {
         const foundBlogModel = await BlogModel.findOne({ _id: new ObjectId(id) })
 
         if (!foundBlogModel) return false
 
-        foundBlogModel.name = updateData.name
-        foundBlogModel.description = updateData.description
-        foundBlogModel.websiteUrl = updateData.websiteUrl
+        foundBlogModel.updateBlog(updateData)
 
         await foundBlogModel.save()
 
         return true
-    },
+    }
     async deleteBlog(id: string) {
         await BlogModel.deleteOne({ _id: new ObjectId(id) })
     }
 }
+
+export const blogsRepository = new BlogsRepository()

@@ -165,7 +165,7 @@ export const getAuthRouter = () => {
             const cookieToken = req.cookies.refreshToken
 
             const { status, data: userData } = await authService.checkUser(req.body)
-            console.log(status)
+
             if (status === 'BadRequest') {
                 res
                     .sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
