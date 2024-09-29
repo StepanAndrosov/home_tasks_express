@@ -11,6 +11,9 @@ export const validCommentLengthFields = {
 export const errRequiredCommentContent = 'content required'
 export const errLengthContent = `content must be shorter than ${validCommentLengthFields.content.max} or larger than ${validCommentLengthFields.content.min} characters`
 
+export const errRequiredLikeStatus = 'likeStatus required'
+export const errTypeLikeStatus = 'likeStatus should be "None", "Like", "Dislike"'
+
 export const errId = 'id does not valid'
 
 export const validationCommentContent = () => body("content").trim().notEmpty().withMessage(errRequiredCommentContent)
@@ -18,4 +21,15 @@ export const validationCommentContent = () => body("content").trim().notEmpty().
     .withMessage(errLengthContent)
 
 export const validParamId = () => param('id').isMongoId().withMessage(errId)
+
+const customLikeStatusValidator = async (likeStatus?: string) => {
+    if (!likeStatus || !likeStatus.length)
+        throw new Error(errRequiredLikeStatus);
+    if (likeStatus !== 'None' && likeStatus !== 'Like' && likeStatus !== 'Dislike')
+        throw new Error(errTypeLikeStatus);
+    return true
+}
+
+export const validationLikeStatus = () => body("likeStatus").trim().notEmpty().withMessage(errRequiredLikeStatus)
+    .custom(customLikeStatusValidator)
 

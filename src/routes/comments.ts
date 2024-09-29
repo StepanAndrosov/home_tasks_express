@@ -1,7 +1,7 @@
 import { JWTPayload } from './../utils/genJWT';
 import express, { Request, Response } from 'express'
 import { CommentViewModel } from '../features/comments/models/CommentViewModel'
-import { validParamId, validationCommentContent } from '../features/comments/validations'
+import { validParamId, validationCommentContent, validationLikeStatus } from '../features/comments/validations'
 import { UserViewModel } from '../features/users/models/UserViewModel'
 import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer'
 import { inputValidMiddleware } from '../middlewares/input-valid'
@@ -10,6 +10,7 @@ import { commentsRepository } from '../repositories/commentsRepository'
 import { ErrorsMessagesType, RequestWithBody, RequestWithParamsAndBody } from '../types'
 import { HTTP_STATUSES } from '../utils/helpers'
 import { LikeStatus } from '../features/likes/models/LikeStatus'
+import { commentsService } from '../features/comments/service';
 
 export const getCommentsRouter = () => {
     const router = express.Router()
@@ -53,25 +54,21 @@ export const getCommentsRouter = () => {
 
     router.put('/:commentId/like-status',
         authenticationBearerMiddleware,
-        validationCommentContent(),
+        validationLikeStatus,
         inputValidMiddleware,
         async (req: RequestWithParamsAndBody<{ commentId: string }, { likeStatus: LikeStatus } & JWTPayload>, res: Response<ErrorsMessagesType>) => {
 
-            const foundComment = await commentsQRepository.findComment(req.params.commentId)
+            const updateLike = await commentsService.updateLikes(req.params.commentId, req.body.likeStatus, req.body.id)
 
-            if (!foundComment) {
+            if (updateLike.status === 'BadRequest') {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
-            if (req.body.id !== foundComment?.commentatorInfo.userId) {
-                res.sendStatus(HTTP_STATUSES.FORBIDDEN_403)
+
+            if (updateLike.status === 'Success') {
+                res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
                 return
             }
-            // const updated = await commentsRepository.updateComment(req.params.commentId, req.body.content)
-            // if (updated) {
-            //     res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
-            //     return
-            // }
         })
 
 
