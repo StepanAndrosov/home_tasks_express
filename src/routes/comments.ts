@@ -60,7 +60,7 @@ export const getCommentsRouter = () => {
 
             const updateLike = await commentsService.updateLikes(req.params.commentId, req.body.likeStatus, req.body.id)
 
-            if (updateLike.status === 'BadRequest') {
+            if (updateLike.status === 'NotFound') {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
