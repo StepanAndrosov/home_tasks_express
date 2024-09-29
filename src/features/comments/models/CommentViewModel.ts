@@ -1,3 +1,4 @@
+import { LikeStatus } from "../../likes/models/LikeStatus"
 
 export interface CommentViewModel {
     /**
@@ -19,4 +20,9 @@ export interface CommentViewModel {
     * Created time comment 
     */
     createdAt: string
+    likesInfo: {
+        likesCount: number
+        dislikesCount: number
+        myStatus: LikeStatus
+    }
 }

@@ -33,11 +33,11 @@ const commentMethods = {
         if (!!comment.likesInfo.likesCount)
             comment.likesInfo.likesCount = comment.likesInfo.likesCount--
     },
-    increaseDisLike() {
+    increaseDislike() {
         const comment = this as CommentDocument
         comment.likesInfo.dislikesCount = comment.likesInfo.dislikesCount++
     },
-    decreaseDisLike() {
+    decreaseDislike() {
         const comment = this as CommentDocument
         if (!!comment.likesInfo.dislikesCount)
             comment.likesInfo.dislikesCount = comment.likesInfo.dislikesCount--
