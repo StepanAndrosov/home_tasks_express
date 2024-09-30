@@ -14,12 +14,12 @@ class LikesRepository {
         await newLike.save()
     }
     async updateLike(likeId: ObjectId, status: LikeStatus) {
-        const foundedLike = await likesQRepository.findLike(likeId)
+        const foundLike = await likesQRepository.findLike(likeId)
 
-        if (!foundedLike) return false
+        if (!foundLike) return false
 
-        foundedLike.updateLike(status)
-        await foundedLike.save()
+        foundLike.updateLike(status)
+        await foundLike.save()
         return true
     }
 }

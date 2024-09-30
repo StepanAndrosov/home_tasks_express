@@ -29,25 +29,25 @@ class UsersRepository {
         return getViewModelUser(newUser)
     }
     async updateUserConfirmationData(id: ObjectId, updateData: UserUpdateConfirmationModel) {
-        const foundedUser = await UserModel.findOne({ _id: id })
-        if (!foundedUser) return false
-        foundedUser.emailConfirmation = updateData
-        await foundedUser.save()
+        const foundUser = await UserModel.findOne({ _id: id })
+        if (!foundUser) return false
+        foundUser.emailConfirmation = updateData
+        await foundUser.save()
         return true
     }
     async updateUserRecoveryPasswordData(id: ObjectId, updateData?: UserUpdateRecoveryPasswordModel) {
-        const foundedUser = await UserModel.findOne({ _id: id })
-        if (!foundedUser) return false
-        foundedUser.resendPasswordConfirmation = updateData
-        await foundedUser.save()
+        const foundUser = await UserModel.findOne({ _id: id })
+        if (!foundUser) return false
+        foundUser.resendPasswordConfirmation = updateData
+        await foundUser.save()
         return true
     }
     async updateUserPassword(id: ObjectId, newPassword: string) {
-        const foundedUser = await UserModel.findOne({ _id: id })
-        if (!foundedUser) return false
+        const foundUser = await UserModel.findOne({ _id: id })
+        if (!foundUser) return false
         const passwordHash = await genHash(newPassword)
-        foundedUser.passwordHash = passwordHash
-        await foundedUser.save()
+        foundUser.passwordHash = passwordHash
+        await foundUser.save()
         return true
     }
     async deleteUser(id: string) {

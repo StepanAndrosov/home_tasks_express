@@ -9,7 +9,8 @@ export const likesQRepository = {
         return like
     },
     async getLikeByAuthorAndParent(authorId: string, parentId: string) {
-        const likeData = await LikeModel.findOne({ $and: [{ authorId }, { 'parent.id': parentId }] })
-        return likeData
+        const like = await LikeModel.findOne({ $and: [{ authorId }, { 'parent.id': parentId }] })
+        if (!like) return null
+        return like
     }
 }

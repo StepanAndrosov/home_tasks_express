@@ -65,7 +65,7 @@ export const getDeviceInfoByToken = (refreshToken?: string) => {
 
     const deviceId = JSON.parse(decoded).deviceId as string
     const lastActiveDate = JSON.parse(decoded).iat as string
-    const userId = JSON.parse(decoded).userId as string
+    const userId = JSON.parse(decoded).userId as string | undefined
 
     return {
         deviceId,

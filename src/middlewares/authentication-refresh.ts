@@ -10,16 +10,16 @@ export const authenticationRefreshMiddleware = async (req: Request, res: Respons
 
     const { deviceId, lastActiveDate } = getDeviceInfoByToken(token)
 
-    const foundedDevice = await devicesQRepository.findDevicesByOneOfTerms([
+    const foundDevice = await devicesQRepository.findDevicesByOneOfTerms([
         { deviceId }
     ])
-    if (!foundedDevice[0]) {
-        console.log('not founded device')
+    if (!foundDevice[0]) {
+        console.log('not found device')
         res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
         return
     }
 
-    if (foundedDevice[0].lastActiveDate !== lastActiveDate) {
+    if (foundDevice[0].lastActiveDate !== lastActiveDate) {
         console.log('wrong lastActiveDate')
         res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
         return

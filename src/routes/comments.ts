@@ -8,7 +8,7 @@ import { inputValidMiddleware } from '../middlewares/input-valid'
 import { commentsQRepository } from '../queryRepositories/commentsQRepository'
 import { commentsRepository } from '../repositories/commentsRepository'
 import { ErrorsMessagesType, RequestWithBody, RequestWithParamsAndBody } from '../types'
-import { HTTP_STATUSES } from '../utils/helpers'
+import { getDeviceInfoByToken, HTTP_STATUSES } from '../utils/helpers'
 import { LikeStatus } from '../features/likes/models/LikeStatus'
 import { commentsService } from '../features/comments/service';
 
@@ -20,7 +20,10 @@ export const getCommentsRouter = () => {
         inputValidMiddleware,
         async (req: Request, res: Response<CommentViewModel>) => {
 
-            const foundComment = await commentsQRepository.findComment(req.params.id)
+            const token = req.cookies.refreshToken
+            const { userId } = getDeviceInfoByToken(token)
+
+            const foundComment = await commentsService.getCommentWithMyStatus(req.params.id, userId)
             if (!foundComment) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
@@ -54,7 +57,7 @@ export const getCommentsRouter = () => {
 
     router.put('/:commentId/like-status',
         authenticationBearerMiddleware,
-        validationLikeStatus,
+        validationLikeStatus(),
         inputValidMiddleware,
         async (req: RequestWithParamsAndBody<{ commentId: string }, { likeStatus: LikeStatus } & JWTPayload>, res: Response<ErrorsMessagesType>) => {
 
@@ -70,7 +73,6 @@ export const getCommentsRouter = () => {
                 return
             }
         })
-
 
     router.delete('/:commentId',
         authenticationBearerMiddleware,

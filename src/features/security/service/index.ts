@@ -10,7 +10,7 @@ export const devicesService = {
 
         const { deviceId } = getDeviceInfoByToken(refreshToken)
 
-        const foundedDevices = await devicesQRepository.findDevicesBySeveralTerms(
+        const foundDevices = await devicesQRepository.findDevicesBySeveralTerms(
             [
                 { userId },
                 { deviceId },
@@ -18,10 +18,10 @@ export const devicesService = {
             ]
         )
 
-        if (foundedDevices.length && refreshToken) {
-            await devicesRepository.updateLastActiveDevice(foundedDevices[0]._id)
+        if (foundDevices.length && refreshToken) {
+            await devicesRepository.updateLastActiveDevice(foundDevices[0]._id)
             return {
-                deviceId: foundedDevices[0].deviceId
+                deviceId: foundDevices[0].deviceId
             }
         } else {
             const deviceId = randomUUID()
@@ -41,21 +41,21 @@ export const devicesService = {
     },
     async deleteDevice(deviceId: string, userId: string): Promise<Result<undefined>> {
 
-        const foundedDevice = await devicesQRepository.findDevicesByOneOfTerms([
+        const foundDevice = await devicesQRepository.findDevicesByOneOfTerms([
             { deviceId }
         ])
-        if (!foundedDevice[0]) {
+        if (!foundDevice[0]) {
             return {
                 status: 'BadRequest'
             }
         }
-        console.log(foundedDevice[0].deviceId, 'deleteDevice')
-        if (foundedDevice[0].userId.toString() !== userId) {
+        console.log(foundDevice[0].deviceId, 'deleteDevice')
+        if (foundDevice[0].userId.toString() !== userId) {
             return {
                 status: 'Forbidden'
             }
         }
-        await devicesRepository.deleteDevice(foundedDevice[0]._id.toString())
+        await devicesRepository.deleteDevice(foundDevice[0]._id.toString())
 
         return { status: 'Success' }
     }

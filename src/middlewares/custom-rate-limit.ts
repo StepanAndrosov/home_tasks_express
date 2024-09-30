@@ -16,11 +16,11 @@ export const customRateLimitMiddleware = async (req: Request, res: Response, nex
     if (customRate && customRate.length) {
         // custom rate in the last 10 sec
         console.log(url, 'url')
-        const foundedCustomRate = customRate.filter((cr) => new Date(cr.date).getTime() >= (Date.now() - (10 * 1000)))
+        const foundCustomRate = customRate.filter((cr) => new Date(cr.date).getTime() >= (Date.now() - (10 * 1000)))
 
-        console.log(foundedCustomRate.map((cr) => new Date(cr.date).getTime()), 'times', Date.now(), 'now', Date.now() - (10 * 1000), 'now - 10sec')
+        console.log(foundCustomRate.map((cr) => new Date(cr.date).getTime()), 'times', Date.now(), 'now', Date.now() - (10 * 1000), 'now - 10sec')
         // if custom rate exceeds five in the last 10 sec
-        if (foundedCustomRate.length > 5) {
+        if (foundCustomRate.length > 5) {
             res.sendStatus(HTTP_STATUSES.TOO_MANY_REQUESTS)
             return
         }

@@ -10,7 +10,6 @@ export const authenticationBearerMiddleware = (req: Request, res: Response<JWTPa
     const token = (req.headers.authorization || '').split(' ')[1] || '' // 'Xxxxx access token'
 
     const decoded = verifyJWT(token)
-
     // Verify token is set and correct
 
     if (decoded?.exp! < Date.now()) {

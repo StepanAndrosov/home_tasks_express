@@ -4,58 +4,62 @@ import { Result } from "../../../types";
 import { LikeStatus } from "../../likes/models/LikeStatus";
 import { commentsRepository } from '../../../repositories/commentsRepository';
 import { likesRepository } from '../../../repositories/likesRepository';
+import { CommentViewModel } from '../models/CommentViewModel';
 
 class CommentsService {
     async updateLikes(commentId: string, status: LikeStatus, userId: string): Promise<Result<undefined>> {
-        const foundedComment = await commentsQRepository.findComment(commentId)
+        const foundComment = await commentsQRepository.findComment(commentId)
 
-        if (!foundedComment) {
+        if (!foundComment) {
             return {
                 status: 'NotFound'
             }
         }
 
-        const foundedLike = await likesQRepository.getLikeByAuthorAndParent(userId, commentId)
-        if (!foundedLike) {
+        const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId, commentId)
+        console.log(foundLike?._id.toString(), 'foundLike id')
+        if (!foundLike) {
             await likesRepository.createLike({ authorId: userId, parent: { id: commentId, type: 'Comment' }, status })
-            if (status === 'Like')
+            if (status === 'Like') {
                 await commentsRepository.increaseLike(commentId)
+            }
             if (status === 'Dislike')
                 await commentsRepository.increaseDislike(commentId)
-            if (userId === foundedComment.commentatorInfo.userId) {
-                await commentsRepository.updateMyStatusLike(commentId, status)
-            }
         }
 
-        if (foundedLike) {
-            await likesRepository.updateLike(foundedLike._id, status)
-
-            if (userId === foundedComment.commentatorInfo.userId) {
-                await commentsRepository.updateMyStatusLike(commentId, status)
-            }
-
-            if (foundedLike.status === 'None') {
-                if (status === 'Like')
-                    await commentsRepository.increaseLike(commentId)
-                if (status === 'Dislike')
-                    await commentsRepository.increaseDislike(commentId)
-            }
-
-            if (foundedLike.status === 'Like') {
-                if (status === 'Like')
+        if (foundLike) {
+            if (foundLike.status === 'Like') {
+                if (status === 'Like') {
+                    console.log('got:', status, 'found:', foundLike.status)
+                    await likesRepository.updateLike(foundLike._id, 'None')
                     await commentsRepository.decreaseLike(commentId)
+                }
                 if (status === 'Dislike') {
+                    console.log('got:', status, 'found:', foundLike.status)
+                    await likesRepository.updateLike(foundLike._id, status)
                     await commentsRepository.decreaseLike(commentId)
                     await commentsRepository.increaseDislike(commentId)
                 }
-            }
-
-            if (foundedLike.status === 'Dislike') {
-                if (status === 'Dislike')
+            } else if (foundLike.status === 'Dislike') {
+                if (status === 'Dislike') {
+                    console.log('got:', status, 'found:', foundLike.status)
+                    await likesRepository.updateLike(foundLike._id, 'None')
                     await commentsRepository.decreaseDislike(commentId)
+                }
                 if (status === 'Like') {
+                    console.log('got:', status, 'found:', foundLike.status)
+                    await likesRepository.updateLike(foundLike._id, status)
                     await commentsRepository.decreaseDislike(commentId)
                     await commentsRepository.increaseLike(commentId)
+                }
+            } else {
+                console.log('got:', status, 'found:', foundLike.status)
+                await likesRepository.updateLike(foundLike._id, status)
+                if (status === 'Like') {
+                    await commentsRepository.increaseLike(commentId)
+                }
+                if (status === 'Dislike') {
+                    await commentsRepository.increaseDislike(commentId)
                 }
             }
         }
@@ -63,6 +67,21 @@ class CommentsService {
         return {
             status: 'Success'
         }
+    }
+    async getCommentWithMyStatus(commentId: string, userId: string | undefined): Promise<CommentViewModel | null> {
+        const foundComment = await commentsQRepository.findComment(commentId)
+        if (userId) {
+            if (userId === foundComment?.commentatorInfo.userId) {
+                const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId, commentId)
+                return {
+                    ...foundComment,
+                    likesInfo: {
+                        ...foundComment.likesInfo,
+                        myStatus: foundLike?.status ?? 'None'
+                    }
+                }
+            } else return foundComment
+        } else return foundComment
     }
 }
 

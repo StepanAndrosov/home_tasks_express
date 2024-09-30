@@ -26,26 +26,26 @@ export const CommentSchema = new mongoose.Schema<ICommentModel, CommentModelType
 const commentMethods = {
     increaseLike() {
         const comment = this as CommentDocument
-        comment.likesInfo.likesCount = comment.likesInfo.likesCount++
+        comment.likesInfo.likesCount++
+        console.log(comment.likesInfo.likesCount, 'increaseLike')
     },
     decreaseLike() {
         const comment = this as CommentDocument
         if (!!comment.likesInfo.likesCount)
-            comment.likesInfo.likesCount = comment.likesInfo.likesCount--
+            comment.likesInfo.likesCount--
+        console.log(comment.likesInfo.likesCount, 'decreaseLike')
     },
     increaseDislike() {
         const comment = this as CommentDocument
-        comment.likesInfo.dislikesCount = comment.likesInfo.dislikesCount++
+        comment.likesInfo.dislikesCount++
+        console.log(comment.likesInfo.dislikesCount, 'increaseDislike')
     },
     decreaseDislike() {
         const comment = this as CommentDocument
         if (!!comment.likesInfo.dislikesCount)
-            comment.likesInfo.dislikesCount = comment.likesInfo.dislikesCount--
+            comment.likesInfo.dislikesCount--
+        console.log(comment.likesInfo.dislikesCount, 'decreaseDislike')
     },
-    updateMyStatusLike(status: LikeStatus) {
-        const comment = this as CommentDocument
-        comment.likesInfo.myStatus = status
-    }
 }
 
 const commentStatics = {

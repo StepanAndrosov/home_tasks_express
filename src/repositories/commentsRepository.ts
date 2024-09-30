@@ -31,47 +31,40 @@ class CommentsRepository {
     }
 
     async updateComment(id: string, content: string) {
-        const foundedComment = await CommentModel.findOne({ _id: new ObjectId(id) })
+        const foundComment = await CommentModel.findOne({ _id: new ObjectId(id) })
 
-        if (!foundedComment) return false
+        if (!foundComment) return false
 
-        foundedComment.content = content
+        foundComment.content = content
 
         return true
     }
     async increaseLike(id: string) {
-        const foundedComment = await CommentModel.findOne({ _id: new ObjectId(id) })
-        if (!foundedComment) return false
-        foundedComment.increaseLike()
-        await foundedComment.save()
+        const foundComment = await CommentModel.findOne({ _id: new ObjectId(id) })
+        if (!foundComment) return false
+        foundComment.increaseLike()
+        await foundComment.save()
         return true
     }
     async decreaseLike(id: string,) {
-        const foundedComment = await CommentModel.findOne({ _id: new ObjectId(id) })
-        if (!foundedComment) return false
-        foundedComment.decreaseLike()
-        await foundedComment.save()
+        const foundComment = await CommentModel.findOne({ _id: new ObjectId(id) })
+        if (!foundComment) return false
+        foundComment.decreaseLike()
+        await foundComment.save()
         return true
     }
     async increaseDislike(id: string,) {
-        const foundedComment = await CommentModel.findOne({ _id: new ObjectId(id) })
-        if (!foundedComment) return false
-        foundedComment.increaseDislike()
-        await foundedComment.save()
+        const foundComment = await CommentModel.findOne({ _id: new ObjectId(id) })
+        if (!foundComment) return false
+        foundComment.increaseDislike()
+        await foundComment.save()
         return true
     }
     async decreaseDislike(id: string,) {
-        const foundedComment = await CommentModel.findOne({ _id: new ObjectId(id) })
-        if (!foundedComment) return false
-        foundedComment.decreaseDislike()
-        await foundedComment.save()
-        return true
-    }
-    async updateMyStatusLike(id: string, status: LikeStatus) {
-        const foundedComment = await CommentModel.findOne({ _id: new ObjectId(id) })
-        if (!foundedComment) return false
-        foundedComment.updateMyStatusLike(status)
-        await foundedComment.save()
+        const foundComment = await CommentModel.findOne({ _id: new ObjectId(id) })
+        if (!foundComment) return false
+        foundComment.decreaseDislike()
+        await foundComment.save()
         return true
     }
     async deleteComment(id: string) {

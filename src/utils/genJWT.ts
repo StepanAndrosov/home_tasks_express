@@ -25,10 +25,10 @@ export const genPairJWT = (
     secret: string | undefined = process.env.JWT_SECRET
 ) => {
     const accessToken = jwt.sign({ id: newUser.id, name: newUser.name, iat: Date.now() }, secret ?? '123456', {
-        expiresIn: Number(expiresInAccess)
+        expiresIn: 86400000
     });
     const refreshToken = jwt.sign({ id: newUser.id, name: newUser.name, iat: Date.now(), deviceId }, secret ?? '123456', {
-        expiresIn: Number(expiresInRefresh)
+        expiresIn: 172800000
     });
 
     return {

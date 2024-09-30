@@ -24,11 +24,11 @@ class DevicesRepository {
         await newDevice.save()
     }
     async updateLastActiveDevice(id: ObjectId) {
-        const foundedDevice = await DeviceModel.findOne({ _id: id })
+        const foundDevice = await DeviceModel.findOne({ _id: id })
 
-        if (!foundedDevice) return false
-        foundedDevice.lastActiveDate = new Date(Date.now()).toISOString()
-        await foundedDevice.save()
+        if (!foundDevice) return false
+        foundDevice.lastActiveDate = new Date(Date.now()).toISOString()
+        await foundDevice.save()
         return true
     }
     async deleteDevices(userId: string, currentDevice: string) {
