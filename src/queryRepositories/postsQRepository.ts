@@ -6,6 +6,8 @@ import { getViewModelComment } from "../repositories/commentsRepository";
 import { getViewModelPost } from "../repositories/postsRepository";
 import { SanitizedQuery } from "../utils/helpers";
 import { CommentsPaginateModel } from './../features/comments/models/CommentsPaginateModel';
+import { commentsService } from "../features/comments/service";
+import { CommentViewModel } from "../features/comments/models/CommentViewModel";
 
 export const postsQRepository = {
     async getPosts(query: SanitizedQuery) {
@@ -34,7 +36,7 @@ export const postsQRepository = {
         if (!postData) return null
         return getViewModelPost(postData)
     },
-    async getPostIdComments(postId: string, query: SanitizedQuery): Promise<CommentsPaginateModel> {
+    async getPostIdComments(postId: string, query: SanitizedQuery, userId: string | undefined): Promise<CommentsPaginateModel> {
 
         const search = query.searchNameTerm ? { title: { $regex: query.searchNameTerm, $options: 'i' } } : {}
         const skip = (query.pageNumber - 1) * query.pageSize
@@ -49,6 +51,13 @@ export const postsQRepository = {
             .skip(skip)
             .limit(query.pageSize)
 
+        let commentDataWithMyStatus: CommentViewModel[] = []
+
+        commentsData.map((c) => getViewModelComment(c)).map(async (c) => {
+            const comment = await commentsService.parseCommentWithMyStatus(c, userId)
+            if (comment) commentDataWithMyStatus.push(comment)
+        })
+
         const totalCount = await CommentModel.countDocuments(filter)
         const pagesCount = Math.ceil(totalCount / query.pageSize)
 
@@ -57,7 +66,7 @@ export const postsQRepository = {
             page: query.pageNumber,
             pageSize: query.pageSize,
             totalCount,
-            items: commentsData.map((c) => getViewModelComment(c))
+            items: commentDataWithMyStatus // commentsData.map((c) => getViewModelComment(c))
         }
     },
 }

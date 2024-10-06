@@ -1,10 +1,10 @@
-import { likesQRepository } from './../../../queryRepositories/likesQRepository';
 import { commentsQRepository } from "../../../queryRepositories/commentsQRepository";
-import { Result } from "../../../types";
-import { LikeStatus } from "../../likes/models/LikeStatus";
 import { commentsRepository } from '../../../repositories/commentsRepository';
 import { likesRepository } from '../../../repositories/likesRepository';
+import { Result } from "../../../types";
+import { LikeStatus } from "../../likes/models/LikeStatus";
 import { CommentViewModel } from '../models/CommentViewModel';
+import { likesQRepository } from './../../../queryRepositories/likesQRepository';
 
 class CommentsService {
     async updateLikes(commentId: string, status: LikeStatus, userId: string): Promise<Result<undefined>> {
@@ -70,18 +70,30 @@ class CommentsService {
     }
     async getCommentWithMyStatus(commentId: string, userId: string | undefined): Promise<CommentViewModel | null> {
         const foundComment = await commentsQRepository.findComment(commentId)
+        const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId ?? '', commentId)
+        const status = userId && userId === foundComment?.commentatorInfo.userId ? foundLike?.status ?? 'None' : 'None'
+        if (!foundComment) return null
+        return {
+            ...foundComment,
+            likesInfo: {
+                ...foundComment.likesInfo,
+                myStatus: status
+            }
+        }
+    }
+    async parseCommentWithMyStatus(comment: CommentViewModel | null, userId: string | undefined): Promise<CommentViewModel | null> {
         if (userId) {
-            if (userId === foundComment?.commentatorInfo.userId) {
-                const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId, commentId)
+            if (userId === comment?.commentatorInfo.userId) {
+                const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId, comment.id)
                 return {
-                    ...foundComment,
+                    ...comment,
                     likesInfo: {
-                        ...foundComment.likesInfo,
+                        ...comment.likesInfo,
                         myStatus: foundLike?.status ?? 'None'
                     }
                 }
-            } else return foundComment
-        } else return foundComment
+            } else return comment
+        } else return comment
     }
 }
 

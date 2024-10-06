@@ -18,7 +18,7 @@ import { usersQRepository } from '../queryRepositories/usersQRepository';
 import { commentsRepository } from '../repositories/commentsRepository';
 import { postsRepository } from '../repositories/postsRepository';
 import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndQuery } from '../types';
-import { HTTP_STATUSES, sanitizeQuery, } from '../utils/helpers';
+import { getDeviceInfoByToken, HTTP_STATUSES, sanitizeQuery, } from '../utils/helpers';
 
 export const getPostsRouter = () => {
     const router = express.Router()
@@ -105,8 +105,10 @@ export const getPostsRouter = () => {
             }
 
             const sanitizedQuery = sanitizeQuery(req.query)
+            const token = req.cookies.refreshToken
+            const { userId } = getDeviceInfoByToken(token)
 
-            const comments = await postsQRepository.getPostIdComments(req.params.postId, sanitizedQuery)
+            const comments = await postsQRepository.getPostIdComments(req.params.postId, sanitizedQuery, userId)
             res.json(comments)
             res.status(HTTP_STATUSES.OK_200)
         })
