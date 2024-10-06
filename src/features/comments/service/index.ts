@@ -26,9 +26,7 @@ class CommentsService {
             }
             if (status === 'Dislike')
                 await commentsRepository.increaseDislike(commentId)
-        }
-
-        if (foundLike) {
+        } else {
             if (foundLike.status === 'Like') {
                 if (status === 'Like') {
                     console.log('got:', status, 'found:', foundLike.status)
@@ -53,7 +51,7 @@ class CommentsService {
                     await commentsRepository.decreaseDislike(commentId)
                     await commentsRepository.increaseLike(commentId)
                 }
-            } else {
+            } else if (foundLike.status === 'None') {
                 console.log('got:', status, 'found:', foundLike.status)
                 await likesRepository.updateLike(foundLike._id, status)
                 if (status === 'Like') {
