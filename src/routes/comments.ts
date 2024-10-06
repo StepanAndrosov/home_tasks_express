@@ -22,6 +22,7 @@ export const getCommentsRouter = () => {
 
             const token = req.cookies.refreshToken
             const { userId } = getDeviceInfoByToken(token)
+            console.log(userId, 'token')
 
             const foundComment = await commentsService.getCommentWithMyStatus(req.params.id, userId)
             if (!foundComment) {
@@ -61,7 +62,7 @@ export const getCommentsRouter = () => {
         inputValidMiddleware,
         async (req: RequestWithParamsAndBody<{ commentId: string }, { likeStatus: LikeStatus } & JWTPayload>, res: Response<ErrorsMessagesType>) => {
 
-            const updateLike = await commentsService.updateLikes(req.params.commentId, req.body.likeStatus, req.body.id)
+            const updateLike = await commentsService.updateLike(req.params.commentId, req.body.likeStatus, req.body.id)
 
             if (updateLike.status === 'NotFound') {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

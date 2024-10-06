@@ -7,7 +7,7 @@ import { CommentViewModel } from '../models/CommentViewModel';
 import { likesQRepository } from './../../../queryRepositories/likesQRepository';
 
 class CommentsService {
-    async updateLikes(commentId: string, status: LikeStatus, userId: string): Promise<Result<undefined>> {
+    async updateLike(commentId: string, status: LikeStatus, userId: string): Promise<Result<undefined>> {
         const foundComment = await commentsQRepository.findComment(commentId)
 
         if (!foundComment) {
@@ -18,6 +18,7 @@ class CommentsService {
 
         const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId, commentId)
         console.log(foundLike?._id.toString(), 'foundLike id')
+        console.log('userId', userId, foundLike?.authorId, 'foundLike authorId')
         if (!foundLike) {
             await likesRepository.createLike({ authorId: userId, parent: { id: commentId, type: 'Comment' }, status })
             if (status === 'Like') {
@@ -71,29 +72,28 @@ class CommentsService {
     async getCommentWithMyStatus(commentId: string, userId: string | undefined): Promise<CommentViewModel | null> {
         const foundComment = await commentsQRepository.findComment(commentId)
         const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId ?? '', commentId)
-        const status = userId && userId === foundComment?.commentatorInfo.userId ? foundLike?.status ?? 'None' : 'None'
+        console.log(foundLike, 'foundLike id')
+        console.log('userId', userId, foundLike?.authorId, 'foundLike authorId')
+
         if (!foundComment) return null
         return {
             ...foundComment,
             likesInfo: {
                 ...foundComment.likesInfo,
-                myStatus: status
+                myStatus: foundLike?.status ?? 'None'
             }
         }
     }
     async parseCommentWithMyStatus(comment: CommentViewModel | null, userId: string | undefined): Promise<CommentViewModel | null> {
-        if (userId) {
-            if (userId === comment?.commentatorInfo.userId) {
-                const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId, comment.id)
-                return {
-                    ...comment,
-                    likesInfo: {
-                        ...comment.likesInfo,
-                        myStatus: foundLike?.status ?? 'None'
-                    }
-                }
-            } else return comment
-        } else return comment
+        if (!comment) return null
+        const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId ?? '', comment.id)
+        return {
+            ...comment,
+            likesInfo: {
+                ...comment.likesInfo,
+                myStatus: foundLike?.status ?? 'None'
+            }
+        }
     }
 }
 
