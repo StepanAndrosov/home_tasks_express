@@ -82,8 +82,8 @@ class CommentsService {
             }
         }
     }
-    async parseCommentWithMyStatus(comment: CommentViewModel | null, userId: string | undefined): Promise<CommentViewModel | null> {
-        if (!comment) return null
+    async parseCommentWithMyStatus(comment: CommentViewModel, userId: string | undefined): Promise<CommentViewModel> {
+
         const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId ?? '', comment.id)
         return {
             ...comment,

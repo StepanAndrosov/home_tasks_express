@@ -55,7 +55,7 @@ export const postsQRepository = {
 
         commentsData.map((c) => getViewModelComment(c)).map(async (c) => {
             const comment = await commentsService.parseCommentWithMyStatus(c, userId)
-            if (comment) commentDataWithMyStatus.push(comment)
+            commentDataWithMyStatus.push(comment)
         })
 
         const totalCount = await CommentModel.countDocuments(filter)
