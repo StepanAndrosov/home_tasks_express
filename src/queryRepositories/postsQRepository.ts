@@ -55,6 +55,7 @@ export const postsQRepository = {
 
         commentsData.map((c) => getViewModelComment(c)).map(async (c) => {
             const comment = await commentsService.parseCommentWithMyStatus(c, userId)
+            console.log(comment)
             commentDataWithMyStatus.push(comment)
         })
 
@@ -66,7 +67,7 @@ export const postsQRepository = {
             page: query.pageNumber,
             pageSize: query.pageSize,
             totalCount,
-            items: commentDataWithMyStatus // commentsData.map((c) => getViewModelComment(c))
+            items: commentDataWithMyStatus.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) // commentsData.map((c) => getViewModelComment(c))
         }
     },
 }
