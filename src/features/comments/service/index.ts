@@ -30,8 +30,8 @@ class CommentsService {
             if (foundLike.status === 'Like') {
                 if (status === 'Like') {
                     console.log('got:', status, 'found:', foundLike.status)
-                    await likesRepository.updateLike(foundLike._id, 'None')
-                    await commentsRepository.decreaseLike(commentId)
+                    // await likesRepository.updateLike(foundLike._id, 'None')
+                    // await commentsRepository.decreaseLike(commentId)
                 }
                 if (status === 'Dislike') {
                     console.log('got:', status, 'found:', foundLike.status)
@@ -42,8 +42,8 @@ class CommentsService {
             } else if (foundLike.status === 'Dislike') {
                 if (status === 'Dislike') {
                     console.log('got:', status, 'found:', foundLike.status)
-                    await likesRepository.updateLike(foundLike._id, 'None')
-                    await commentsRepository.decreaseDislike(commentId)
+                    // await likesRepository.updateLike(foundLike._id, 'None')
+                    // await commentsRepository.decreaseDislike(commentId)
                 }
                 if (status === 'Like') {
                     console.log('got:', status, 'found:', foundLike.status)

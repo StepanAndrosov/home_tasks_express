@@ -67,7 +67,9 @@ export const postsQRepository = {
             page: query.pageNumber,
             pageSize: query.pageSize,
             totalCount,
-            items: commentDataWithMyStatus.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()) // commentsData.map((c) => getViewModelComment(c))
+            items: commentDataWithMyStatus
+                .sort((a, b) => new Date(a.createdAt)
+                    .getTime() - new Date(b.createdAt).getTime()) // commentsData.map((c) => getViewModelComment(c))
         }
     },
 }
