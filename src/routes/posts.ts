@@ -19,6 +19,7 @@ import { commentsRepository } from '../repositories/commentsRepository';
 import { postsRepository } from '../repositories/postsRepository';
 import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndQuery } from '../types';
 import { getDeviceInfoByToken, HTTP_STATUSES, sanitizeQuery, } from '../utils/helpers';
+import { commentsService } from '../features/comments/service';
 
 export const getPostsRouter = () => {
     const router = express.Router()
@@ -97,7 +98,7 @@ export const getPostsRouter = () => {
 
     router.get('/:postId/comments',
         async (req: RequestWithParamsAndQuery<PostIdCommentsParamsModel, { [key: string]: string | undefined }>, res: Response<CommentsPaginateModel>) => {
-
+            console.log(req.params)
             const foundPost = await postsQRepository.findPost(req.params.postId)
             if (!foundPost) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -105,11 +106,22 @@ export const getPostsRouter = () => {
             }
 
             const sanitizedQuery = sanitizeQuery(req.query)
-            const token = req.cookies.refreshToken
+            const token = req.headers.authorization
             const { userId } = getDeviceInfoByToken(token)
 
-            const comments = await postsQRepository.getPostIdComments(req.params.postId, sanitizedQuery, userId)
-            res.json(comments)
+            const commentsQuery = await postsQRepository.getPostIdComments(req.params.postId, sanitizedQuery)
+
+            const allPromise = Promise.all(
+                commentsQuery.items
+                    .map(async (comment) => await commentsService.parseCommentWithMyStatus(comment, userId))
+            );
+
+            const comments = await allPromise
+
+            res.json({
+                ...commentsQuery,
+                items: comments
+            })
             res.status(HTTP_STATUSES.OK_200)
         })
 

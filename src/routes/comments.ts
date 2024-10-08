@@ -20,7 +20,7 @@ export const getCommentsRouter = () => {
         inputValidMiddleware,
         async (req: Request, res: Response<CommentViewModel>) => {
 
-            const token = req.cookies.refreshToken
+            const token = req.headers.authorization
             const { userId } = getDeviceInfoByToken(token)
             console.log(userId, 'token')
 

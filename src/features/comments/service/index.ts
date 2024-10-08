@@ -39,6 +39,10 @@ class CommentsService {
                     await commentsRepository.decreaseLike(commentId)
                     await commentsRepository.increaseDislike(commentId)
                 }
+                if (status === 'None') {
+                    await likesRepository.updateLike(foundLike._id, status)
+                    await commentsRepository.decreaseLike(commentId)
+                }
             } else if (foundLike.status === 'Dislike') {
                 if (status === 'Dislike') {
                     console.log('got:', status, 'found:', foundLike.status)
@@ -50,6 +54,10 @@ class CommentsService {
                     await likesRepository.updateLike(foundLike._id, status)
                     await commentsRepository.decreaseDislike(commentId)
                     await commentsRepository.increaseLike(commentId)
+                }
+                if (status === 'None') {
+                    await likesRepository.updateLike(foundLike._id, status)
+                    await commentsRepository.decreaseDislike(commentId)
                 }
             } else if (foundLike.status === 'None') {
                 console.log('got:', status, 'found:', foundLike.status)
@@ -92,6 +100,24 @@ class CommentsService {
                 myStatus: foundLike?.status ?? 'None'
             }
         }
+    }
+    async parseComments(comments: CommentViewModel[], userId: string | undefined) {
+        let commentDataWithMyStatus: CommentViewModel[] = []
+
+        comments.map(async (comment) => {
+            const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId ?? '', comment.id)
+            console.log(foundLike?._id, foundLike?.authorId, 'foundLike')
+            const commentWithStatus = {
+                ...comment,
+                likesInfo: {
+                    ...comment.likesInfo,
+                    myStatus: foundLike?.status ?? 'None'
+                }
+            }
+            commentDataWithMyStatus.push(commentWithStatus)
+        })
+
+        return commentDataWithMyStatus
     }
 }
 
