@@ -7,7 +7,7 @@ import { CommentViewModel } from '../models/CommentViewModel';
 import { likesQRepository } from './../../../queryRepositories/likesQRepository';
 
 class CommentsService {
-    async updateLike(commentId: string, status: LikeStatus, userId: string): Promise<Result<undefined>> {
+    async updateLike(commentId: string, status: LikeStatus, user: { id: string, name: string }): Promise<Result<undefined>> {
         const foundComment = await commentsQRepository.findComment(commentId)
 
         if (!foundComment) {
@@ -16,11 +16,11 @@ class CommentsService {
             }
         }
 
-        const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId, commentId)
+        const foundLike = await likesQRepository.getLikeByAuthorAndParent(user.id, commentId)
         console.log(foundLike?._id.toString(), 'foundLike id')
-        console.log('userId', userId, foundLike?.authorId, 'foundLike authorId')
+        console.log('userId', user.id, foundLike?.authorId, 'foundLike authorId')
         if (!foundLike) {
-            await likesRepository.createLike({ authorId: userId, parent: { id: commentId, type: 'Comment' }, status })
+            await likesRepository.createLike({ authorId: user.id, authorName: user.name, parent: { id: commentId, type: 'Comment' }, status })
             if (status === 'Like') {
                 await commentsRepository.increaseLike(commentId)
             }
@@ -30,8 +30,6 @@ class CommentsService {
             if (foundLike.status === 'Like') {
                 if (status === 'Like') {
                     console.log('got:', status, 'found:', foundLike.status)
-                    // await likesRepository.updateLike(foundLike._id, 'None')
-                    // await commentsRepository.decreaseLike(commentId)
                 }
                 if (status === 'Dislike') {
                     console.log('got:', status, 'found:', foundLike.status)
@@ -46,8 +44,6 @@ class CommentsService {
             } else if (foundLike.status === 'Dislike') {
                 if (status === 'Dislike') {
                     console.log('got:', status, 'found:', foundLike.status)
-                    // await likesRepository.updateLike(foundLike._id, 'None')
-                    // await commentsRepository.decreaseDislike(commentId)
                 }
                 if (status === 'Like') {
                     console.log('got:', status, 'found:', foundLike.status)
@@ -100,24 +96,6 @@ class CommentsService {
                 myStatus: foundLike?.status ?? 'None'
             }
         }
-    }
-    async parseComments(comments: CommentViewModel[], userId: string | undefined) {
-        let commentDataWithMyStatus: CommentViewModel[] = []
-
-        comments.map(async (comment) => {
-            const foundLike = await likesQRepository.getLikeByAuthorAndParent(userId ?? '', comment.id)
-            console.log(foundLike?._id, foundLike?.authorId, 'foundLike')
-            const commentWithStatus = {
-                ...comment,
-                likesInfo: {
-                    ...comment.likesInfo,
-                    myStatus: foundLike?.status ?? 'None'
-                }
-            }
-            commentDataWithMyStatus.push(commentWithStatus)
-        })
-
-        return commentDataWithMyStatus
     }
 }
 

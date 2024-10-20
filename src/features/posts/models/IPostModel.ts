@@ -1,4 +1,5 @@
 import { WithId } from "mongodb"
+import { LikeStatus } from "../../likes/models/LikeStatus"
 
 
 interface Post {
@@ -27,6 +28,17 @@ interface Post {
     * Created time post 
     */
     createdAt: string
+    extendedLikesInfo: {
+        likesCount: number
+        dislikesCount: number
+        myStatus: LikeStatus
+        newestLikes:
+        {
+            addedAt: string
+            userId: string
+            login: string
+        }[]
+    }
 }
 
 export type IPostModel = WithId<Post>

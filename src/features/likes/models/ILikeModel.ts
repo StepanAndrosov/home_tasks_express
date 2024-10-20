@@ -7,6 +7,7 @@ interface Like {
     createdAt: string
     status: LikeStatus
     authorId: string
+    authorName: string
     parent: { id: string, type: LikeParentType }
 }
 

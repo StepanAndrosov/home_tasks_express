@@ -2,12 +2,15 @@ import express, { Request, Response } from 'express';
 import { BlogViewModel } from '../features/blogs/models/BlogViewModel';
 import { CommentViewModel } from '../features/comments/models/CommentViewModel';
 import { CommentsPaginateModel } from '../features/comments/models/CommentsPaginateModel';
-import { validationCommentContent } from '../features/comments/validations';
+import { commentsService } from '../features/comments/service';
+import { validationCommentContent, validationLikeStatus } from '../features/comments/validations';
+import { LikeStatus } from '../features/likes/models/LikeStatus';
 import { PostCreateModel } from '../features/posts/models/PostCreateModel';
 import { PostIdCommentsParamsModel } from '../features/posts/models/PostIdCommentsParamsModel';
 import { PostIdParamsModel } from '../features/posts/models/PostIdParamsModel';
 import { PostViewModel } from '../features/posts/models/PostViewModel';
 import { PostsPaginateModel } from '../features/posts/models/PostsPaginateModel';
+import { postsService } from '../features/posts/service';
 import { validationPostBlogId, validationPostContent, validationPostDescription, validationPostTile } from '../features/posts/validations';
 import { authenticationBasicMiddleware } from '../middlewares/authentication-basic';
 import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer';
@@ -17,9 +20,9 @@ import { postsQRepository } from '../queryRepositories/postsQRepository';
 import { usersQRepository } from '../queryRepositories/usersQRepository';
 import { commentsRepository } from '../repositories/commentsRepository';
 import { postsRepository } from '../repositories/postsRepository';
-import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndQuery } from '../types';
+import { ErrorsMessagesType, RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithParamsAndQuery } from '../types';
+import { JWTPayload } from '../utils/genJWT';
 import { getDeviceInfoByToken, HTTP_STATUSES, sanitizeQuery, } from '../utils/helpers';
-import { commentsService } from '../features/comments/service';
 
 export const getPostsRouter = () => {
     const router = express.Router()
@@ -27,9 +30,22 @@ export const getPostsRouter = () => {
     router.get('/', async (req: Request<{}, {}, {}, { [key: string]: string | undefined }>, res: Response<PostsPaginateModel>) => {
 
         const sanitizedQuery = sanitizeQuery(req.query)
+        const token = req.headers.authorization
+        const { userId } = getDeviceInfoByToken(token)
 
-        const posts = await postsQRepository.getPosts(sanitizedQuery)
-        res.json(posts)
+        const postsQuery = await postsQRepository.getPosts(sanitizedQuery)
+
+        const allPromise = Promise.all(
+            postsQuery.items
+                .map(async (post) => await postsService.parsePostWithMyStatus(post, userId))
+        );
+
+        const posts = await allPromise
+
+        res.json({
+            ...postsQuery,
+            items: posts
+        })
         res.status(HTTP_STATUSES.OK_200)
     })
 
@@ -57,7 +73,11 @@ export const getPostsRouter = () => {
     router.get('/:id',
         async (req: RequestWithParams<PostIdParamsModel>, res: Response<PostViewModel>) => {
 
-            const foundPost = await postsQRepository.findPost(req.params.id)
+            const token = req.headers.authorization
+            const { userId } = getDeviceInfoByToken(token)
+            console.log(userId, 'token')
+
+            const foundPost = await postsService.getPostWithMyStatus(req.params.id, userId)
             if (!foundPost) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
@@ -149,6 +169,29 @@ export const getPostsRouter = () => {
 
             res.status(HTTP_STATUSES.CREATED_201)
             res.send(comment)
+        })
+
+    router.put('/:postId/like-status',
+        authenticationBearerMiddleware,
+        validationLikeStatus(),
+        inputValidMiddleware,
+        async (req: RequestWithParamsAndBody<{ postId: string }, { likeStatus: LikeStatus } & JWTPayload>, res: Response<ErrorsMessagesType>) => {
+
+            const updateLike = await postsService.updateLike(
+                req.params.postId,
+                req.body.likeStatus,
+                { id: req.body.id, name: req.body.name }
+            )
+
+            if (updateLike.status === 'NotFound') {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return
+            }
+
+            if (updateLike.status === 'Success') {
+                res.sendStatus(HTTP_STATUSES.NO_CONTEND_204)
+                return
+            }
         })
 
     return router

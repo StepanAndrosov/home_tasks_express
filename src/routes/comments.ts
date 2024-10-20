@@ -1,16 +1,16 @@
-import { JWTPayload } from './../utils/genJWT';
-import express, { Request, Response } from 'express'
-import { CommentViewModel } from '../features/comments/models/CommentViewModel'
-import { validParamId, validationCommentContent, validationLikeStatus } from '../features/comments/validations'
-import { UserViewModel } from '../features/users/models/UserViewModel'
-import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer'
-import { inputValidMiddleware } from '../middlewares/input-valid'
-import { commentsQRepository } from '../queryRepositories/commentsQRepository'
-import { commentsRepository } from '../repositories/commentsRepository'
-import { ErrorsMessagesType, RequestWithBody, RequestWithParamsAndBody } from '../types'
-import { getDeviceInfoByToken, HTTP_STATUSES } from '../utils/helpers'
-import { LikeStatus } from '../features/likes/models/LikeStatus'
+import express, { Request, Response } from 'express';
+import { CommentViewModel } from '../features/comments/models/CommentViewModel';
 import { commentsService } from '../features/comments/service';
+import { validationCommentContent, validationLikeStatus, validParamId } from '../features/comments/validations';
+import { LikeStatus } from '../features/likes/models/LikeStatus';
+import { UserViewModel } from '../features/users/models/UserViewModel';
+import { authenticationBearerMiddleware } from '../middlewares/authentication-bearer';
+import { inputValidMiddleware } from '../middlewares/input-valid';
+import { commentsQRepository } from '../queryRepositories/commentsQRepository';
+import { commentsRepository } from '../repositories/commentsRepository';
+import { ErrorsMessagesType, RequestWithParamsAndBody } from '../types';
+import { getDeviceInfoByToken, HTTP_STATUSES } from '../utils/helpers';
+import { JWTPayload } from './../utils/genJWT';
 
 export const getCommentsRouter = () => {
     const router = express.Router()
@@ -62,7 +62,11 @@ export const getCommentsRouter = () => {
         inputValidMiddleware,
         async (req: RequestWithParamsAndBody<{ commentId: string }, { likeStatus: LikeStatus } & JWTPayload>, res: Response<ErrorsMessagesType>) => {
 
-            const updateLike = await commentsService.updateLike(req.params.commentId, req.body.likeStatus, req.body.id)
+            const updateLike = await commentsService.updateLike(
+                req.params.commentId,
+                req.body.likeStatus,
+                { id: req.body.id, name: req.body.name }
+            )
 
             if (updateLike.status === 'NotFound') {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

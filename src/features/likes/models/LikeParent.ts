@@ -1,1 +1,1 @@
-export type LikeParentType = 'Blog' | 'Comment' 
+export type LikeParentType = 'Post' | 'Comment' 

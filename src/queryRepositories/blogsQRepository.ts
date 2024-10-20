@@ -50,7 +50,7 @@ export const blogsQRepository = {
         }
 
         const postsData = await PostModel.find(filter)
-            // .sort(query.sortBy, query.sortDirection)
+            .sort({ createdAt: -1 })
             .skip(skip)
             .limit(query.pageSize)
 

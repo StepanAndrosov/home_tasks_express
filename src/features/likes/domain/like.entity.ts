@@ -15,6 +15,7 @@ export const LikeSchema = new mongoose.Schema<ILikeModel, LikeModelType, LikeMet
     createdAt: { type: String, required: true },
     status: { type: String, required: true },
     authorId: { type: String, required: true },
+    authorName: { type: String, required: true },
     parent: { id: { type: String, required: true }, type: { type: String, required: true } },
 })
 
@@ -33,6 +34,7 @@ const likeStatics = {
         newLike.createdAt = new Date(Date.now()).toISOString()
         newLike.status = dto.status
         newLike.authorId = dto.authorId
+        newLike.authorName = dto.authorName
         newLike.parent = dto.parent
 
         return newLike

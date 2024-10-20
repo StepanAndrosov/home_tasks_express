@@ -1,3 +1,4 @@
+import { LikeStatus } from "../../likes/models/LikeStatus"
 
 export interface PostViewModel {
     /**
@@ -28,5 +29,17 @@ export interface PostViewModel {
     * Created time post 
     */
     createdAt: string
+    extendedLikesInfo: {
+        likesCount: number
+        dislikesCount: number
+        myStatus: LikeStatus
+        newestLikes:
+        {
+            addedAt: string
+            userId: string
+            login: string
+        }[]
+
+    }
 }
 

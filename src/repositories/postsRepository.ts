@@ -12,7 +12,8 @@ export const getViewModelPost = (post: IPostModel): PostViewModel => {
         content: post.content,
         blogId: post.blogId,
         blogName: post.blogName,
-        createdAt: post.createdAt
+        createdAt: post.createdAt,
+        extendedLikesInfo: post.extendedLikesInfo
     }
 }
 
@@ -41,6 +42,34 @@ class PostsRepository {
 
         await foundPostModel.save()
 
+        return true
+    }
+    async increaseLike(id: string) {
+        const foundComment = await PostModel.findOne({ _id: new ObjectId(id) })
+        if (!foundComment) return false
+        foundComment.increaseLike()
+        await foundComment.save()
+        return true
+    }
+    async decreaseLike(id: string,) {
+        const foundComment = await PostModel.findOne({ _id: new ObjectId(id) })
+        if (!foundComment) return false
+        foundComment.decreaseLike()
+        await foundComment.save()
+        return true
+    }
+    async increaseDislike(id: string,) {
+        const foundComment = await PostModel.findOne({ _id: new ObjectId(id) })
+        if (!foundComment) return false
+        foundComment.increaseDislike()
+        await foundComment.save()
+        return true
+    }
+    async decreaseDislike(id: string,) {
+        const foundComment = await PostModel.findOne({ _id: new ObjectId(id) })
+        if (!foundComment) return false
+        foundComment.decreaseDislike()
+        await foundComment.save()
         return true
     }
     async deletePost(id: string) {

@@ -10,9 +10,10 @@ import { inputValidMiddleware } from '../middlewares/input-valid';
 import { blogsQRepository } from '../queryRepositories/blogsQRepository';
 import { blogsRepository } from '../repositories/blogsRepository';
 import { ErrorsMessagesType, RequestWithBody, RequestWithParamsAndQuery } from '../types';
-import { HTTP_STATUSES, sanitizeQuery } from '../utils/helpers';
+import { getDeviceInfoByToken, HTTP_STATUSES, sanitizeQuery } from '../utils/helpers';
 import { CreateBlogDto } from '../features/blogs/domain';
 import { PostsPaginateModel } from '../features/posts/models/PostsPaginateModel';
+import { postsService } from '../features/posts/service';
 
 export const getBlogsRouter = () => {
     const router = express.Router()
@@ -63,8 +64,22 @@ export const getBlogsRouter = () => {
             }
 
             const sanitizedQuery = sanitizeQuery(req.query)
-            const posts = await blogsQRepository.getBlogIdPosts(req.params.blogId, sanitizedQuery)
-            res.json(posts)
+            const postsQuery = await blogsQRepository.getBlogIdPosts(req.params.blogId, sanitizedQuery)
+
+            const token = req.headers.authorization
+            const { userId } = getDeviceInfoByToken(token)
+
+            const allPromise = Promise.all(
+                postsQuery.items
+                    .map(async (post) => await postsService.parsePostWithMyStatus(post, userId))
+            );
+
+            const posts = await allPromise
+
+            res.json({
+                ...postsQuery,
+                items: posts
+            })
             res.status(HTTP_STATUSES.OK_200)
         })
 

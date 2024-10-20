@@ -13,7 +13,7 @@ export const postsQRepository = {
         const skip = (query.pageNumber - 1) * query.pageSize
 
         const postsData = await PostModel.find({})
-            // .sort(query.sortBy, query.sortDirection)
+            .sort({ createdAt: -1 })
             .skip(skip)
             .limit(query.pageSize)
 
